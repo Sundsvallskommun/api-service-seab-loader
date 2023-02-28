@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0">
+
+  <xs:element name="InExchangeInvoiceStatus" type="InExchangeInvoiceStatusType"/>
+
+  <xs:complexType name="PartyType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" minOccurs="0"/>
+      <xs:element name="OrgNo" type="xs:string" minOccurs="0"/>
+      <xs:element name="VatNo" type="xs:string" minOccurs="0" />
+      <xs:element name="GLN" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IdentifiedPartyType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" minOccurs="0" />
+      <xs:element name="OrgNo" type="xs:string" minOccurs="0" />
+      <xs:element name="VatNo" type="xs:string" minOccurs="0" />
+      <xs:element name="GLN" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InExchangeInvoiceStatusType">
+    <xs:sequence>
+      <xs:element name="Version" type="xs:string" />
+      <xs:element name="File" maxOccurs="1" minOccurs="1" >
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="IncomingDataId" type="xs:int"/>
+            <xs:element name="FileName" type="xs:string" />
+            <xs:element name="ReceivedAt" type="xs:dateTime" />
+            <xs:element name="StatusCode" type="xs:int">
+              <xs:annotation>
+                <xs:documentation>
+                  1 = Received
+                  2 = Technical error
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="MessageRow">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Level" type="xs:int">
+                    <xs:annotation>
+                      <xs:documentation>
+                        2 = Error
+                        3 = Warning
+                        4 = Info
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Message" type="xs:string" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Invoice" maxOccurs="1" minOccurs="0" >
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="InvoiceId" type="xs:int" />
+            <xs:element name="InvoiceNo" type="xs:string" />
+            <xs:element name="InvoiceTypeCode" type="xs:string" nillable="true" minOccurs="0"/>
+            <xs:element name="InternalTag" type="xs:string" nillable="true" minOccurs="0"/>
+            <xs:element name="CustomerNo" type="xs:string" minOccurs="0"/>
+            <xs:element name="InvoiceDate" type="xs:dateTime" nillable="true" minOccurs="0"/>
+            <xs:element name="DueDate" type="xs:dateTime" nillable="true" minOccurs="0"/>
+            <xs:element name="InvoiceType" type="xs:int">
+              <xs:annotation>
+                <xs:documentation>
+                  0 = Invoice
+                  1 = Credit note
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="SellerParty" type="PartyType" minOccurs="0"/>
+            <xs:element name="BuyerParty" type="PartyType" minOccurs="0"/>
+            <xs:element name="IdentifiedSellerParty" type="IdentifiedPartyType" minOccurs="0"/>
+            <xs:element name="IdentifiedBuyerParty" type="IdentifiedPartyType" minOccurs="0"/>
+            <xs:element name="TotalAmountExclVAT" type="xs:decimal" />
+            <xs:element name="TotalAmountInclVAT" type="xs:decimal" />
+            <xs:element name="TotalVATAmount" type="xs:decimal" />
+            <xs:element name="LineItemCount" type="xs:int" nillable="true" minOccurs="0"/>
+            <xs:element name="PaymentReference" type="xs:string" minOccurs="0" />
+            <xs:element name="CurrencyCode" type="xs:string" minOccurs="0" />
+            <xs:element name="RefCode" type="xs:string" minOccurs="0" />
+            <xs:element name="RefName" type="xs:string" minOccurs="0" />
+            <xs:element name="PONumber" type="xs:string" minOccurs="0"/>
+            <xs:element name="OriginalInvoiceReference" type ="xs:string" minOccurs="0"/>
+            <xs:element name="OriginalInvoiceId" type="xs:int" nillable="true" minOccurs="0" />
+            <xs:element name="IsTestInvoice" type="xs:boolean" />
+            <xs:element name="Transport" minOccurs="1" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="TransportService" type="xs:int">
+                    <xs:annotation>
+                      <xs:documentation>
+                        1 = Electronic
+                        2 = Print
+                        4 = Epdf
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="PdfRecipientEmailAddress" type="xs:string" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="IsConsumerInvoice" type="xs:boolean" nillable="true" minOccurs="0"/>
+            <xs:element name="ConsumerId" type="xs:string" minOccurs="0" />
+            <xs:element name="IsDirectDebitInvoice" type="xs:boolean" nillable="true" minOccurs="0"/>
+            <xs:element name="StatusCode" type="xs:int">
+              <xs:annotation>
+                <xs:documentation>
+                  1 = Accepted
+                  2 = Stopped
+                  3 = Delivered
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="StopReason" type="xs:int" nillable="true" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  Undefined                           = 0
+                  EpdfDeliveryFailure                 = 1
+                  RecipientValidatorViolation         = 2
+                  RejectedByRecipient                 = 3
+                  NotAcceptedByOperator               = 4
+                  ReportedByAdministrator             = 5
+                  PrintingFileGenerationError         = 6
+                  EpdfDeliveryFailureRecipient        = 7
+                  ReturnedByMailDistributor           = 8
+                  MonetaryError                       = 9
+                  AbortedWhileWaitingForAttachments   = 10
+                  FormatViolation                     = 11
+                  CustomDefinedBusinessRule           = 12
+                  CustomerNameDoesNotMatch            = 13
+                  ReferenceCodeDoesNotMatch           = 14
+                  ReferenceNameDoesNotExist           = 15
+                  OrderNoDoesNotMatch                 = 16
+                  SenderIdentificationFailure         = 100
+                  RecipientIdentificationFailure      = 101
+                  TransactionHasNoCustomer            = 102
+                  SenderIsNotActive                   = 103
+                  RecipientIsNotActive                = 104
+                  SenderIsNotRegisteredAsSender       = 105
+                  RecipientIsNotRegisteredAsRecipient = 106
+                  RecipientRequiresApprovalInAdvance  = 107
+                  SenderIsNotRegisteredAsPaperSender  = 108
+                  SendingOperatorIsNotAllowed         = 109
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="DeliveredAt" type="xs:dateTime" nillable="true" minOccurs="0"/>
+            <xs:element name="InvoiceLink" type="xs:string" />
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="MessageRow">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Level" type="xs:int">
+                    <xs:annotation>
+                      <xs:documentation>
+                        2 = Error
+                        3 = Warning
+                        4 = Info
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Message" type="xs:string" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element nillable="true" minOccurs="0" name="InvoiceHistory">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Message" maxOccurs="unbounded" minOccurs="0" type="xs:string"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="Attachment">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="OriginalName" type="xs:string" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="OriginalInvoice" minOccurs="0">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="name" type="xs:string" />
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Attachments" minOccurs="0" type="InExchangeInvoiceStatusTypeAttachment"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InExchangeInvoiceStatusTypeAttachment">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="Attachment" minOccurs="0">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="name" type="xs:string" />
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
