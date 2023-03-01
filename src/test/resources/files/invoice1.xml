@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<InExchangeInvoiceStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Version>1.0</Version>
+  <File>
+    <IncomingDataId>17024905</IncomingDataId>
+    <FileName>EvryStd_12964_invoice_0000000000_221128_0000000000.xml</FileName>
+    <ReceivedAt>2022-12-13T07:58:36</ReceivedAt>
+    <StatusCode>1</StatusCode>
+  </File>
+  <Invoice>
+    <InvoiceId>683288</InvoiceId>
+    <InvoiceNo>791932494</InvoiceNo>
+    <InvoiceTypeCode>380</InvoiceTypeCode>
+    <InternalTag>Faktura</InternalTag>
+    <CustomerNo>66666666</CustomerNo>
+    <InvoiceDate>2021-01-11T00:00:00</InvoiceDate>
+    <DueDate>2021-02-01T00:00:00</DueDate>
+    <InvoiceType>0</InvoiceType>
+    <SellerParty>
+      <Name>Company AB</Name>
+      <OrgNo>5555555555</OrgNo>
+      <VatNo>SE5555555555</VatNo>
+      <GLN>736666666666</GLN>
+    </SellerParty>
+    <BuyerParty>
+      <Name>Customer Name</Name>
+      <OrgNo>666666-6666</OrgNo>
+    </BuyerParty>
+    <IdentifiedSellerParty>
+      <Name>Sundsvall Energi AB</Name>
+      <OrgNo>556666-6666</OrgNo>
+      <VatNo>SE66666666666</VatNo>
+      <GLN>7366666666666</GLN>
+    </IdentifiedSellerParty>
+    <TotalAmountExclVAT>227.7200</TotalAmountExclVAT>
+    <TotalAmountInclVAT>285.0000</TotalAmountInclVAT>
+    <TotalVATAmount>56.9300</TotalVATAmount>
+    <LineItemCount>4</LineItemCount>
+    <PaymentReference>791999999</PaymentReference>
+    <CurrencyCode>SEK</CurrencyCode>
+    <RefCode>n/a</RefCode>
+    <IsTestInvoice>false</IsTestInvoice>
+    <Transport>
+      <TransportService>2</TransportService>
+    </Transport>
+    <StatusCode>1</StatusCode>
+    <InvoiceLink>https://host/Services/ViewInvoice.aspx?ID=guid</InvoiceLink>
+  </Invoice>
+  <OriginalInvoice name="InvoiceImage_791932494_0.pdf">JVBERxxxxxx</OriginalInvoice>
+  <Attachments>
+    <Attachment name="791932494_1.pdf">JVBERxxxxxx</Attachment>
+  </Attachments>
+</InExchangeInvoiceStatus>
