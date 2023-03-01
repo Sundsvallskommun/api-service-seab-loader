@@ -1,6 +1,7 @@
 package se.sundsvall.seabloader.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -11,16 +12,22 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.zalando.problem.Problem;
 import org.zalando.problem.Status;
+
+import se.sundsvall.seabloader.service.InvoiceService;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
 class InvoicesResourceFailuresTest {
 
 	private static final String PATH = "/invoices";
+
+	@MockBean
+	private InvoiceService invoiceService;
 
 	@Autowired
 	private WebTestClient webTestClient;
@@ -44,7 +51,7 @@ class InvoicesResourceFailuresTest {
 		assertThat(response.getDetail()).isEqualTo("Required request body is missing: "
 			+ "public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.seabloader.api.InvoicesResource.createInvoice(byte[])");
 
-		// TODO: verifyNoInteractions(serviceMock);
+		verifyNoInteractions(invoiceService);
 	}
 
 	@Test
@@ -65,6 +72,6 @@ class InvoicesResourceFailuresTest {
 		assertThat(response.getStatus()).isEqualTo(Status.UNSUPPORTED_MEDIA_TYPE);
 		assertThat(response.getDetail()).isEqualTo("Content type 'application/json' not supported");
 
-		// TODO: verifyNoInteractions(serviceMock);
+		verifyNoInteractions(invoiceService);
 	}
 }
