@@ -4,14 +4,19 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
 
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import se.inexchange.generated.InExchangeInvoiceStatusType;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
@@ -40,8 +45,16 @@ public class InvoiceMapper {
 		}
 	}
 
-	public static InExchangeInvoiceStatusType toInExchangeInvoice(final String xml) throws JAXBException {
+	public static InExchangeInvoiceStatusType toInExchangeInvoice(final String xml) throws SAXException, JAXBException, ParserConfigurationException {
+		// Disable XXE.
+		final var saxParserFactory = SAXParserFactory.newInstance();
+		saxParserFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		saxParserFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		saxParserFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+		// Do unmarshall operation.
+		final var xmlSource = new SAXSource(saxParserFactory.newSAXParser().getXMLReader(), new InputSource(new StringReader(xml)));
 		final var unmarshaller = JAXBContext.newInstance(InExchangeInvoiceStatusType.class).createUnmarshaller();
-		return (InExchangeInvoiceStatusType) JAXBIntrospector.getValue(unmarshaller.unmarshal(new ByteArrayInputStream(xml.getBytes(UTF_8))));
+		return (InExchangeInvoiceStatusType) JAXBIntrospector.getValue(unmarshaller.unmarshal(xmlSource));
 	}
 }
