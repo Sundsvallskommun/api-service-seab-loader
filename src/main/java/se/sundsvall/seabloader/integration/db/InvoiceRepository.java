@@ -1,5 +1,6 @@
 package se.sundsvall.seabloader.integration.db;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.integration.db.model.enums.Status;
 
 @CircuitBreaker(name = "InvoiceRepository")
 public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, JpaSpecificationExecutor<InvoiceEntity> {
@@ -27,4 +29,12 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	 * @throws IllegalArgumentException if {@literal invoiceId} is {@literal null}.
 	 */
 	boolean existsByInvoiceId(String invoiceId);
+
+	/**
+	 * Find by status list.
+	 *
+	 * @param statusList a List of statuses to filter on.
+	 * @return A List of InvoiceEntity
+	 */
+	List<InvoiceEntity> findByStatusIn(Status... statusList);
 }
