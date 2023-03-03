@@ -4,6 +4,8 @@ import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.groups.Tuple.tuple;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
@@ -135,6 +137,21 @@ class InvoiceRepositoryTest {
 	@Test
 	void existsByInvoiceIdNotFound() {
 		assertThat(repository.existsByInvoiceId("DOES-NOT-EXIST")).isFalse();
+	}
+
+	@Test
+	void findByStatusIn() {
+
+		// Call
+		final var result = repository.findByStatusIn(FAILED, PROCESSED);
+
+		// Verification
+		assertThat(result).hasSize(2);
+		assertThat(result)
+			.extracting(InvoiceEntity::getId, InvoiceEntity::getStatus)
+			.containsExactlyInAnyOrder(
+				tuple(5L, PROCESSED),
+				tuple(6L, FAILED));
 	}
 
 	private static InvoiceEntity createInvoiceEntity() {
