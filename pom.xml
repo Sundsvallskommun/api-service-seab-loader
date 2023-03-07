@@ -22,6 +22,7 @@
 		<!-- Service properties -->
 		<testcontainers.version>1.17.6</testcontainers.version>
 		<jaxb2-maven-plugin.version>2.5.0</jaxb2-maven-plugin.version>
+		<cron-expression-descriptor.version>1.2.6</cron-expression-descriptor.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
 	</properties>
@@ -45,6 +46,12 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
+		</dependency>
+		<dependency>
+			<!-- Used by scheduler to display cron expressions in human readable format -->
+			<groupId>it.burning</groupId>
+			<artifactId>cron-expression-descriptor</artifactId>
+			<version>${cron-expression-descriptor.version}</version>
 		</dependency>
 
 		<!-- Test -->

@@ -1,0 +1,7 @@
+[
+	{
+		"name": "DatabaseCleanerSchedulerService",
+		"expression": "0 0 2 * * 7",
+		"description": "At 02:00, every day, only on Sunday"
+	}
+]
