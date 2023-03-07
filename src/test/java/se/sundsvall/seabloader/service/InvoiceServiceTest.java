@@ -28,8 +28,8 @@ import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 @ExtendWith({ MockitoExtension.class, ResourceLoaderExtension.class })
 class InvoiceServiceTest {
 
-	private static final String TEST_INVOICE_FILE = "files/invoice1.xml";
-	private static final String TEST_FAULTY_INVOICE_FILE = "files/invoice2.xml";
+	private static final String TEST_INVOICE_FILE = "files/invoice/invoice1.xml";
+	private static final String TEST_FAULTY_INVOICE_FILE = "files/invoice/invoice2.xml";
 
 	@Mock
 	private InvoiceRepository invoiceRepositoryMock;

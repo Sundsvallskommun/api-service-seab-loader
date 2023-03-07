@@ -23,8 +23,8 @@ import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 @ExtendWith(ResourceLoaderExtension.class)
 class InvoiceMapperTest {
 
-	private static final String TEST_INVOICE_FILE = "files/invoice1.xml";
-	private static final String TEST_FAULTY_INVOICE_FILE = "files/invoice2.xml";
+	private static final String TEST_INVOICE_FILE = "files/invoice/invoice1.xml";
+	private static final String TEST_FAULTY_INVOICE_FILE = "files/invoice/invoice2.xml";
 
 	@BeforeAll
 	static void setup() {
