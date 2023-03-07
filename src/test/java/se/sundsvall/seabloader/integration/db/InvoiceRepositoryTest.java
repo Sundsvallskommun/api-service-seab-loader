@@ -154,6 +154,12 @@ class InvoiceRepositoryTest {
 				tuple(6L, FAILED));
 	}
 
+	@Test
+	void countByStatusIn() {
+		// Call
+		assertThat(repository.countByStatusIn(FAILED, PROCESSED)).isEqualTo(2);
+	}
+
 	private static InvoiceEntity createInvoiceEntity() {
 		return new InvoiceEntity()
 			.withContent(CONTENT)
