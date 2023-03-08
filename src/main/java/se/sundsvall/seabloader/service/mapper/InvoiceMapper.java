@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import se.inexchange.generated.InExchangeInvoiceStatusType;
+import generated.se.inexchange.InExchangeInvoiceStatusType;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 
 public class InvoiceMapper {

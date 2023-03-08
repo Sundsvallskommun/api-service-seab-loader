@@ -117,18 +117,8 @@
 					<sources>
 						<source>src/main/resources/schema/InExchangeInvoiceStatusSchema.xsd</source>
 					</sources>
-					<packageName>se.inexchange.generated</packageName>
+					<packageName>generated.se.inexchange</packageName>
 					<outputDirectory>${generated-sources-path}/${generated-sources-java-path}</outputDirectory>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>**/se/sundsvall/seabloader/Application*</exclude>
-						<exclude>**/generated/**</exclude>
-					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -159,7 +149,58 @@
 							</configOptions>
 						</configuration>
 					</execution>
+					<execution>
+						<id>messaging-api</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>src/main/resources/integrations/messaging-api.yaml</inputSpec>
+							<output>${generated-sources-path}</output>
+							<generatorName>jaxrs-spec</generatorName>
+							<generateApis>false</generateApis>
+							<generateSupportingFiles>false</generateSupportingFiles>
+							<configOptions>
+								<sourceFolder>${generated-sources-java-path}</sourceFolder>
+								<dateLibrary>java8</dateLibrary>
+								<modelPackage>generated.se.sundsvall.messaging</modelPackage>
+								<openApiNullable>false</openApiNullable>
+								<generatePom>false</generatePom>
+								<useBeanValidation>false</useBeanValidation>
+								<useSwaggerAnnotations>false</useSwaggerAnnotations>
+								<interfaceOnly>true</interfaceOnly>
+							</configOptions>
+						</configuration>
+					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-generated-source</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${generated-sources-path}/${generated-sources-java-path}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/se/sundsvall/seabloader/Application*</exclude>
+						<exclude>**/generated/**</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

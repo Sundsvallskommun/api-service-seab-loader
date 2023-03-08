@@ -16,7 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import se.inexchange.generated.InExchangeInvoiceStatusTypeAttachment;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 

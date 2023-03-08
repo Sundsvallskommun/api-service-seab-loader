@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.zalando.problem.Problem;
 
-import se.inexchange.generated.InExchangeInvoiceStatusType;
-import se.inexchange.generated.InExchangeInvoiceStatusTypeAttachment;
-import se.inexchange.generated.InExchangeInvoiceStatusTypeAttachment.Attachment;
+import generated.se.inexchange.InExchangeInvoiceStatusType;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
 
 @Component
 public class InvoicePdfMerger {
