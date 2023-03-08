@@ -1,0 +1,429 @@
+openapi: 3.0.1
+info:
+  title: api-invoicecache
+  contact: {}
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  version: "1.2"
+servers:
+  - url: /
+paths:
+  /invoices:
+    get:
+      tags:
+        - Invoice Cache
+      summary: Search for and fetch invoices
+      operationId: getInvoices
+      parameters:
+        -
+          name: request
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/InvoiceFilterRequest'
+      responses:
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoicesResponse'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+    post:
+      tags:
+        - Invoice Cache
+      summary: Create/import an invoice
+      operationId: importInvoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoicePdfRequest'
+        required: true
+      responses:
+        "201":
+          description: Successful Operation
+          headers:
+            Location:
+              style: simple
+              explode: false
+              schema:
+                type: string
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /invoices/{filename}/pdf:
+    get:
+      tags:
+        - Invoice Cache
+      summary: Fetch an invoice PDF
+      operationId: getInvoicePdf
+      parameters:
+        -
+          name: filename
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful Operation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvoicePdfResponse'
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "500":
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+components:
+  schemas:
+    InvoicePdf:
+      required:
+        - content
+        - name
+      type: object
+      properties:
+        content:
+          type: string
+          description: The file content as a BASE64-encoded string
+          example: aGVsbG8gd29ybGQK
+        name:
+          type: string
+          description: The filename
+          example: test.pdf
+      description: Model for the InvoicePdf
+    InvoicePdfRequest:
+      required:
+        - attachment
+      type: object
+      properties:
+        issuerLegalId:
+          type: string
+          description: Invoice issuer legal id
+        debtorLegalId:
+          type: string
+          description: Invoice debtor legal id
+        invoiceNumber:
+          type: string
+          description: Invoice number
+        invoiceName:
+          type: string
+          description: Invoice name
+        invoiceType:
+          type: string
+          description: Invoice type
+          enum:
+            - INVOICE
+            - CREDIT_INVOICE
+            - DIRECT_DEBIT
+            - SELF_INVOICE
+            - REMINDER
+            - CONSOLIDATED_INVOICE
+        attachment:
+          $ref: '#/components/schemas/InvoicePdf'
+    Problem:
+      type: object
+      properties:
+        instance:
+          type: string
+          format: uri
+        type:
+          type: string
+          format: uri
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+        status:
+          $ref: '#/components/schemas/StatusType'
+        title:
+          type: string
+        detail:
+          type: string
+    StatusType:
+      type: object
+      properties:
+        reasonPhrase:
+          type: string
+        statusCode:
+          type: integer
+          format: int32
+    Address:
+      type: object
+      properties:
+        city:
+          type: string
+          description: City
+          example: Sundsvall
+        street:
+          type: string
+          description: Street address
+          example: Storgatan 10
+        postcode:
+          type: string
+          description: Postal code
+          example: "85740"
+        careOf:
+          type: string
+          description: Care of
+          example: John Doe
+      description: Model for the Address
+    Invoice:
+      type: object
+      properties:
+        customerName:
+          type: string
+          description: Customer name
+          example: Fritjofs Blommor
+        customerType:
+          type: string
+          description: Customer type
+          example: XH
+        invoiceNumber:
+          type: string
+          description: Invoice number
+          example: "53489546"
+        invoiceStatus:
+          type: string
+          description: Invoice status
+          example: PAID
+          enum:
+            - PAID
+            - UNPAID
+            - PARTIALLY_PAID
+            - DEBT_COLLECTION
+            - PAID_TOO_MUCH
+            - REMINDER
+            - SENT
+            - UNKNOWN
+        ocrNumber:
+          type: string
+          description: OCR Number
+          example: "8907136421"
+        partyId:
+          type: string
+          description: PartyId for organization or private firm
+          example: fb2f0290-3820-11ed-a261-0242ac120002
+        invoiceDescription:
+          type: string
+          description: Invoice description
+          example: Barn och Utbildning
+        invoiceDueDate:
+          type: string
+          description: When the invoice is due to be paid
+          format: date
+        invoiceDate:
+          type: string
+          description: When the invoice was created
+          format: date
+        invoiceReminderDate:
+          type: string
+          description: When a reminder was sent out
+          format: date
+        paidAmount:
+          type: number
+          description: Amount already paid on the invoice.
+          example: 4995
+        totalAmount:
+          type: number
+          description: Amount to pay including VAT (SEK)
+          example: 4995
+        invoiceName:
+          type: string
+          description: "Filename of the invoice, if it is present"
+          example: Faktura_5555555_to_9988776655.pdf
+        vat:
+          type: number
+          description: Vat amount in SEK
+          example: 999
+        amountVatExcluded:
+          type: number
+          description: Amount without vat
+          example: 3996
+        invoiceType:
+          type: string
+          description: Invoice type
+          example: NORMAL or CREDIT
+          enum:
+            - INVOICE
+            - CREDIT_INVOICE
+            - DIRECT_DEBIT
+            - SELF_INVOICE
+            - REMINDER
+            - CONSOLIDATED_INVOICE
+        invoiceAddress:
+          $ref: '#/components/schemas/Address'
+      description: Model for the Invoice
+    InvoicesResponse:
+      type: object
+      properties:
+        invoices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invoice'
+        _meta:
+          $ref: '#/components/schemas/MetaData'
+      description: Response with invoices
+    MetaData:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page
+          format: int32
+          readOnly: true
+          example: 5
+        limit:
+          type: integer
+          description: Displayed objects per page
+          format: int32
+          readOnly: true
+          example: 20
+        count:
+          type: integer
+          description: Displayed objects on current page
+          format: int32
+          readOnly: true
+          example: 13
+        totalRecords:
+          type: integer
+          description: Total amount of hits based on provided search parameters
+          format: int64
+          readOnly: true
+          example: 98
+        totalPages:
+          type: integer
+          description: Total amount of pages based on provided search parameters
+          format: int32
+          readOnly: true
+          example: 23
+      description: Metadata model
+      readOnly: true
+    InvoiceFilterRequest:
+      type: object
+      properties:
+        page:
+          minimum: 1
+          type: integer
+          description: Page number
+          format: int32
+          example: 1
+          default: 1
+        limit:
+          maximum: 1000
+          minimum: 1
+          type: integer
+          description: Result size per page
+          format: int32
+          example: 100
+          default: 100
+        invoiceDateFrom:
+          type: string
+          description: Fetch invoices from (and including) this date.
+          format: date
+        invoiceDateTo:
+          type: string
+          description: "Fetch invoices up to (and including) this date, includes invoices to this date"
+          format: date
+        dueDateFrom:
+          type: string
+          description: Fetch invoices that are due from (and including) this date.
+          format: date
+        dueDateTo:
+          type: string
+          description: Fetch invoices that are due up to (and including) this date
+          format: date
+        partyIds:
+          type: array
+          description: List of partyIds for organizations or private firms
+          example:
+            - fb2f0290-3820-11ed-a261-0242ac120002
+            - fb2f0290-3820-11ed-a261-0242ac120003
+          items:
+            type: string
+            description: List of partyIds for organizations or private firms
+            example: "[\"fb2f0290-3820-11ed-a261-0242ac120002\",\"fb2f0290-3820-11ed-a261-0242ac120003\"]"
+        ocrNumber:
+          type: string
+          description: Ocr number for the invoice
+          example: "8907131234"
+        invoiceNumbers:
+          type: array
+          description: Invoice numbers to fetch
+          example:
+            - "1234567"
+            - "2345678"
+          items:
+            type: string
+            description: Invoice numbers to fetch
+            example: "[\"1234567\",\"2345678\"]"
+      description: Invoice filter request model
+    InvoicePdfResponse:
+      required:
+        - attachment
+      type: object
+      properties:
+        issuerLegalId:
+          type: string
+          description: Invoice issuer legal id
+        debtorLegalId:
+          type: string
+          description: Invoice debtor legal id
+        invoiceNumber:
+          type: string
+          description: Invoice number
+        invoiceName:
+          type: string
+          description: Invoice name
+        invoiceType:
+          type: string
+          description: Invoice type
+          enum:
+            - INVOICE
+            - CREDIT_INVOICE
+            - DIRECT_DEBIT
+            - SELF_INVOICE
+            - REMINDER
+            - CONSOLIDATED_INVOICE
+        attachment:
+          $ref: '#/components/schemas/InvoicePdf'
