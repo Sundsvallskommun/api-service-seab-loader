@@ -22,7 +22,7 @@ import se.sundsvall.seabloader.service.InvoiceService;
 class InvoicesResourceTest {
 
 	private static final String PATH = "/invoices";
-	private static final String FILE_PATH = "classpath:files/invoice1.xml";
+	private static final String FILE_PATH = "classpath:files/invoice/invoice1.xml";
 
 	@MockBean
 	private InvoiceService invoiceService;
