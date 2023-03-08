@@ -44,4 +44,4 @@ hs_err_pid*
 /target/
 
 # Local environment
-.env
+src/main/resources/application-default.properties

@@ -1,21 +1,20 @@
 package se.sundsvall.seabloader.api;
 
-import static java.nio.file.Files.readAllBytes;
-import static org.mockito.Mockito.verify;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.MediaType.APPLICATION_XML;
-import static org.springframework.util.ResourceUtils.getFile;
-
-import java.io.IOException;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
 import se.sundsvall.seabloader.service.InvoiceService;
+
+import java.io.IOException;
+
+import static java.nio.file.Files.readAllBytes;
+import static org.mockito.Mockito.verify;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.MediaType.APPLICATION_XML;
+import static org.springframework.util.ResourceUtils.getFile;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
@@ -45,5 +44,17 @@ class InvoicesResourceTest {
 
 		// Verifications
 		verify(invoiceService).create(fileContent);
+	}
+
+	@Test
+	void export() {
+
+		// Call
+		webTestClient.post().uri(PATH + "/exports")
+			.exchange()
+			.expectStatus().isNoContent();
+
+		// Verifications
+		verify(invoiceService).exportInvoices();
 	}
 }

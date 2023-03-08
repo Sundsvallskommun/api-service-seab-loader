@@ -1,10 +1,16 @@
 package se.sundsvall.seabloader.service.mapper;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
-
-import java.io.StringReader;
+import generated.se.sundsvall.invoicecache.InvoicePdf;
+import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import se.inexchange.generated.InExchangeInvoiceStatusType;
+import se.inexchange.generated.InExchangeInvoiceStatusTypeAttachment;
+import se.sundsvall.seabloader.api.model.InvoiceType;
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.service.InvoicePdfMerger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -12,14 +18,14 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import generated.se.inexchange.InExchangeInvoiceStatusType;
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
 
 public class InvoiceMapper {
 
@@ -45,6 +51,17 @@ public class InvoiceMapper {
 		}
 	}
 
+	public static InvoicePdfRequest toInvoicePdfRequest(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType) {
+		return new InvoicePdfRequest()
+			.invoiceNumber(inExchangeInvoiceStatusType.getInvoice().getInvoiceNo())
+			.invoiceId(String.valueOf(inExchangeInvoiceStatusType.getInvoice().getInvoiceId()))
+			.invoiceType(InvoicePdfRequest.InvoiceTypeEnum.valueOf(InvoiceType.fromValue(inExchangeInvoiceStatusType.getInvoice().getInternalTag().getValue()).toString()))
+			.invoiceName(inExchangeInvoiceStatusType.getOriginalInvoice().getName())
+			.issuerLegalId(inExchangeInvoiceStatusType.getInvoice().getSellerParty().getOrgNo())
+			.debtorLegalId(inExchangeInvoiceStatusType.getInvoice().getBuyerParty().getOrgNo())
+			.attachment(toInvoicePdf(inExchangeInvoiceStatusType));
+	}
+
 	public static InExchangeInvoiceStatusType toInExchangeInvoice(final String xml) throws SAXException, JAXBException, ParserConfigurationException {
 		// Disable XXE.
 		final var saxParserFactory = SAXParserFactory.newInstance();
@@ -56,5 +73,31 @@ public class InvoiceMapper {
 		final var xmlSource = new SAXSource(saxParserFactory.newSAXParser().getXMLReader(), new InputSource(new StringReader(xml)));
 		final var unmarshaller = JAXBContext.newInstance(InExchangeInvoiceStatusType.class).createUnmarshaller();
 		return (InExchangeInvoiceStatusType) JAXBIntrospector.getValue(unmarshaller.unmarshal(xmlSource));
+	}
+
+	private static InvoicePdf toInvoicePdf(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType) {
+		final var attachments = inExchangeInvoiceStatusType.getAttachments();
+
+		if (Objects.isNull(attachments)) {
+			LOGGER.warn("No attachments found in invoice with invoiceId: {}", inExchangeInvoiceStatusType.getInvoice().getInvoiceId());
+			return null;
+		}
+
+		final var invoicePdfMerger = new InvoicePdfMerger();
+		final var name = inExchangeInvoiceStatusType
+			.getAttachments()
+			.getAttachment().stream()
+			.findFirst()
+			.map(InExchangeInvoiceStatusTypeAttachment.Attachment::getName)
+			.orElse(null);
+
+		if (Objects.isNull(name)) {
+			LOGGER.warn("No attachments found in invoice with invoiceId: {}", inExchangeInvoiceStatusType.getInvoice().getInvoiceId());
+			return null;
+		}
+
+		return new InvoicePdf()
+			.content(Base64.getEncoder().encodeToString(invoicePdfMerger.mergePdfs(inExchangeInvoiceStatusType).toString().getBytes(Charset.defaultCharset())))
+			.name(name);
 	}
 }

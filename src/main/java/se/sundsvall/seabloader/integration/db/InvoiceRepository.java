@@ -1,17 +1,16 @@
 package se.sundsvall.seabloader.integration.db;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.transaction.Transactional;
-
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.data.jpa.repository.Query;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @CircuitBreaker(name = "InvoiceRepository")
@@ -33,6 +32,15 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	 * @throws IllegalArgumentException if {@literal invoiceId} is {@literal null}.
 	 */
 	boolean existsByInvoiceId(String invoiceId);
+
+	/**
+	 * Find by status list.
+	 *
+	 * @param statusList a List of statuses to filter on.
+	 * @return A List of invoiceIds.
+	 */
+	@Query("SELECT invoiceId FROM InvoiceEntity i where i.status in ?1")
+	List<String> findInvoiceIdsByStatusIn(Status... statusList);
 
 	/**
 	 * Find by status list.
