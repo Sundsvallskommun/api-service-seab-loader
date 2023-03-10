@@ -1,16 +1,14 @@
 package se.sundsvall.seabloader.service.mapper;
 
+import generated.se.inexchange.InExchangeInvoiceStatusType;
 import generated.se.sundsvall.invoicecache.InvoicePdf;
 import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import se.inexchange.generated.InExchangeInvoiceStatusType;
-import se.inexchange.generated.InExchangeInvoiceStatusTypeAttachment;
 import se.sundsvall.seabloader.api.model.InvoiceType;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
-import se.sundsvall.seabloader.service.InvoicePdfMerger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -18,11 +16,12 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
+import java.io.OutputStream;
 import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Objects;
 
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
@@ -47,11 +46,11 @@ public class InvoiceMapper {
 			return InvoiceEntity.create()
 				.withContent(xmlContent)
 				.withStatus(FAILED)
-				.withStatusMessage(String.format("Deserialization of received XML failed with message: %s", getRootCauseMessage(e)));
+				.withStatusMessage(format("Deserialization of received XML failed with message: %s", getRootCauseMessage(e)));
 		}
 	}
 
-	public static InvoicePdfRequest toInvoicePdfRequest(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType) {
+	public static InvoicePdfRequest toInvoicePdfRequest(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType, OutputStream outputStream) {
 		return new InvoicePdfRequest()
 			.invoiceNumber(inExchangeInvoiceStatusType.getInvoice().getInvoiceNo())
 			.invoiceId(String.valueOf(inExchangeInvoiceStatusType.getInvoice().getInvoiceId()))
@@ -59,7 +58,7 @@ public class InvoiceMapper {
 			.invoiceName(inExchangeInvoiceStatusType.getOriginalInvoice().getName())
 			.issuerLegalId(inExchangeInvoiceStatusType.getInvoice().getSellerParty().getOrgNo())
 			.debtorLegalId(inExchangeInvoiceStatusType.getInvoice().getBuyerParty().getOrgNo())
-			.attachment(toInvoicePdf(inExchangeInvoiceStatusType));
+			.attachment(toInvoicePdf(inExchangeInvoiceStatusType, outputStream));
 	}
 
 	public static InExchangeInvoiceStatusType toInExchangeInvoice(final String xml) throws SAXException, JAXBException, ParserConfigurationException {
@@ -75,29 +74,15 @@ public class InvoiceMapper {
 		return (InExchangeInvoiceStatusType) JAXBIntrospector.getValue(unmarshaller.unmarshal(xmlSource));
 	}
 
-	private static InvoicePdf toInvoicePdf(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType) {
-		final var attachments = inExchangeInvoiceStatusType.getAttachments();
+	private static InvoicePdf toInvoicePdf(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType, final OutputStream outputStream) {
 
-		if (Objects.isNull(attachments)) {
-			LOGGER.warn("No attachments found in invoice with invoiceId: {}", inExchangeInvoiceStatusType.getInvoice().getInvoiceId());
-			return null;
-		}
-
-		final var invoicePdfMerger = new InvoicePdfMerger();
-		final var name = inExchangeInvoiceStatusType
-			.getAttachments()
-			.getAttachment().stream()
-			.findFirst()
-			.map(InExchangeInvoiceStatusTypeAttachment.Attachment::getName)
-			.orElse(null);
-
-		if (Objects.isNull(name)) {
-			LOGGER.warn("No attachments found in invoice with invoiceId: {}", inExchangeInvoiceStatusType.getInvoice().getInvoiceId());
-			return null;
+		if (Objects.isNull(inExchangeInvoiceStatusType.getOriginalInvoice()) || Objects.isNull(outputStream)) {
+			LOGGER.error("OriginalInvoice or attachments not found in invoice with invoiceId: {}", inExchangeInvoiceStatusType.getInvoice().getInvoiceId());
+			throw new IllegalArgumentException(format("OriginalInvoice or attachments not found in invoice with invoiceId: %s", inExchangeInvoiceStatusType.getInvoice().getInvoiceId()));
 		}
 
 		return new InvoicePdf()
-			.content(Base64.getEncoder().encodeToString(invoicePdfMerger.mergePdfs(inExchangeInvoiceStatusType).toString().getBytes(Charset.defaultCharset())))
-			.name(name);
+			.content(Base64.getEncoder().encodeToString(outputStream.toString().getBytes(UTF_8)))
+			.name(inExchangeInvoiceStatusType.getOriginalInvoice().getName());
 	}
 }

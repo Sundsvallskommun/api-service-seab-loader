@@ -20,5 +20,5 @@ public interface InvoiceCacheClient {
 	 * @param invoicePdfRequest with attributes for export an invoice.
 	 */
 	@PostMapping(path = "invoices", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_PROBLEM_JSON_VALUE)
-	ResponseEntity<Void> importInvoice(@RequestBody InvoicePdfRequest invoicePdfRequest);
+	ResponseEntity<Void> sendInvoice(@RequestBody InvoicePdfRequest invoicePdfRequest);
 }

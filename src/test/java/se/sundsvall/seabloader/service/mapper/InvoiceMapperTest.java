@@ -1,13 +1,16 @@
 package se.sundsvall.seabloader.service.mapper;
 
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import se.inexchange.generated.InExchangeInvoiceStatusTypeAttachment.Attachment;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 
 import javax.xml.bind.JAXBException;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.Locale;
 
 import static generated.se.sundsvall.invoicecache.InvoicePdfRequest.InvoiceTypeEnum.INVOICE;
@@ -19,17 +22,6 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
 
-import java.util.Locale;
-
-import javax.xml.bind.JAXBException;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
-import se.sundsvall.dept44.test.annotation.resource.Load;
-import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 
 @ExtendWith(ResourceLoaderExtension.class)
 class InvoiceMapperTest {
@@ -37,9 +29,8 @@ class InvoiceMapperTest {
 	private static final String TEST_INVOICE_FILE = "files/invoice/invoice1.xml";
 	private static final String TEST_FAULTY_INVOICE_FILE = "files/invoice/invoice2.xml";
 
-	private static final String TEST_INVOICE_FILE_WITH_ATTACHEMENTS = "files/pdfutility/invoice1.xml";
-	private static final String TEST_INVOICE_FILE_WITHOUT_ATTACHEMENTS = "files/pdfutility/invoice2.xml";
-
+	private static final String TEST_INVOICE_FILE_WITH_ATTACHMENTS = "files/pdfutility/invoice1.xml";
+	private static final String TEST_INVOICE_FILE_WITHOUT_ATTACHMENTS = "files/pdfutility/invoice2.xml";
 
 	@BeforeAll
 	static void setup() {
@@ -95,11 +86,14 @@ class InvoiceMapperTest {
 	}
 
 	@Test
-	void toInvoicePdfRequest(@Load(TEST_INVOICE_FILE_WITH_ATTACHEMENTS) final String xml) throws Exception {
+	void toInvoicePdfRequest(@Load(TEST_INVOICE_FILE_WITH_ATTACHMENTS) final String xml) throws Exception {
 		final var inExchangeInvoice = InvoiceMapper.toInExchangeInvoice(xml);
 
+		final var outputStream = new ByteArrayOutputStream();
+
+		outputStream.writeBytes("JVBERxxxxxx".getBytes());
 		// Call
-		final var result = InvoiceMapper.toInvoicePdfRequest(inExchangeInvoice);
+		final var result = InvoiceMapper.toInvoicePdfRequest(inExchangeInvoice, outputStream);
 
 		// Verification
 		assertThat(result).isNotNull();
@@ -109,26 +103,18 @@ class InvoiceMapperTest {
 		assertThat(result.getInvoiceName()).isEqualTo("InvoiceImage_791932494_0.pdf");
 		assertThat(result.getIssuerLegalId()).isEqualTo("5555555555");
 		assertThat(result.getDebtorLegalId()).isEqualTo("666666-6666");
-		assertThat(result.getAttachment().getName()).isEqualTo("791932494_1.pdf");
-		assertThat(result.getAttachment().getContent()).hasSize(190132);
+		assertThat(result.getAttachment().getName()).isEqualTo("InvoiceImage_791932494_0.pdf");
+		assertThat(Base64.getDecoder().decode(result.getAttachment().getContent())).isEqualTo("JVBERxxxxxx".getBytes(UTF_8));
 	}
 
 	@Test
-	void toInvoicePdfRequestWithoutAttachments(@Load(TEST_INVOICE_FILE_WITHOUT_ATTACHEMENTS) final String xml) throws Exception {
+	void toInvoicePdfRequestWithoutAttachments(@Load(TEST_INVOICE_FILE_WITHOUT_ATTACHMENTS) final String xml) throws Exception {
 		final var inExchangeInvoice = InvoiceMapper.toInExchangeInvoice(xml);
 
 		// Call
-		final var result = InvoiceMapper.toInvoicePdfRequest(inExchangeInvoice);
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> InvoiceMapper.toInvoicePdfRequest(inExchangeInvoice, null));
 
-		// Verification
-		assertThat(result).isNotNull();
-		assertThat(result.getInvoiceNumber()).isEqualTo("791932494");
-		assertThat(result.getInvoiceId()).isEqualTo("683288");
-		assertThat(result.getInvoiceType()).isEqualTo(INVOICE);
-		assertThat(result.getInvoiceName()).isEqualTo("InvoiceImage_791932494_0.pdf");
-		assertThat(result.getIssuerLegalId()).isEqualTo("5555555555");
-		assertThat(result.getDebtorLegalId()).isEqualTo("666666-6666");
-		assertThat(result.getAttachment()).isNull();
+		AssertionsForClassTypes.assertThat(e.getMessage()).isEqualTo("OriginalInvoice or attachments not found in invoice with invoiceId: 683288");// Verification
 	}
 
 	@Test

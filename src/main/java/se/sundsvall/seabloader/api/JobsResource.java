@@ -9,37 +9,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.zalando.problem.Problem;
 import org.zalando.problem.violations.ConstraintViolationProblem;
 import se.sundsvall.seabloader.service.InvoiceService;
 
-import javax.validation.constraints.NotNull;
-
 import static org.springframework.http.MediaType.ALL_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 import static org.springframework.http.ResponseEntity.noContent;
 
 @RestController
 @Validated
-@Tag(name = "Invoices", description = "Invoice resource")
-@RequestMapping("/invoices")
-public class InvoicesResource {
+@Tag(name = "Jobs", description = "Jobs resource")
+@RequestMapping("/jobs")
+public class JobsResource {
 
 	@Autowired
 	private InvoiceService invoiceService;
 
-	@PostMapping(consumes = { APPLICATION_OCTET_STREAM_VALUE, APPLICATION_XML_VALUE }, produces = APPLICATION_PROBLEM_JSON_VALUE)
-	@Operation(summary = "Create invoice", description = "Receives and stores invoices in XML-format.")
+	@PostMapping(path = "/export", produces = APPLICATION_PROBLEM_JSON_VALUE)
+	@Operation(summary = "Triggers job for sending unprocessed invoices", description = "Triggers job for sending unprocessed invoices to InvoiceCache")
 	@ApiResponse(responseCode = "204", description = "Successful operation", content = @Content(mediaType = ALL_VALUE, schema = @Schema(implementation = Void.class)))
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> createInvoice(@NotNull @RequestBody final byte[] body) {
-		invoiceService.create(body);
+	public ResponseEntity<Void> sendInvoices() {
+		invoiceService.exportInvoices();
 		return noContent().build();
 	}
 }
