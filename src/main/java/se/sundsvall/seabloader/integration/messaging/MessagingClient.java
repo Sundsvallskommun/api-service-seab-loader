@@ -17,7 +17,7 @@ public interface MessagingClient {
 
 	/**
 	 * Send a single e-mail
-	 * 
+	 *
 	 * @param emailRequest containing email information
 	 * @return response containing id for sent message
 	 */
@@ -26,7 +26,7 @@ public interface MessagingClient {
 
 	/**
 	 * Send a single sms
-	 * 
+	 *
 	 * @param smsRequest containing sms information
 	 * @return response containing id for sent message
 	 */

@@ -19,11 +19,8 @@ public enum InvoiceType {
 	}
 
 	public static InvoiceType fromValue(final String value) {
-		for (InvoiceType invoiceType : InvoiceType.values()) {
-			if (invoiceType.value.equals(value)) {
-				return invoiceType;
-			}
-		}
-		throw new IllegalArgumentException("Unexpected value '" + value + "'");
+		return java.util.Arrays.stream(values())
+			.filter(enumObj -> enumObj.value.equals(value))
+			.findFirst().orElseThrow(() -> new  IllegalArgumentException(String.format("Illegal enum value: %s", value)));
 	}
 }

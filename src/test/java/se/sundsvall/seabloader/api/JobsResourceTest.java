@@ -8,20 +8,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import se.sundsvall.seabloader.service.InvoiceService;
 
-import java.io.IOException;
-
-import static java.nio.file.Files.readAllBytes;
 import static org.mockito.Mockito.verify;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.MediaType.APPLICATION_XML;
-import static org.springframework.util.ResourceUtils.getFile;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
-class InvoicesResourceTest {
-
-	private static final String PATH = "/invoices";
-	private static final String FILE_PATH = "classpath:files/invoice/invoice1.xml";
+class JobsResourceTest {
+	private static final String PATH = "/jobs";
 
 	@MockBean
 	private InvoiceService invoiceService;
@@ -30,19 +23,15 @@ class InvoicesResourceTest {
 	private WebTestClient webTestClient;
 
 	@Test
-	void createInvoice() throws IOException {
-
-		// Setup
-		final var fileContent = readAllBytes(getFile(FILE_PATH).toPath());
+	void export() {
 
 		// Call
-		webTestClient.post().uri(PATH)
-			.contentType(APPLICATION_XML)
-			.bodyValue(fileContent)
+		webTestClient.post().uri(PATH + "/export")
 			.exchange()
 			.expectStatus().isNoContent();
 
 		// Verifications
-		verify(invoiceService).create(fileContent);
+		verify(invoiceService).exportInvoices();
 	}
 }
+
