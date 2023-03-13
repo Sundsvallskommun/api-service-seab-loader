@@ -162,7 +162,7 @@ class InvoiceRepositoryTest {
 	}
 
 	@Test
-	void getByStatusIn() {
+	void findIdsByStatusIn() {
 
 		// Call
 		final var result = repository.findIdsByStatusIn(FAILED, PROCESSED);
