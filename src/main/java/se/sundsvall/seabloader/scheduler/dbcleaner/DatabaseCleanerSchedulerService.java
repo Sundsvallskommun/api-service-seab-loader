@@ -2,6 +2,8 @@ package se.sundsvall.seabloader.scheduler.dbcleaner;
 
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
+import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.scheduler.AbstractScheduler;
 
@@ -35,11 +38,18 @@ public class DatabaseCleanerSchedulerService extends AbstractScheduler {
 		final var entitiesToRemove = invoiceRepository.countByStatusIn(STATUSES_TO_REMOVE);
 		if (entitiesToRemove > 0) {
 			LOGGER.info(LOG_ENTITIES_REMOVAL, entitiesToRemove, STATUSES_TO_REMOVE);
-			invoiceRepository.deleteAll(invoiceRepository.findByStatusIn(STATUSES_TO_REMOVE));
+			invoiceRepository.deleteAllById(getIdsToRemove());
 		} else {
 			LOGGER.info(LOG_NOTHING_TO_REMOVE, (Object) STATUSES_TO_REMOVE);
 		}
 
 		LOGGER.info(LOG_CLEANING_ENDED);
+	}
+
+	private List<Long> getIdsToRemove() {
+		return invoiceRepository.findIdsByStatusIn(STATUSES_TO_REMOVE)
+			.stream()
+			.map(InvoiceId::getId)
+			.toList();
 	}
 }

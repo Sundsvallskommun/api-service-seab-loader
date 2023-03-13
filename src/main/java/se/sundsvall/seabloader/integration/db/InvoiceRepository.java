@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 
 @Transactional
@@ -48,4 +49,12 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	 * @return amount of entities having matching the sent in statuses.
 	 */
 	long countByStatusIn(Status... statusList);
+
+	/**
+	 * Get ids of entities matching status in sent in status list.
+	 *
+	 * @param statusList a List of statuses to filter on.
+	 * @return A List of InvoiceId
+	 */
+	List<InvoiceId> findIdsByStatusIn(Status... statusList);
 }
