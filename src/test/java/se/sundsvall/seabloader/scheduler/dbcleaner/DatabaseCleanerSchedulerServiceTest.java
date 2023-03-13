@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,19 +29,19 @@ class DatabaseCleanerSchedulerServiceTest {
 	@Test
 	void executeWithEntitiesToRemove() {
 		// Setup
-		final var entitiesToRemove = List.of(InvoiceEntity.create(), InvoiceEntity.create());
+		final var entityIdsToRemove = createInvoiceIds();
 
 		// Setup mocking
-		when(invoiceRepositoryMock.countByStatusIn(Status.PROCESSED)).thenReturn(Integer.toUnsignedLong(entitiesToRemove.size()));
-		when(invoiceRepositoryMock.findByStatusIn(Status.PROCESSED)).thenReturn(entitiesToRemove);
+		when(invoiceRepositoryMock.countByStatusIn(Status.PROCESSED)).thenReturn(Integer.toUnsignedLong(entityIdsToRemove.size()));
+		when(invoiceRepositoryMock.findIdsByStatusIn(Status.PROCESSED)).thenReturn(entityIdsToRemove);
 
 		// Call.
 		service.execute();
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(Status.PROCESSED);
-		verify(invoiceRepositoryMock).findByStatusIn(Status.PROCESSED);
-		verify(invoiceRepositoryMock).deleteAll(entitiesToRemove);
+		verify(invoiceRepositoryMock).findIdsByStatusIn(Status.PROCESSED);
+		verify(invoiceRepositoryMock).deleteAllById(List.of(5L, 6L));
 	}
 
 	@Test
@@ -51,7 +51,20 @@ class DatabaseCleanerSchedulerServiceTest {
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(Status.PROCESSED);
-		verify(invoiceRepositoryMock, never()).findByStatusIn(any());
-		verify(invoiceRepositoryMock, never()).deleteAll(any());
+		verify(invoiceRepositoryMock, never()).findIdsByStatusIn(any());
+		verify(invoiceRepositoryMock, never()).deleteAllById(any());
+	}
+
+	private List<InvoiceId> createInvoiceIds() {
+		return List.of(createInvoiceIdInstance(5L), createInvoiceIdInstance(6L));
+	}
+
+	private InvoiceId createInvoiceIdInstance(long id) {
+		return new InvoiceId() {
+			@Override
+			public long getId() {
+				return id;
+			}
+		};
 	}
 }
