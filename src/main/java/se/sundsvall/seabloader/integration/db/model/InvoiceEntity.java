@@ -26,7 +26,8 @@ import se.sundsvall.seabloader.integration.db.model.enums.Status;
 		@UniqueConstraint(name = "invoice_unique_invoice_id_constraint", columnNames = { "invoice_id" })
 	},
 	indexes = {
-		@Index(name = "invoice_invoice_id_index", columnList = "invoice_id")
+		@Index(name = "invoice_invoice_id_index", columnList = "invoice_id"),
+		@Index(name = "invoice_status_index", columnList = "status")
 	})
 @EntityListeners(InvoiceEntityListener.class)
 public class InvoiceEntity {
