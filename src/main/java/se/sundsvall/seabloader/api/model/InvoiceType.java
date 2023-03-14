@@ -1,5 +1,7 @@
 package se.sundsvall.seabloader.api.model;
 
+import java.util.Arrays;
+
 public enum InvoiceType {
 	INVOICE("Faktura"),
 	CREDIT_INVOICE("Kreditfaktura"),
@@ -19,7 +21,7 @@ public enum InvoiceType {
 	}
 
 	public static InvoiceType fromValue(final String value) {
-		return java.util.Arrays.stream(values())
+		return Arrays.stream(values())
 			.filter(enumObj -> enumObj.value.equals(value))
 			.findFirst().orElseThrow(() -> new  IllegalArgumentException(String.format("Illegal enum value: %s", value)));
 	}
