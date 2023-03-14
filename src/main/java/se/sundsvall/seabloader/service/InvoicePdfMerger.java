@@ -1,8 +1,13 @@
 package se.sundsvall.seabloader.service;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Optional.ofNullable;
-import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
+import generated.se.inexchange.InExchangeInvoiceStatusType;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.zalando.problem.Problem;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,22 +15,16 @@ import java.io.OutputStream;
 import java.util.Base64;
 import java.util.List;
 
-import org.apache.pdfbox.io.MemoryUsageSetting;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.zalando.problem.Problem;
-
-import generated.se.inexchange.InExchangeInvoiceStatusType;
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Optional.ofNullable;
+import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
 @Component
 public class InvoicePdfMerger {
 
 	@Value("${pdfutility.max.memory.usage:10485760}") // Default the pdf merger is allowed to use 10MB
 	private long maxMemory;
-	private MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(maxMemory);
+	private final MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(maxMemory);
 
 	public OutputStream mergePdfs(InExchangeInvoiceStatusType inExchangeInvoice) {
 		try {
