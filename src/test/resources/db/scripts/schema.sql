@@ -11,6 +11,7 @@
         primary key (id)
     ) engine=InnoDB;
 create index invoice_invoice_id_index on invoice (invoice_id);
+create index invoice_status_index on invoice (status);
 
-    alter table invoice 
+    alter table invoice
        add constraint invoice_unique_invoice_id_constraint unique (invoice_id);

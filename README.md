@@ -16,13 +16,17 @@ Tjänsten integrerar mot:
 
 ### Starta tjänsten
 
-| Konfigurationsnyckel                                                |Beskrivning|
-|---------------------------------------------------------------------|---|
-| **InvoiceCache**                                             ||
-| `integration.invoicecache.url`                                          |URL för endpoint till InvoiceCache-tjänsten i WSO2|
-| `spring.security.oauth2.client.registration.invoicecache.client-id`     |Klient-ID som ska användas för InvoiceCache-tjänsten|
-| `spring.security.oauth2.client.registration.invoicecache.client-secret` |Klient-secret som ska användas för InvoiceCache-tjänsten|
-| `spring.security.oauth2.client.provider.invoicecache.token-uri`         |URI till endpoint för att förnya token för InvoiceCache-tjänsten|
+| Konfigurationsnyckel|Beskrivning|
+|---|---|
+|**Databasinställningar**||
+|`spring.datasource.url`|JDBC-URL för anslutning till databas|
+|`spring.datasource.username`|Användarnamn för anslutning till databas|
+|`spring.datasource.password`|Lösenord för anslutning till databas|
+|**InvoiceCache**||
+| `integration.invoicecache.url`|URL för endpoint till InvoiceCache-tjänsten i WSO2|
+| `spring.security.oauth2.client.registration.invoicecache.client-id`|Klient-ID som ska användas för InvoiceCache-tjänsten|
+| `spring.security.oauth2.client.registration.invoicecache.client-secret`|Klient-secret som ska användas för InvoiceCache-tjänsten|
+| `spring.security.oauth2.client.provider.invoicecache.token-uri`|URI till endpoint för att förnya token för InvoiceCache-tjänsten|
 
 ### Paketera och starta tjänsten
 Applikationen kan paketeras genom:

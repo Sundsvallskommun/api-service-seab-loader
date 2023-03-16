@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 
 /**
  * InvoiceRepository tests
@@ -152,6 +153,25 @@ class InvoiceRepositoryTest {
 			.containsExactlyInAnyOrder(
 				tuple(5L, PROCESSED),
 				tuple(6L, FAILED));
+	}
+
+	@Test
+	void countByStatusIn() {
+		// Call
+		assertThat(repository.countByStatusIn(FAILED, PROCESSED)).isEqualTo(2);
+	}
+
+	@Test
+	void findIdsByStatusIn() {
+
+		// Call
+		final var result = repository.findIdsByStatusIn(FAILED, PROCESSED);
+
+		// Verification
+		assertThat(result).hasSize(2);
+		assertThat(result)
+			.extracting(InvoiceId::getId)
+			.containsExactlyInAnyOrder(5L, 6L);
 	}
 
 	private static InvoiceEntity createInvoiceEntity() {

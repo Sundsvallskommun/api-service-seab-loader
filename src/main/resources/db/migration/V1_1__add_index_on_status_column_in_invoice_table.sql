@@ -1,0 +1,1 @@
+create index invoice_status_index on invoice (status);
