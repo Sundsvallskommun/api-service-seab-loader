@@ -4,5 +4,5 @@ public enum Status {
 	UNPROCESSED,
 	PROCESSED,
 	EXPORT_FAILED,
-	FAILED
+	IMPORT_FAILED
 }

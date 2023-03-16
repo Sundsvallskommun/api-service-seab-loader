@@ -17,8 +17,9 @@ import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.scheduler.AbstractScheduler;
 
 @Service
-@ConfigurationProperties("scheduler.database.cleaner.cron")
+@ConfigurationProperties("scheduler.dbcleaner.cron")
 public class DatabaseCleanerSchedulerService extends AbstractScheduler {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseCleanerSchedulerService.class);
 	private static final String LOG_CLEANING_STARTED = "Beginning removal of obsolete entities in the database";
 	private static final String LOG_ENTITIES_REMOVAL = "Removing a total of {} obsolete entities having status {}";
@@ -31,7 +32,7 @@ public class DatabaseCleanerSchedulerService extends AbstractScheduler {
 	private InvoiceRepository invoiceRepository;
 
 	@Override
-	@Scheduled(cron = "${scheduler.database.cleaner.cron.expression:-}")
+	@Scheduled(cron = "${scheduler.dbcleaner.cron.expression:-}")
 	public void execute() {
 		LOGGER.info(LOG_CLEANING_STARTED);
 

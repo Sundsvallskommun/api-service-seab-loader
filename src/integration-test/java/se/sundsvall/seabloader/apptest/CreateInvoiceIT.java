@@ -5,7 +5,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.MediaType.APPLICATION_XML;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
 import java.io.IOException;
@@ -62,10 +62,10 @@ class CreateInvoiceIT extends AbstractAppTest {
 	void test02_createInvoiceThatWillFail() throws IOException, URISyntaxException {
 
 		// Assert that we have one failed invoice (with null as invoiceId).
-		assertThat(repository.findByStatusIn(FAILED))
+		assertThat(repository.findByStatusIn(IMPORT_FAILED))
 			.extracting(InvoiceEntity::getId, InvoiceEntity::getInvoiceId, InvoiceEntity::getStatus)
 			.containsExactlyInAnyOrder(
-				tuple(1L, null, FAILED));
+				tuple(1L, null, IMPORT_FAILED));
 
 		// Call.
 		setupCall()
@@ -76,11 +76,11 @@ class CreateInvoiceIT extends AbstractAppTest {
 			.sendRequestAndVerifyResponse(APPLICATION_XML);
 
 		// Assert that we have two failed invoices (with null as invoiceId).
-		assertThat(repository.findByStatusIn(FAILED))
+		assertThat(repository.findByStatusIn(IMPORT_FAILED))
 			.extracting(InvoiceEntity::getId, InvoiceEntity::getContent, InvoiceEntity::getInvoiceId, InvoiceEntity::getStatus)
 			.containsExactlyInAnyOrder(
-				tuple(1L, "Lorem ipsum dolor sit amet", null, FAILED),
-				tuple(2L, getResourceAsString("CreateInvoiceIT/__files/test02_createInvoiceThatWillFail/invoice.xml"), null, FAILED));
+				tuple(1L, "Lorem ipsum dolor sit amet", null, IMPORT_FAILED),
+				tuple(2L, getResourceAsString("CreateInvoiceIT/__files/test02_createInvoiceThatWillFail/invoice.xml"), null, IMPORT_FAILED));
 	}
 
 	private String getResourceAsString(final String resourcePath) throws IOException, URISyntaxException {
