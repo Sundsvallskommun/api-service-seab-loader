@@ -4,7 +4,7 @@ import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
@@ -35,7 +35,7 @@ class InvoiceEntityListenerTest {
 
 		// Setup
 		final var listener = new InvoiceEntityListener();
-		final var entity = new InvoiceEntity().withStatus(FAILED);
+		final var entity = new InvoiceEntity().withStatus(IMPORT_FAILED);
 
 		// Call
 		listener.prePersist(entity);
@@ -43,7 +43,7 @@ class InvoiceEntityListenerTest {
 		// Assertions
 		assertThat(entity).hasAllNullFieldsOrPropertiesExcept("id", "status", "created");
 		assertThat(entity.getCreated()).isCloseTo(now(), within(2, SECONDS));
-		assertThat(entity.getStatus()).isEqualTo(FAILED);
+		assertThat(entity.getStatus()).isEqualTo(IMPORT_FAILED);
 	}
 
 	@Test

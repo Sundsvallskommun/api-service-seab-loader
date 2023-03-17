@@ -5,7 +5,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.groups.Tuple.tuple;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
@@ -144,7 +144,7 @@ class InvoiceRepositoryTest {
 	void findByStatusIn() {
 
 		// Call
-		final var result = repository.findByStatusIn(FAILED, PROCESSED);
+		final var result = repository.findByStatusIn(IMPORT_FAILED, PROCESSED);
 
 		// Verification
 		assertThat(result).hasSize(2);
@@ -152,20 +152,20 @@ class InvoiceRepositoryTest {
 			.extracting(InvoiceEntity::getId, InvoiceEntity::getStatus)
 			.containsExactlyInAnyOrder(
 				tuple(5L, PROCESSED),
-				tuple(6L, FAILED));
+				tuple(6L, IMPORT_FAILED));
 	}
 
 	@Test
 	void countByStatusIn() {
 		// Call
-		assertThat(repository.countByStatusIn(FAILED, PROCESSED)).isEqualTo(2);
+		assertThat(repository.countByStatusIn(IMPORT_FAILED, PROCESSED)).isEqualTo(2);
 	}
 
 	@Test
 	void findIdsByStatusIn() {
 
 		// Call
-		final var result = repository.findIdsByStatusIn(FAILED, PROCESSED);
+		final var result = repository.findIdsByStatusIn(IMPORT_FAILED, PROCESSED);
 
 		// Verification
 		assertThat(result).hasSize(2);

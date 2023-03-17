@@ -1,25 +1,5 @@
 package se.sundsvall.seabloader.service;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import se.sundsvall.dept44.test.annotation.resource.Load;
-import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
-import se.sundsvall.seabloader.integration.db.InvoiceRepository;
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
-import se.sundsvall.seabloader.integration.db.model.InvoiceId;
-import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
-
-import java.io.ByteArrayOutputStream;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyList;
 import static java.util.Locale.ENGLISH;
@@ -32,9 +12,30 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
+
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import se.sundsvall.dept44.test.annotation.resource.Load;
+import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
+import se.sundsvall.seabloader.integration.db.InvoiceRepository;
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.integration.db.model.InvoiceId;
+import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
 
 @ExtendWith({ MockitoExtension.class, ResourceLoaderExtension.class })
 class InvoiceServiceTest {
@@ -109,7 +110,7 @@ class InvoiceServiceTest {
 		assertThat(capturedInvoiceEntity).isNotNull();
 		assertThat(capturedInvoiceEntity.getContent()).isEqualTo(xml);
 		assertThat(capturedInvoiceEntity.getInvoiceId()).isNull();
-		assertThat(capturedInvoiceEntity.getStatus()).isEqualTo(FAILED);
+		assertThat(capturedInvoiceEntity.getStatus()).isEqualTo(IMPORT_FAILED);
 		assertThat(capturedInvoiceEntity.getStatusMessage())
 			.isEqualTo("Deserialization of received XML failed with message: SAXParseException: Premature end of file.");
 	}
@@ -117,7 +118,7 @@ class InvoiceServiceTest {
 	@Test
 	void exportInvoicesWhenInvoicesToSend(@Load(TEST_INVOICE_FILE_WITH_ATTACHMENTS) final String xml) {
 
-		//Setup.
+		// Setup.
 		final var pdfs = new ByteArrayOutputStream();
 		pdfs.writeBytes("pdfs".getBytes(UTF_8));
 
@@ -171,7 +172,7 @@ class InvoiceServiceTest {
 		final var invoiceIds = createInvoiceIds();
 		final var invoiceEntity1 = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml);
 		final var invoiceEntity2 = new InvoiceEntity().withInvoiceId("INVOICE_ID_2").withContent(xml);
-		//Setup.
+		// Setup.
 		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(invoiceIds);
 		when(invoiceRepositoryMock.findById(1L))
 			.thenReturn(Optional.of(invoiceEntity1));
@@ -203,7 +204,7 @@ class InvoiceServiceTest {
 	void exportInvoicesWhenNoAttachments(@Load(TEST_INVOICE_FILE_WITHOUT_ATTACHMENTS) final String xml) {
 
 		final var invoiceEntity1 = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml);
-		//Setup.
+		// Setup.
 		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(List.of(createInvoiceIdInstance(1L)));
 		when(invoiceRepositoryMock.findById(1L))
 			.thenReturn(Optional.of(invoiceEntity1));
@@ -228,7 +229,7 @@ class InvoiceServiceTest {
 		return List.of(createInvoiceIdInstance(1L), createInvoiceIdInstance(2L));
 	}
 
-	private InvoiceId createInvoiceIdInstance(long id) {
+	private InvoiceId createInvoiceIdInstance(final long id) {
 		return () -> id;
 	}
 }
