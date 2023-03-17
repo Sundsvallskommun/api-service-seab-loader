@@ -1,18 +1,5 @@
 package se.sundsvall.seabloader.service.mapper;
 
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
-import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import se.sundsvall.dept44.test.annotation.resource.Load;
-import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
-
-import javax.xml.bind.JAXBException;
-import java.io.ByteArrayOutputStream;
-import java.util.Base64;
-import java.util.Locale;
-
 import static generated.se.sundsvall.invoicecache.InvoicePdfRequest.InvoiceTypeEnum.INVOICE;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Locale.ENGLISH;
@@ -20,8 +7,22 @@ import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMess
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
+import java.util.Locale;
+
+import javax.xml.bind.JAXBException;
+
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
+import se.sundsvall.dept44.test.annotation.resource.Load;
+import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 
 @ExtendWith(ResourceLoaderExtension.class)
 class InvoiceMapperTest {
@@ -60,7 +61,7 @@ class InvoiceMapperTest {
 
 		assertThat(result.getContent()).isEqualTo(xml);
 		assertThat(result.getInvoiceId()).isNull();
-		assertThat(result.getStatus()).isEqualTo(FAILED);
+		assertThat(result.getStatus()).isEqualTo(IMPORT_FAILED);
 		assertThat(result.getStatusMessage())
 			.isEqualTo("Deserialization of received XML failed with message: SAXParseException: Premature end of file.");
 	}
@@ -112,7 +113,7 @@ class InvoiceMapperTest {
 		final var inExchangeInvoice = InvoiceMapper.toInExchangeInvoice(xml);
 
 		// Call
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> InvoiceMapper.toInvoicePdfRequest(inExchangeInvoice, null));
+		final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> InvoiceMapper.toInvoicePdfRequest(inExchangeInvoice, null));
 
 		AssertionsForClassTypes.assertThat(e.getMessage()).isEqualTo("OriginalInvoice or attachments not found in invoice with invoiceId: 683288");// Verification
 	}

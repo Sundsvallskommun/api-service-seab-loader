@@ -8,5 +8,10 @@
 		"name": "InvoiceExportSchedulerService",
 		"expression": "0 0 1 * * *",
 		"description": "At 01:00, every day"
+	},
+	{
+		"name": "NotifierSchedulerService",
+		"expression": "0 0 8 * * MON-FRI",
+		"description": "At 08:00, every day, Monday through Friday"
 	}
 ]

@@ -45,4 +45,3 @@ hs_err_pid*
 
 # Local environment
 .env
-src/main/resources/application-default.properties
