@@ -30,7 +30,7 @@ public class InvoiceService {
 	private InvoiceRepository invoiceRepository;
 
 	@Autowired
-	InvoicePdfMerger invoicePdfMerger;
+	private InvoicePdfMerger invoicePdfMerger;
 
 	@Autowired
 	private InvoiceCacheClient invoiceCacheClient;

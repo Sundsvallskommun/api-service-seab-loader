@@ -5,6 +5,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.stream.Stream;
 
@@ -30,6 +31,7 @@ public class NotifierSchedulerService extends AbstractScheduler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NotifierSchedulerService.class);
 	private static final String LOG_EXECUTE_STARTED = "Executing started";
 	private static final String LOG_EXECUTE_ENDED = "Executing ended";
+	private static final String LOG_MAIL_NOTIFICATION_DISABLED = "Mail notification disabled, returning. Enable this feature with: 'notification.mail.enabled=true'";
 	private static final String NOTIFICATION_SUBJECT = "Failed records discovered in %s (%s)";
 	private static final String NOTIFICATION_BODY_INTRODUCTION = "Failed record(s) exist in %s-database! %n";
 	private static final String NOTIFICATION_BODY_ROW = "%n%-20s\t%s records";
@@ -40,11 +42,14 @@ public class NotifierSchedulerService extends AbstractScheduler {
 	@Value("${spring.profiles.active:}")
 	private String applicationEnvironment;
 
+	@Value("${notification.mail.enabled:true}")
+	private boolean mailNotificationEnabled;
+
 	@Value("${notification.mail.recipient.address:}")
-	private String recipientAddress;
+	private String mailRecipientAddress;
 
 	@Value("${notification.mail.sender.address:}")
-	private String senderAddress;
+	private String mailSenderAddress;
 
 	@Autowired
 	private InvoiceRepository invoiceRepository;
@@ -64,6 +69,11 @@ public class NotifierSchedulerService extends AbstractScheduler {
 	 * Sends failure notifications to configured recipient.
 	 */
 	private void sendFailureNotification() {
+
+		if (!mailNotificationEnabled) {
+			LOGGER.info(LOG_MAIL_NOTIFICATION_DISABLED);
+			return;
+		}
 
 		// Collect data
 		final var failedStatusMap = new EnumMap<Status, Long>(Status.class);
@@ -91,8 +101,8 @@ public class NotifierSchedulerService extends AbstractScheduler {
 		return new EmailRequest()
 			.sender(new Email()
 				.name(applicationName)
-				.address(senderAddress))
-			.emailAddress(recipientAddress)
+				.address(mailSenderAddress))
+			.emailAddress(mailRecipientAddress)
 			.subject(subject)
 			.message(message);
 	}
@@ -112,7 +122,7 @@ public class NotifierSchedulerService extends AbstractScheduler {
 		}
 
 		return statusMap.entrySet().stream()
-			.filter(entry -> EXPORT_FAILED.equals(entry.getKey()) || IMPORT_FAILED.equals(entry.getKey()))
+			.filter(entry -> Arrays.asList(IMPORT_FAILED, EXPORT_FAILED).contains(entry.getKey()))
 			.anyMatch(entry -> entry.getValue() > 0);
 	}
 }

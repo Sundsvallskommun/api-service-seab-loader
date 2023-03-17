@@ -20,6 +20,6 @@ class StatusTest {
 		assertThat(UNPROCESSED).hasToString("UNPROCESSED");
 		assertThat(PROCESSED).hasToString("PROCESSED");
 		assertThat(EXPORT_FAILED).hasToString("EXPORT_FAILED");
-		assertThat(IMPORT_FAILED).hasToString("FAILED");
+		assertThat(IMPORT_FAILED).hasToString("IMPORT_FAILED");
 	}
 }

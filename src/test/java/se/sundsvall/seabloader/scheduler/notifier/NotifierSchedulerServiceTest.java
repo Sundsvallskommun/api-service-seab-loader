@@ -43,8 +43,9 @@ class NotifierSchedulerServiceTest {
 	void setup() {
 		setField(service, "applicationName", "MyApplication");
 		setField(service, "applicationEnvironment", "test");
-		setField(service, "recipientAddress", "recipient@host.com");
-		setField(service, "senderAddress", "sender@host.com");
+		setField(service, "mailNotificationEnabled", true);
+		setField(service, "mailRecipientAddress", "recipient@host.com");
+		setField(service, "mailSenderAddress", "sender@host.com");
 	}
 
 	@Test
@@ -65,7 +66,7 @@ class NotifierSchedulerServiceTest {
 	}
 
 	@Test
-	void executeWithFailedRecords() {
+	void executeWithExportFailedRecords() {
 
 		// Setup
 		when(invoiceRepositoryMock.countByStatusIn(EXPORT_FAILED)).thenReturn(1L);
@@ -97,5 +98,54 @@ class NotifierSchedulerServiceTest {
 				EXPORT_FAILED       	1 records
 				IMPORT_FAILED       	0 records
 			""");
+	}
+
+	@Test
+	void executeWithImportFailedRecords() {
+
+		// Setup
+		when(invoiceRepositoryMock.countByStatusIn(EXPORT_FAILED)).thenReturn(0L);
+		when(invoiceRepositoryMock.countByStatusIn(IMPORT_FAILED)).thenReturn(1L);
+		when(invoiceRepositoryMock.countByStatusIn(UNPROCESSED)).thenReturn(0L);
+		when(invoiceRepositoryMock.countByStatusIn(PROCESSED)).thenReturn(0L);
+
+		// Call.
+		service.execute();
+
+		// Verification.
+		verify(invoiceRepositoryMock).countByStatusIn(UNPROCESSED);
+		verify(invoiceRepositoryMock).countByStatusIn(PROCESSED);
+		verify(invoiceRepositoryMock).countByStatusIn(EXPORT_FAILED);
+		verify(invoiceRepositoryMock).countByStatusIn(IMPORT_FAILED);
+		verify(messagingClientMock).sendEmail(emailRequestCaptor.capture());
+
+		final var capturedEmailRequest = emailRequestCaptor.getValue();
+		assertThat(capturedEmailRequest).isNotNull();
+		assertThat(capturedEmailRequest.getEmailAddress()).isEqualTo("recipient@host.com");
+		assertThat(capturedEmailRequest.getSender().getName()).isEqualTo("MyApplication");
+		assertThat(capturedEmailRequest.getSender().getAddress()).isEqualTo("sender@host.com");
+		assertThat(capturedEmailRequest.getSubject()).isEqualTo("Failed records discovered in MyApplication (test)");
+		assertThat(capturedEmailRequest.getMessage()).isEqualToIgnoringWhitespace("""
+				Failed record(s) exist in test-database!
+
+				UNPROCESSED         	0 records
+				PROCESSED           	0 records
+				EXPORT_FAILED       	0 records
+				IMPORT_FAILED       	1 records
+			""");
+	}
+
+	@Test
+	void executeWithFailedRecordsAndMailNotifictionDisabled() {
+
+		// Setup
+		setField(service, "mailNotificationEnabled", false);
+
+		// Call.
+		service.execute();
+
+		// Verification.
+		verifyNoInteractions(invoiceRepositoryMock);
+		verifyNoInteractions(messagingClientMock);
 	}
 }

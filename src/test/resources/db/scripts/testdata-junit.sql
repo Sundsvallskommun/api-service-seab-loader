@@ -14,4 +14,4 @@ INSERT INTO invoice (id, content, created, invoice_id, modified, processed, stat
 VALUES (5, 'Lorem ipsum dolor sit amet', '2021-10-05 13:47:17.767', 'INV-2023-005', NULL, NULL, 'PROCESSED');
 
 INSERT INTO invoice (id, content, created, invoice_id, modified, processed, status)
-VALUES (6, 'Lorem ipsum dolor sit amet', '2021-10-06 13:47:17.767', 'INV-2023-006', NULL, NULL, 'FAILED');
+VALUES (6, 'Lorem ipsum dolor sit amet', '2021-10-06 13:47:17.767', 'INV-2023-006', NULL, NULL, 'IMPORT_FAILED');
