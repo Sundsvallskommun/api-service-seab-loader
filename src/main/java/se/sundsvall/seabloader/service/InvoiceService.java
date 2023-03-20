@@ -59,23 +59,22 @@ public class InvoiceService {
 
 		LOGGER.info("Found {} invoices with status {}", invoiceIdsToSend.size(), STATUSES_OF_INVOICES_TO_SEND);
 
-		sendInvoiceToInvoiceCache(invoiceIdsToSend);
+		sendInvoicesToInvoiceCache(invoiceIdsToSend);
 	}
 
-	private void sendInvoiceToInvoiceCache(final List<InvoiceId> invoiceIds) {
+	private void sendInvoicesToInvoiceCache(final List<InvoiceId> invoiceIds) {
 		invoiceIds.forEach(invoiceId -> invoiceRepository.findById(invoiceId.getId())
 			.ifPresent(invoiceEntity -> {
 				try {
 					final var inExchangeInvoice = toInExchangeInvoice(invoiceEntity.getContent());
 					final var invoicePdfRequest = toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice));
 					invoiceCacheClient.sendInvoice(invoicePdfRequest);
-					invoiceEntity.setStatus(PROCESSED);
-					invoiceRepository.save(invoiceEntity);
+					invoiceRepository.save(invoiceEntity.withStatus(PROCESSED));
 				} catch (final Exception e) {
-					LOGGER.error("Error when sending invoice with invoiceId: {} {}", invoiceId, e.getMessage());
-					invoiceEntity.setStatus(EXPORT_FAILED);
-					invoiceEntity.setStatusMessage(e.getMessage());
-					invoiceRepository.save(invoiceEntity);
+					LOGGER.error("Error when sending invoice with id: {}. Message: {}", invoiceId.getId(), e.getMessage());
+					invoiceRepository.save(invoiceEntity
+						.withStatus(EXPORT_FAILED)
+						.withStatusMessage(e.getMessage()));
 				}
 			}));
 	}
