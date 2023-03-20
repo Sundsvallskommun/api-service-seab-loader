@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -179,7 +180,7 @@ class InvoiceServiceTest {
 		when(invoiceRepositoryMock.findById(2L))
 			.thenReturn(Optional.of(invoiceEntity2));
 		when(invoicePdfMergerMock.mergePdfs(any())).thenReturn(pdfs);
-		when(invoiceCacheClientMock.sendInvoice(any())).thenThrow(new RuntimeException("Test exception"));
+		doThrow(new RuntimeException("Test exception")).when(invoiceCacheClientMock).sendInvoice(any());
 
 		// Call.
 		service.exportInvoices();
