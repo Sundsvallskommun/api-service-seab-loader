@@ -1,14 +1,14 @@
 package se.sundsvall.seabloader.service.mapper;
 
-import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
-
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.util.Base64;
-import java.util.Objects;
+import generated.se.inexchange.InExchangeInvoiceStatusType;
+import generated.se.sundsvall.invoicecache.InvoicePdf;
+import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import se.sundsvall.seabloader.api.model.InvoiceType;
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,17 +16,16 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.util.Base64;
+import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import generated.se.inexchange.InExchangeInvoiceStatusType;
-import generated.se.sundsvall.invoicecache.InvoicePdf;
-import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
-import se.sundsvall.seabloader.api.model.InvoiceType;
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
 public class InvoiceMapper {
 
@@ -84,7 +83,7 @@ public class InvoiceMapper {
 		}
 
 		return new InvoicePdf()
-			.content(Base64.getEncoder().encodeToString(outputStream.toString().getBytes(UTF_8)))
+			.content(Base64.getEncoder().encodeToString(((ByteArrayOutputStream) outputStream).toByteArray()))
 			.name(inExchangeInvoiceStatusType.getOriginalInvoice().getName());
 	}
 }
