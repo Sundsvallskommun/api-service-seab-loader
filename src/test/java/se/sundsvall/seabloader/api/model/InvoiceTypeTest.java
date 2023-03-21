@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static se.sundsvall.seabloader.api.model.InvoiceType.CONSOLIDATED_INVOICE;
 import static se.sundsvall.seabloader.api.model.InvoiceType.CREDIT_INVOICE;
 import static se.sundsvall.seabloader.api.model.InvoiceType.DIRECT_DEBIT;
+import static se.sundsvall.seabloader.api.model.InvoiceType.FINAL_INVOICE;
 import static se.sundsvall.seabloader.api.model.InvoiceType.INVOICE;
 import static se.sundsvall.seabloader.api.model.InvoiceType.REMINDER;
 import static se.sundsvall.seabloader.api.model.InvoiceType.SELF_INVOICE;
@@ -14,7 +15,7 @@ class InvoiceTypeTest {
 
 	@Test
 	void values() {
-		assertThat(InvoiceType.values()).containsExactly(INVOICE, CREDIT_INVOICE, DIRECT_DEBIT, SELF_INVOICE, REMINDER, CONSOLIDATED_INVOICE);
+		assertThat(InvoiceType.values()).containsExactly(INVOICE, CREDIT_INVOICE, DIRECT_DEBIT, SELF_INVOICE, REMINDER, CONSOLIDATED_INVOICE, FINAL_INVOICE);
 	}
 
 	@Test
@@ -25,5 +26,6 @@ class InvoiceTypeTest {
 		assertThat(InvoiceType.fromValue("Självfaktura")).isEqualTo(SELF_INVOICE);
 		assertThat(InvoiceType.fromValue("Påminnelse")).isEqualTo(REMINDER);
 		assertThat(InvoiceType.fromValue("Samlingsfaktura")).isEqualTo(CONSOLIDATED_INVOICE);
+		assertThat(InvoiceType.fromValue("Slutfaktura")).isEqualTo(FINAL_INVOICE);
 	}
 }
