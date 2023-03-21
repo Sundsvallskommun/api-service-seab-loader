@@ -1,17 +1,16 @@
 package se.sundsvall.seabloader.integration.db;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
-
-@Transactional
 @CircuitBreaker(name = "InvoiceRepository")
 public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, JpaSpecificationExecutor<InvoiceEntity> {
 
@@ -50,7 +49,7 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 
 	/**
 	 * Count occurences of entities with statuses equal to sent in statuses.
-	 * 
+	 *
 	 * @param statusList a List of statuses to filter on.
 	 * @return amount of entities having matching the sent in statuses.
 	 */

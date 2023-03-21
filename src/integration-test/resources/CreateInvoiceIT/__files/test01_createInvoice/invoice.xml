@@ -8,7 +8,7 @@
     <StatusCode>1</StatusCode>
   </File>
   <Invoice>
-    <InvoiceId>111</InvoiceId>
+    <InvoiceId>555</InvoiceId>
     <InvoiceNo>7911111</InvoiceNo>
     <InvoiceTypeCode>380</InvoiceTypeCode>
     <InternalTag>Faktura</InternalTag>

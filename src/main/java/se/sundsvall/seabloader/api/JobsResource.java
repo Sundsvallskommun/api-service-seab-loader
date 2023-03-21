@@ -18,7 +18,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import se.sundsvall.seabloader.service.InvoiceService;
+import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerSchedulerService;
+import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportSchedulerService;
+import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
 
 @RestController
 @Validated
@@ -27,15 +29,41 @@ import se.sundsvall.seabloader.service.InvoiceService;
 public class JobsResource {
 
 	@Autowired
-	private InvoiceService invoiceService;
+	private InvoiceExportSchedulerService invoiceExportSchedulerService;
 
-	@PostMapping(path = "/export", produces = APPLICATION_PROBLEM_JSON_VALUE)
-	@Operation(summary = "Triggers job for sending unprocessed invoices", description = "Triggers job for exporting unprocessed invoices to InvoiceCache")
+	@Autowired
+	private NotifierSchedulerService notifierSchedulerService;
+
+	@Autowired
+	private DatabaseCleanerSchedulerService databaseCleanerSchedulerService;
+
+	@PostMapping(path = "/invoiceexporter", produces = APPLICATION_PROBLEM_JSON_VALUE)
+	@Operation(summary = "Triggers export invoices (to InvoiceCache) job.", description = "Triggers export invoices (to InvoiceCache) job.")
 	@ApiResponse(responseCode = "204", description = "Successful operation", content = @Content(mediaType = ALL_VALUE, schema = @Schema(implementation = Void.class)))
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> sendInvoices() {
-		invoiceService.exportInvoices();
+	public ResponseEntity<Void> invoiceexporter() {
+		invoiceExportSchedulerService.execute();
+		return noContent().build();
+	}
+
+	@PostMapping(path = "/notifier", produces = APPLICATION_PROBLEM_JSON_VALUE)
+	@Operation(summary = "Triggers notification job.", description = "Triggers notification job.")
+	@ApiResponse(responseCode = "204", description = "Successful operation", content = @Content(mediaType = ALL_VALUE, schema = @Schema(implementation = Void.class)))
+	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
+	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
+	public ResponseEntity<Void> notifier() {
+		notifierSchedulerService.execute();
+		return noContent().build();
+	}
+
+	@PostMapping(path = "/dbcleaner", produces = APPLICATION_PROBLEM_JSON_VALUE)
+	@Operation(summary = "Triggers database cleaning job.", description = "Triggers database cleaning job.")
+	@ApiResponse(responseCode = "204", description = "Successful operation", content = @Content(mediaType = ALL_VALUE, schema = @Schema(implementation = Void.class)))
+	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
+	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
+	public ResponseEntity<Void> dbcleaner() {
+		databaseCleanerSchedulerService.execute();
 		return noContent().build();
 	}
 }
