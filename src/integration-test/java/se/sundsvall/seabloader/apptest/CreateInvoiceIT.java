@@ -42,7 +42,7 @@ class CreateInvoiceIT extends AbstractAppTest {
 	void test01_createInvoice() throws IOException, URISyntaxException {
 
 		// Assert that invoice doesn't exist yet.
-		assertThat(repository.existsByInvoiceId("111")).isFalse();
+		assertThat(repository.existsByInvoiceId("555")).isFalse();
 
 		// Call.
 		setupCall()
@@ -53,9 +53,9 @@ class CreateInvoiceIT extends AbstractAppTest {
 			.sendRequestAndVerifyResponse(APPLICATION_XML);
 
 		// Assert that invoice exists with expected values.
-		assertThat(repository.findByInvoiceId("111")).get()
-			.extracting(InvoiceEntity::getId, InvoiceEntity::getContent, InvoiceEntity::getInvoiceId, InvoiceEntity::getStatus)
-			.containsExactly(2L, getResourceAsString("CreateInvoiceIT/__files/test01_createInvoice/invoice.xml"), "111", UNPROCESSED);
+		assertThat(repository.findByInvoiceId("555")).get()
+			.extracting(InvoiceEntity::getContent, InvoiceEntity::getInvoiceId, InvoiceEntity::getStatus)
+			.containsExactly(getResourceAsString("CreateInvoiceIT/__files/test01_createInvoice/invoice.xml"), "555", UNPROCESSED);
 	}
 
 	@Test
@@ -65,7 +65,7 @@ class CreateInvoiceIT extends AbstractAppTest {
 		assertThat(repository.findByStatusIn(IMPORT_FAILED))
 			.extracting(InvoiceEntity::getId, InvoiceEntity::getInvoiceId, InvoiceEntity::getStatus)
 			.containsExactlyInAnyOrder(
-				tuple(1L, null, IMPORT_FAILED));
+				tuple(2L, null, IMPORT_FAILED));
 
 		// Call.
 		setupCall()
@@ -79,8 +79,8 @@ class CreateInvoiceIT extends AbstractAppTest {
 		assertThat(repository.findByStatusIn(IMPORT_FAILED))
 			.extracting(InvoiceEntity::getId, InvoiceEntity::getContent, InvoiceEntity::getInvoiceId, InvoiceEntity::getStatus)
 			.containsExactlyInAnyOrder(
-				tuple(1L, "Lorem ipsum dolor sit amet", null, IMPORT_FAILED),
-				tuple(2L, getResourceAsString("CreateInvoiceIT/__files/test02_createInvoiceThatWillFail/invoice.xml"), null, IMPORT_FAILED));
+				tuple(2L, "Lorem ipsum dolor sit amet", null, IMPORT_FAILED),
+				tuple(4L, getResourceAsString("CreateInvoiceIT/__files/test02_createInvoiceThatWillFail/invoice.xml"), null, IMPORT_FAILED));
 	}
 
 	private String getResourceAsString(final String resourcePath) throws IOException, URISyntaxException {
