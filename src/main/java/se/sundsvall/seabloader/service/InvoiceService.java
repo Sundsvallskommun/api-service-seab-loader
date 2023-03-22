@@ -23,7 +23,7 @@ import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
 
 @Service
-@Transactional(isolation = READ_COMMITTED)
+@Transactional(isolation = READ_COMMITTED, timeout = 20)
 public class InvoiceService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
