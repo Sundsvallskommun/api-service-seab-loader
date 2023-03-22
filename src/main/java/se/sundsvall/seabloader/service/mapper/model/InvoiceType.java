@@ -1,8 +1,9 @@
-package se.sundsvall.seabloader.api.model;
+package se.sundsvall.seabloader.service.mapper.model;
 
 import java.util.Arrays;
 
 public enum InvoiceType {
+
 	INVOICE("Faktura"),
 	CREDIT_INVOICE("Kreditfaktura"),
 	DIRECT_DEBIT("Autogiro"),
@@ -13,7 +14,7 @@ public enum InvoiceType {
 
 	private final String value;
 
-	InvoiceType (final String v) {
+	InvoiceType(final String v) {
 		value = v;
 	}
 
@@ -24,6 +25,6 @@ public enum InvoiceType {
 	public static InvoiceType fromValue(final String value) {
 		return Arrays.stream(values())
 			.filter(enumObj -> enumObj.value.equals(value))
-			.findFirst().orElseThrow(() -> new  IllegalArgumentException(String.format("Illegal enum value: %s", value)));
+			.findFirst().orElseThrow(() -> new IllegalArgumentException(String.format("Illegal enum value: %s", value)));
 	}
 }

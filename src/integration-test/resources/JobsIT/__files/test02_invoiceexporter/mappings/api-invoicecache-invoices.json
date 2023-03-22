@@ -1,0 +1,31 @@
+{
+	"name": "api-invoicecache",
+	"request": {
+		"urlPath": "/api-invoicecache/invoices",
+		"method": "POST",
+		"headers": {
+			"Authorization": {
+				"equalTo": "Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"
+			}
+		},
+		"bodyPatterns": [
+			{
+				"equalToJson": {
+					"issuerLegalId": "5555555555",
+					"debtorLegalId": "180101300101",
+					"invoiceNumber": "712345678",
+					"invoiceId": "111",
+					"invoiceName": "InvoiceImage_111_0.pdf",
+					"invoiceType": "CONSOLIDATED_INVOICE",
+					"attachment": {
+						"content": "${json-unit.any-string}",
+						"name": "InvoiceImage_111_0.pdf"
+					}
+				}
+			}
+		]
+	},
+	"response": {
+		"status": 201
+	}
+}

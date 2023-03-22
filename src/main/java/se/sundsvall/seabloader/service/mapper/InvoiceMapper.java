@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import se.sundsvall.seabloader.api.model.InvoiceType;
+
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

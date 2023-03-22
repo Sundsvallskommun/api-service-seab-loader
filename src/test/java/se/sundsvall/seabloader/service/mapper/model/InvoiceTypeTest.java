@@ -1,15 +1,15 @@
-package se.sundsvall.seabloader.api.model;
-
-import org.junit.jupiter.api.Test;
+package se.sundsvall.seabloader.service.mapper.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static se.sundsvall.seabloader.api.model.InvoiceType.CONSOLIDATED_INVOICE;
-import static se.sundsvall.seabloader.api.model.InvoiceType.CREDIT_INVOICE;
-import static se.sundsvall.seabloader.api.model.InvoiceType.DIRECT_DEBIT;
-import static se.sundsvall.seabloader.api.model.InvoiceType.FINAL_INVOICE;
-import static se.sundsvall.seabloader.api.model.InvoiceType.INVOICE;
-import static se.sundsvall.seabloader.api.model.InvoiceType.REMINDER;
-import static se.sundsvall.seabloader.api.model.InvoiceType.SELF_INVOICE;
+import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.CONSOLIDATED_INVOICE;
+import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.CREDIT_INVOICE;
+import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.DIRECT_DEBIT;
+import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.FINAL_INVOICE;
+import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.INVOICE;
+import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.REMINDER;
+import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.SELF_INVOICE;
+
+import org.junit.jupiter.api.Test;
 
 class InvoiceTypeTest {
 

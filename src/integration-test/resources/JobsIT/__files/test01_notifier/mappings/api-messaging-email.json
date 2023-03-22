@@ -1,0 +1,34 @@
+{
+	"name": "api-messaging",
+	"request": {
+		"urlPath": "/api-messaging/email",
+		"method": "POST",
+		"headers": {
+			"Authorization": {
+				"equalTo": "Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"
+			}
+		},
+		"bodyPatterns": [
+			{
+				"equalToJson": {
+					"headers": [],
+					"emailAddress": "dummy@host.com",
+					"subject": "Failed records discovered in api-seab-loader ()",
+					"message": "Failed record(s) exist in -database! \n\nUNPROCESSED         \t1 records\nPROCESSED           \t1 records\nEXPORT_FAILED       \t0 records\nIMPORT_FAILED       \t1 records",
+					"sender": {
+						"name": "api-seab-loader",
+						"address": "dummy@host.com"
+					},
+					"attachments": []
+				}
+			}
+		]
+	},
+	"response": {
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"status": 200,
+		"bodyFileName": "test01_notifier/mocks/api-messaging-email-response.json"
+	}
+}
