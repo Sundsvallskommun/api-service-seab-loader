@@ -14,7 +14,7 @@
 					"headers": [],
 					"emailAddress": "dummy@host.com",
 					"subject": "Failed records discovered in api-seab-loader ()",
-					"message": "Failed record(s) exist in -database! \r\n\r\nUNPROCESSED         \t1 records\r\nPROCESSED           \t1 records\r\nEXPORT_FAILED       \t0 records\r\nIMPORT_FAILED       \t1 records",
+					"message": "Failed record(s) exist in -database! \n\nUNPROCESSED         \t1 records\nPROCESSED           \t1 records\nEXPORT_FAILED       \t0 records\nIMPORT_FAILED       \t1 records",
 					"sender": {
 						"name": "api-seab-loader",
 						"address": "dummy@host.com"

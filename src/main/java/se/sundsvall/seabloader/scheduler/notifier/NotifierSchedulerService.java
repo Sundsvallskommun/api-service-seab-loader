@@ -33,8 +33,8 @@ public class NotifierSchedulerService extends AbstractScheduler {
 	private static final String LOG_EXECUTE_ENDED = "Executing ended";
 	private static final String LOG_MAIL_NOTIFICATION_DISABLED = "Mail notification disabled, returning. Enable this feature with: 'notification.mail.enabled=true'";
 	private static final String NOTIFICATION_SUBJECT = "Failed records discovered in %s (%s)";
-	private static final String NOTIFICATION_BODY_INTRODUCTION = "Failed record(s) exist in %s-database! %n";
-	private static final String NOTIFICATION_BODY_ROW = "%n%-20s\t%s records";
+	private static final String NOTIFICATION_BODY_INTRODUCTION = "Failed record(s) exist in %s-database! \n";
+	private static final String NOTIFICATION_BODY_ROW = "\n%-20s\t%s records";
 
 	@Value("${spring.application.name:}")
 	private String applicationName;
