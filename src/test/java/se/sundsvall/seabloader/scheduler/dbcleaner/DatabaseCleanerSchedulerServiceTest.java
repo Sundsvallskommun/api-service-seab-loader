@@ -33,15 +33,13 @@ class DatabaseCleanerSchedulerServiceTest {
 
 		// Setup mocking
 		when(invoiceRepositoryMock.countByStatusIn(Status.PROCESSED)).thenReturn(Integer.toUnsignedLong(entityIdsToRemove.size()));
-		when(invoiceRepositoryMock.findIdsByStatusIn(Status.PROCESSED)).thenReturn(entityIdsToRemove);
 
 		// Call.
 		service.execute();
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(Status.PROCESSED);
-		verify(invoiceRepositoryMock).findIdsByStatusIn(Status.PROCESSED);
-		verify(invoiceRepositoryMock).deleteAllById(List.of(5L, 6L));
+		verify(invoiceRepositoryMock).deleteByStatusIn(Status.PROCESSED);
 	}
 
 	@Test
@@ -51,20 +49,14 @@ class DatabaseCleanerSchedulerServiceTest {
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(Status.PROCESSED);
-		verify(invoiceRepositoryMock, never()).findIdsByStatusIn(any());
-		verify(invoiceRepositoryMock, never()).deleteAllById(any());
+		verify(invoiceRepositoryMock, never()).deleteByStatusIn(any());
 	}
 
 	private List<InvoiceId> createInvoiceIds() {
 		return List.of(createInvoiceIdInstance(5L), createInvoiceIdInstance(6L));
 	}
 
-	private InvoiceId createInvoiceIdInstance(long id) {
-		return new InvoiceId() {
-			@Override
-			public long getId() {
-				return id;
-			}
-		};
+	private InvoiceId createInvoiceIdInstance(final long id) {
+		return () -> id;
 	}
 }

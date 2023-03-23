@@ -1,7 +1,6 @@
 package se.sundsvall.seabloader.service;
 
 import static java.util.Objects.nonNull;
-import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
@@ -15,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
@@ -23,7 +21,6 @@ import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
 
 @Service
-@Transactional(isolation = READ_COMMITTED, timeout = 20)
 public class InvoiceService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
@@ -51,7 +48,7 @@ public class InvoiceService {
 	}
 
 	public void exportInvoices() {
-		LOGGER.info("Exporting invoices to Invoice-cache");
+		LOGGER.info("Exporting invoices to InvoiceCache");
 
 		final var invoiceIdsToSend = invoiceRepository.findIdsByStatusIn(STATUSES_OF_INVOICES_TO_SEND);
 

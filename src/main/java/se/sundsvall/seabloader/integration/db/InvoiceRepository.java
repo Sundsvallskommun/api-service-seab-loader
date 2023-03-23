@@ -1,16 +1,20 @@
 package se.sundsvall.seabloader.integration.db;
 
+import static org.springframework.transaction.annotation.Isolation.READ_COMMITTED;
+
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 
+@Transactional(isolation = READ_COMMITTED)
 @CircuitBreaker(name = "InvoiceRepository")
 public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, JpaSpecificationExecutor<InvoiceEntity> {
 
@@ -54,4 +58,11 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	 * @return amount of entities having matching the sent in statuses.
 	 */
 	long countByStatusIn(Status... statusList);
+
+	/**
+	 * Delete entities with statuses equal to sent in statuses.
+	 *
+	 * @param statusList a List of statuses to delete by.
+	 */
+	void deleteByStatusIn(Status... statusList);
 }

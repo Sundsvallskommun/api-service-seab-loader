@@ -174,6 +174,20 @@ class InvoiceRepositoryTest {
 			.containsExactlyInAnyOrder(5L, 6L);
 	}
 
+	@Test
+	void deleteByStatusIn() {
+
+		assertThat(repository.count()).isEqualTo(6);
+		assertThat(repository.countByStatusIn(PROCESSED)).isEqualTo(1);
+
+		// Call
+		repository.deleteByStatusIn(PROCESSED);
+
+		// Verification
+		assertThat(repository.count()).isEqualTo(5);
+		assertThat(repository.countByStatusIn(PROCESSED)).isZero();
+	}
+
 	private static InvoiceEntity createInvoiceEntity() {
 		return new InvoiceEntity()
 			.withContent(CONTENT)
