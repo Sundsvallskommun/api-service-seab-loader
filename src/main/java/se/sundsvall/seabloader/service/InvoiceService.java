@@ -76,8 +76,7 @@ public class InvoiceService {
 
 		try {
 			final var inExchangeInvoice = toInExchangeInvoice(invoiceEntity.getContent());
-			final var invoicePdfRequest = toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice));
-			invoiceCacheClient.sendInvoice(invoicePdfRequest);
+			invoiceCacheClient.sendInvoice(toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice)));
 			invoiceRepository.save(invoiceEntity.withStatus(PROCESSED));
 		} catch (final Exception e) {
 			LOGGER.error("Error when sending invoice with id: {}. Message: {}", id, e.getMessage());
