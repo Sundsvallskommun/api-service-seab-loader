@@ -1,15 +1,15 @@
 package se.sundsvall.seabloader.service.mapper;
 
-import generated.se.inexchange.InExchangeInvoiceStatusType;
-import generated.se.sundsvall.invoicecache.InvoicePdf;
-import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
-import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.util.Base64;
+import java.util.Objects;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -17,16 +17,17 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.util.Base64;
-import java.util.Objects;
 
-import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import generated.se.inexchange.InExchangeInvoiceStatusType;
+import generated.se.sundsvall.invoicecache.InvoicePdf;
+import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
 
 public class InvoiceMapper {
 
@@ -53,6 +54,7 @@ public class InvoiceMapper {
 	}
 
 	public static InvoicePdfRequest toInvoicePdfRequest(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType, final OutputStream outputStream) {
+
 		return new InvoicePdfRequest()
 			.invoiceNumber(inExchangeInvoiceStatusType.getInvoice().getInvoiceNo())
 			.invoiceId(String.valueOf(inExchangeInvoiceStatusType.getInvoice().getInvoiceId()))
