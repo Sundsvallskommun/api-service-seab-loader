@@ -1,5 +1,6 @@
 package se.sundsvall.seabloader.service;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
@@ -7,8 +8,6 @@ import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCES
 import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInExchangeInvoice;
 import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInvoiceEntity;
 import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInvoicePdfRequest;
-
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ public class InvoiceService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
 	private static final Status[] STATUSES_OF_INVOICES_TO_SEND = { UNPROCESSED, EXPORT_FAILED };
+	private static final int SLEEP_TIME_AFTER_SEND_ERROR_IN_MS = 500;
 
 	@Autowired
 	private InvoiceRepository invoiceRepository;
@@ -59,23 +59,37 @@ public class InvoiceService {
 
 		LOGGER.info("Found {} invoices with status {}", invoiceIdsToSend.size(), STATUSES_OF_INVOICES_TO_SEND);
 
-		sendInvoicesToInvoiceCache(invoiceIdsToSend);
+		// Send invoices.
+		invoiceIdsToSend.stream()
+			.map(InvoiceId::getId)
+			.forEach(this::sendInvoiceToInvoiceCache);
 	}
 
-	private void sendInvoicesToInvoiceCache(final List<InvoiceId> invoiceIds) {
-		invoiceIds.forEach(invoiceId -> invoiceRepository.findById(invoiceId.getId())
-			.ifPresent(invoiceEntity -> {
-				try {
-					final var inExchangeInvoice = toInExchangeInvoice(invoiceEntity.getContent());
-					final var invoicePdfRequest = toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice));
-					invoiceCacheClient.sendInvoice(invoicePdfRequest);
-					invoiceRepository.save(invoiceEntity.withStatus(PROCESSED));
-				} catch (final Exception e) {
-					LOGGER.error("Error when sending invoice with id: {}. Message: {}", invoiceId.getId(), e.getMessage());
-					invoiceRepository.save(invoiceEntity
-						.withStatus(EXPORT_FAILED)
-						.withStatusMessage(e.getMessage()));
-				}
-			}));
+	private void sendInvoiceToInvoiceCache(final long id) {
+
+		final var invoiceEntity = invoiceRepository.findById(id).orElse(null);
+
+		if (isNull(invoiceEntity)) {
+			LOGGER.error("No invoice with invoice with id:{} found. Do nothing.", id);
+			return;
+		}
+
+		try {
+			final var inExchangeInvoice = toInExchangeInvoice(invoiceEntity.getContent());
+			final var invoicePdfRequest = toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice));
+			invoiceCacheClient.sendInvoice(invoicePdfRequest);
+			invoiceRepository.save(invoiceEntity.withStatus(PROCESSED));
+		} catch (final Exception e) {
+			LOGGER.error("Error when sending invoice with id: {}. Message: {}", id, e.getMessage());
+			invoiceRepository.save(invoiceEntity
+				.withStatus(EXPORT_FAILED)
+				.withStatusMessage(e.getMessage()));
+
+			try {
+				Thread.sleep(SLEEP_TIME_AFTER_SEND_ERROR_IN_MS);
+			} catch (final InterruptedException e1) {
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 }
