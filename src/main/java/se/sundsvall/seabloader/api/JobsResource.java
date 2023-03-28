@@ -18,9 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerSchedulerService;
-import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportSchedulerService;
-import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
+import se.sundsvall.seabloader.service.AsyncExecutorService;
 
 @RestController
 @Validated
@@ -29,13 +27,7 @@ import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
 public class JobsResource {
 
 	@Autowired
-	private InvoiceExportSchedulerService invoiceExportSchedulerService;
-
-	@Autowired
-	private NotifierSchedulerService notifierSchedulerService;
-
-	@Autowired
-	private DatabaseCleanerSchedulerService databaseCleanerSchedulerService;
+	private AsyncExecutorService asyncExecutorService;
 
 	@PostMapping(path = "/invoiceexporter", produces = APPLICATION_PROBLEM_JSON_VALUE)
 	@Operation(summary = "Triggers export invoices (to InvoiceCache) job.", description = "Triggers export invoices (to InvoiceCache) job.")
@@ -43,7 +35,7 @@ public class JobsResource {
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Void> invoiceexporter() {
-		invoiceExportSchedulerService.execute();
+		asyncExecutorService.invoiceExportExecute();
 		return noContent().build();
 	}
 
@@ -53,7 +45,7 @@ public class JobsResource {
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Void> notifier() {
-		notifierSchedulerService.execute();
+		asyncExecutorService.notifierExecute();
 		return noContent().build();
 	}
 
@@ -63,7 +55,7 @@ public class JobsResource {
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	public ResponseEntity<Void> dbcleaner() {
-		databaseCleanerSchedulerService.execute();
+		asyncExecutorService.databaseCleanerExecute();
 		return noContent().build();
 	}
 }

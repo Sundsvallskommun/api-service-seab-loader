@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +40,18 @@ class JobsIT extends AbstractAppTest {
 	}
 
 	@Test
-	void test02_invoiceexporter() {
+	void test02_invoiceexporter() throws InterruptedException {
+
+		// Assert that we have records with status UNPROCESSED.
+		assertThat(repository.findByStatusIn(UNPROCESSED)).isNotEmpty();
 
 		// Call
 		setupCall()
 			.withServicePath("/jobs/invoiceexporter")
 			.withHttpMethod(POST)
 			.withExpectedResponseStatus(NO_CONTENT)
-			.sendRequestAndVerifyResponse();
+			.sendRequestAndVerifyResponse()
+			.andVerifyThat(() -> repository.countByStatusIn(UNPROCESSED) == 0);
 	}
 
 	@Test
@@ -60,9 +65,7 @@ class JobsIT extends AbstractAppTest {
 			.withServicePath("/jobs/dbcleaner")
 			.withHttpMethod(POST)
 			.withExpectedResponseStatus(NO_CONTENT)
-			.sendRequestAndVerifyResponse();
-
-		// Assert that we don't have records with status PROCESSED.
-		assertThat(repository.findByStatusIn(PROCESSED)).isEmpty();
+			.sendRequestAndVerifyResponse()
+			.andVerifyThat(() -> repository.countByStatusIn(PROCESSED) == 0);
 	}
 }
