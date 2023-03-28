@@ -24,7 +24,6 @@ public class InvoiceService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
 	private static final Status[] STATUSES_OF_INVOICES_TO_SEND = { UNPROCESSED, EXPORT_FAILED };
-	private static final int SLEEP_TIME_AFTER_SEND_ERROR_IN_MS = 500;
 
 	@Autowired
 	private InvoiceRepository invoiceRepository;
@@ -83,12 +82,6 @@ public class InvoiceService {
 			invoiceRepository.save(invoiceEntity
 				.withStatus(EXPORT_FAILED)
 				.withStatusMessage(e.getMessage()));
-
-			try {
-				Thread.sleep(SLEEP_TIME_AFTER_SEND_ERROR_IN_MS);
-			} catch (final InterruptedException e1) {
-				Thread.currentThread().interrupt();
-			}
 		}
 	}
 }
