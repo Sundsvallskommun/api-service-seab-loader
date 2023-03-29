@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>1.32</version>
+		<version>1.34</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
@@ -19,7 +19,7 @@
 		<published.container.port.sandbox>8913</published.container.port.sandbox>
 		<published.container.port.test>8912</published.container.port.test>
 		<published.container.port.production>8911</published.container.port.production>
-		<app.jvm.xmx.mb>1024</app.jvm.xmx.mb>
+		<app.jvm.xmx.mb>512</app.jvm.xmx.mb>
 		<!-- Service properties -->
 		<testcontainers.version>1.17.6</testcontainers.version>
 		<jaxb2-maven-plugin.version>2.5.0</jaxb2-maven-plugin.version>

@@ -1,7 +1,7 @@
 package se.sundsvall.seabloader.api;
 
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import org.junit.jupiter.api.Test;
@@ -12,8 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerSchedulerService;
-import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportSchedulerService;
 import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
+import se.sundsvall.seabloader.service.AsyncExecutorService;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
@@ -21,7 +21,7 @@ class JobsResourceTest {
 	private static final String PATH = "/jobs";
 
 	@MockBean
-	private InvoiceExportSchedulerService invoiceExportSchedulerService;
+	private AsyncExecutorService asyncExecutorService;
 
 	@MockBean
 	private NotifierSchedulerService notifierSchedulerService;
@@ -41,9 +41,9 @@ class JobsResourceTest {
 			.expectStatus().isNoContent();
 
 		// Verifications
-		verify(invoiceExportSchedulerService).execute();
-		verifyNoInteractions(notifierSchedulerService);
-		verifyNoInteractions(databaseCleanerSchedulerService);
+		verify(asyncExecutorService).invoiceExportExecute();
+		verify(asyncExecutorService, never()).databaseCleanerExecute();
+		verify(asyncExecutorService, never()).notifierExecute();
 	}
 
 	@Test
@@ -55,9 +55,9 @@ class JobsResourceTest {
 			.expectStatus().isNoContent();
 
 		// Verifications
-		verify(databaseCleanerSchedulerService).execute();
-		verifyNoInteractions(notifierSchedulerService);
-		verifyNoInteractions(invoiceExportSchedulerService);
+		verify(asyncExecutorService, never()).invoiceExportExecute();
+		verify(asyncExecutorService).databaseCleanerExecute();
+		verify(asyncExecutorService, never()).notifierExecute();
 	}
 
 	@Test
@@ -69,8 +69,8 @@ class JobsResourceTest {
 			.expectStatus().isNoContent();
 
 		// Verifications
-		verify(notifierSchedulerService).execute();
-		verifyNoInteractions(databaseCleanerSchedulerService);
-		verifyNoInteractions(invoiceExportSchedulerService);
+		verify(asyncExecutorService, never()).invoiceExportExecute();
+		verify(asyncExecutorService, never()).databaseCleanerExecute();
+		verify(asyncExecutorService).notifierExecute();
 	}
 }
