@@ -101,10 +101,10 @@ class InvoiceMapperTest {
 		assertThat(result.getInvoiceNumber()).isEqualTo("791932494");
 		assertThat(result.getInvoiceId()).isEqualTo("683288");
 		assertThat(result.getInvoiceType()).isEqualTo(INVOICE);
-		assertThat(result.getInvoiceName()).isEqualTo("InvoiceImage_791932494_0.pdf");
+		assertThat(result.getInvoiceName()).isEqualTo("683288.pdf");
 		assertThat(result.getIssuerLegalId()).isEqualTo("5555555555");
 		assertThat(result.getDebtorLegalId()).isEqualTo("666666-6666");
-		assertThat(result.getAttachment().getName()).isEqualTo("InvoiceImage_791932494_0.pdf");
+		assertThat(result.getAttachment().getName()).isEqualTo("683288.pdf");
 		assertThat(Base64.getDecoder().decode(result.getAttachment().getContent())).isEqualTo("JVBERxxxxxx".getBytes(UTF_8));
 	}
 

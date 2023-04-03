@@ -33,13 +33,15 @@ class DatabaseCleanerSchedulerServiceTest {
 
 		// Setup mocking
 		when(invoiceRepositoryMock.countByStatusIn(Status.PROCESSED)).thenReturn(Integer.toUnsignedLong(entityIdsToRemove.size()));
+		when(invoiceRepositoryMock.findIdsByStatusIn(Status.PROCESSED)).thenReturn(entityIdsToRemove);
 
 		// Call.
 		service.execute();
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(Status.PROCESSED);
-		verify(invoiceRepositoryMock).deleteByStatusIn(Status.PROCESSED);
+		verify(invoiceRepositoryMock).findIdsByStatusIn(Status.PROCESSED);
+		verify(invoiceRepositoryMock).deleteAllByIdInBatch(List.of(5L, 6L));
 	}
 
 	@Test
@@ -49,7 +51,8 @@ class DatabaseCleanerSchedulerServiceTest {
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(Status.PROCESSED);
-		verify(invoiceRepositoryMock, never()).deleteByStatusIn(any());
+		verify(invoiceRepositoryMock, never()).findIdsByStatusIn(any());
+		verify(invoiceRepositoryMock, never()).deleteAllByIdInBatch(any());
 	}
 
 	private List<InvoiceId> createInvoiceIds() {
