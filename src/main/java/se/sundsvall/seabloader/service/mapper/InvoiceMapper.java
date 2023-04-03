@@ -54,12 +54,11 @@ public class InvoiceMapper {
 	}
 
 	public static InvoicePdfRequest toInvoicePdfRequest(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType, final OutputStream outputStream) {
-
 		return new InvoicePdfRequest()
 			.invoiceNumber(inExchangeInvoiceStatusType.getInvoice().getInvoiceNo())
 			.invoiceId(String.valueOf(inExchangeInvoiceStatusType.getInvoice().getInvoiceId()))
 			.invoiceType(InvoicePdfRequest.InvoiceTypeEnum.valueOf(InvoiceType.fromValue(inExchangeInvoiceStatusType.getInvoice().getInternalTag().getValue()).toString()))
-			.invoiceName(inExchangeInvoiceStatusType.getOriginalInvoice().getName())
+			.invoiceName(toInvoiceFileName(inExchangeInvoiceStatusType))
 			.issuerLegalId(inExchangeInvoiceStatusType.getInvoice().getSellerParty().getOrgNo())
 			.debtorLegalId(inExchangeInvoiceStatusType.getInvoice().getBuyerParty().getOrgNo())
 			.attachment(toInvoicePdf(inExchangeInvoiceStatusType, outputStream));
@@ -87,6 +86,10 @@ public class InvoiceMapper {
 
 		return new InvoicePdf()
 			.content(Base64.getEncoder().encodeToString(((ByteArrayOutputStream) outputStream).toByteArray()))
-			.name(inExchangeInvoiceStatusType.getOriginalInvoice().getName());
+			.name(toInvoiceFileName(inExchangeInvoiceStatusType));
+	}
+
+	private static String toInvoiceFileName(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType) {
+		return String.valueOf(inExchangeInvoiceStatusType.getInvoice().getInvoiceId()) + ".pdf";
 	}
 }
