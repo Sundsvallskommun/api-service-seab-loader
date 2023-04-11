@@ -1,13 +1,13 @@
 openapi: 3.0.1
 info:
   title: api-invoicecache
-  contact: { }
+  contact: {}
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: "1.4"
+  version: "2.0"
 servers:
-  - url: /
+  - url: http://localhost:8080
     description: Generated server url
 paths:
   /invoices:
@@ -20,8 +20,6 @@ paths:
         - name: request
           in: query
           required: true
-          style: form
-          explode: true
           schema:
             $ref: '#/components/schemas/InvoiceFilterRequest'
       responses:
@@ -31,37 +29,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InvoicesResponse'
-        "201":
-          description: Successful operation
-          headers:
-            Location:
-              style: simple
-              explode: false
-              schema:
-                type: string
-          content:
-            '*/*': { }
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Problem'
         "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
-      security:
-        - default: [ ]
-      x-throttling-tier: Unlimited
-      x-auth-type: Application & Application User
-      x-wso2-application-security:
-        security-types:
-          - oauth2
-          - api_key
-        optional: false
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
     post:
       tags:
         - Invoice Cache
@@ -75,17 +54,16 @@ paths:
         required: true
       responses:
         "201":
-          description: Successful operation
+          description: Successful Operation
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
-            '*/*': { }
-        "400":
-          description: Bad Request
+            '*/*': {}
+        "500":
+          description: Internal Server Error
           content:
             application/problem+json:
               schema:
@@ -93,8 +71,8 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Problem'
-        "500":
-          description: Internal Server Error
+        "400":
+          description: Bad Request
           content:
             application/problem+json:
               schema:
@@ -111,23 +89,17 @@ paths:
         - name: issuerlegalid
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
         - name: invoicenumber
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
         - name: debtorLegalId
           in: query
           description: Invoice debtor legal id
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             description: Invoice debtor legal id
@@ -135,53 +107,44 @@ paths:
           in: query
           description: Invoice id
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             description: Invoice id
-        - name: invoiceName
+        - name: invoiceFileName
           in: query
-          description: Invoice name
+          description: Invoice file name
           required: false
-          style: form
-          explode: true
           schema:
             type: string
-            description: Invoice name
+            description: Invoice file name
         - name: invoiceType
           in: query
           description: Invoice type
           required: false
-          style: form
-          explode: true
           schema:
             type: string
-            description: Invoice type
+            enum:
+              - INVOICE
+              - CREDIT_INVOICE
+              - DIRECT_DEBIT
+              - SELF_INVOICE
+              - REMINDER
+              - FINAL_INVOICE
+              - CONSOLIDATED_INVOICE
       responses:
-        "201":
-          description: Successful operation
-          headers:
-            Location:
-              style: simple
-              explode: false
-              schema:
-                type: string
-          content:
-            '*/*': { }
-        "400":
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Problem'
         "500":
           description: Internal Server Error
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Problem'
-  /invoices/{filename}/pdf:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /invoices/{filename}:
     get:
       tags:
         - Invoice Cache
@@ -191,8 +154,6 @@ paths:
         - name: filename
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
       responses:
@@ -202,22 +163,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/InvoicePdfResponse'
-        "201":
-          description: Successful operation
-          headers:
-            Location:
-              style: simple
-              explode: false
-              schema:
-                type: string
-          content:
-            '*/*': { }
-        "400":
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/Problem'
         "404":
           description: Not Found
           content:
@@ -226,6 +171,12 @@ paths:
                 $ref: '#/components/schemas/Problem'
         "500":
           description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Problem'
+        "400":
+          description: Bad Request
           content:
             '*/*':
               schema:
@@ -243,16 +194,9 @@ paths:
             application/yaml:
               schema:
                 type: string
-      security:
-        - default: [ ]
       x-auth-type: None
       x-throttling-tier: Unlimited
       x-wso2-mutual-ssl: Optional
-      x-wso2-application-security:
-        security-types:
-          - oauth2
-          - api_key
-        optional: false
 components:
   schemas:
     InvoicePdf:
@@ -287,9 +231,6 @@ components:
         invoiceId:
           type: string
           description: Invoice id
-        invoiceName:
-          type: string
-          description: Invoice name
         invoiceType:
           type: string
           description: Invoice type
@@ -316,20 +257,20 @@ components:
           type: object
           additionalProperties:
             type: object
-        status:
-          $ref: '#/components/schemas/StatusType'
         title:
           type: string
         detail:
           type: string
+        status:
+          $ref: '#/components/schemas/StatusType'
     StatusType:
       type: object
       properties:
+        reasonPhrase:
+          type: string
         statusCode:
           type: integer
           format: int32
-        reasonPhrase:
-          type: string
     Address:
       type: object
       properties:
@@ -395,34 +336,37 @@ components:
           type: string
           description: When the invoice is due to be paid
           format: date
+          example: 2022-05-05
         invoiceDate:
           type: string
           description: When the invoice was created
           format: date
+          example: 2022-04-05
         invoiceReminderDate:
           type: string
           description: When a reminder was sent out
           format: date
+          example: 2022-04-05
         paidAmount:
           type: number
           description: Amount already paid on the invoice.
-          example: 4995
+          example: 4995.0
         totalAmount:
           type: number
           description: Amount to pay including VAT (SEK)
-          example: 4995
-        invoiceName:
+          example: 4995.0
+        invoiceFileName:
           type: string
           description: "Filename of the invoice, if it is present"
           example: Faktura_5555555_to_9988776655.pdf
         vat:
           type: number
           description: Vat amount in SEK
-          example: 999
+          example: 999.0
         amountVatExcluded:
           type: number
           description: Amount without vat
-          example: 3996
+          example: 3996.0
         invoiceType:
           type: string
           description: Invoice type
@@ -505,18 +449,23 @@ components:
           type: string
           description: Fetch invoices from (and including) this date.
           format: date
+          example: 2022-01-01
         invoiceDateTo:
           type: string
-          description: "Fetch invoices up to (and including) this date, includes invoices to this date"
+          description: "Fetch invoices up to (and including) this date, includes invoices\
+            \ to this date"
           format: date
+          example: 2022-12-31
         dueDateFrom:
           type: string
           description: Fetch invoices that are due from (and including) this date.
           format: date
+          example: 2022-01-01
         dueDateTo:
           type: string
           description: Fetch invoices that are due up to (and including) this date
           format: date
+          example: 2022-12-31
         partyIds:
           type: array
           description: List of partyIds for organizations or private firms
@@ -526,7 +475,8 @@ components:
           items:
             type: string
             description: List of partyIds for organizations or private firms
-            example: "[\"fb2f0290-3820-11ed-a261-0242ac120002\",\"fb2f0290-3820-11ed-a261-0242ac120003\"]"
+            example: "[\"fb2f0290-3820-11ed-a261-0242ac120002\",\"fb2f0290-3820-11ed-a261-0242ac120003\"\
+              ]"
         ocrNumber:
           type: string
           description: Ocr number for the invoice
@@ -556,9 +506,6 @@ components:
         invoiceNumber:
           type: string
           description: Invoice number
-        invoiceName:
-          type: string
-          description: Invoice name
         invoiceType:
           type: string
           description: Invoice type
@@ -572,4 +519,4 @@ components:
             - CONSOLIDATED_INVOICE
         attachment:
           $ref: '#/components/schemas/InvoicePdf'
-  securitySchemes: { }
+  securitySchemes: {}

@@ -15,7 +15,6 @@
 					"debtorLegalId": "180101300101",
 					"invoiceNumber": "712345678",
 					"invoiceId": "111",
-					"invoiceName": "111.pdf",
 					"invoiceType": "CONSOLIDATED_INVOICE",
 					"attachment": {
 						"content": "${json-unit.any-string}",

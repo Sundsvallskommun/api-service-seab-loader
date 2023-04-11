@@ -58,7 +58,6 @@ public class InvoiceMapper {
 			.invoiceNumber(inExchangeInvoiceStatusType.getInvoice().getInvoiceNo())
 			.invoiceId(String.valueOf(inExchangeInvoiceStatusType.getInvoice().getInvoiceId()))
 			.invoiceType(InvoicePdfRequest.InvoiceTypeEnum.valueOf(InvoiceType.fromValue(inExchangeInvoiceStatusType.getInvoice().getInternalTag().getValue()).toString()))
-			.invoiceName(toInvoiceFileName(inExchangeInvoiceStatusType))
 			.issuerLegalId(inExchangeInvoiceStatusType.getInvoice().getSellerParty().getOrgNo())
 			.debtorLegalId(inExchangeInvoiceStatusType.getInvoice().getBuyerParty().getOrgNo())
 			.attachment(toInvoicePdf(inExchangeInvoiceStatusType, outputStream));
