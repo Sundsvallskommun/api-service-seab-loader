@@ -19,12 +19,13 @@
 		<published.container.port.sandbox>8913</published.container.port.sandbox>
 		<published.container.port.test>8912</published.container.port.test>
 		<published.container.port.production>8911</published.container.port.production>
-		<app.jvm.xmx.mb>512</app.jvm.xmx.mb>
+		<app.jvm.xmx.mb>768</app.jvm.xmx.mb>
 		<!-- Service properties -->
 		<testcontainers.version>1.18.0</testcontainers.version>
 		<jaxb2-maven-plugin.version>2.5.0</jaxb2-maven-plugin.version>
 		<openapi-generator-maven-plugin.version>6.5.0</openapi-generator-maven-plugin.version>
 		<org-apache-pdfbox.version>2.0.27</org-apache-pdfbox.version>
+		<guava.version>31.1-jre</guava.version>
 		<cron-expression-descriptor.version>1.2.6</cron-expression-descriptor.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<generated-sources-java-path>src/main/java</generated-sources-java-path>
@@ -62,7 +63,19 @@
 			<artifactId>pdfbox</artifactId>
 			<version>${org-apache-pdfbox.version}</version>
 		</dependency>
-
+		<dependency>
+			<!-- Used for list partitioning (DatabaseCleanerSchedulerService) -->
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		<dependency>
+			<!-- Remove this dependency when SpringBoot 2.7.10 (or greater) is used. See: https://github.com/spring-projects/spring-boot/issues/34363 -->
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<version>2.7.10</version>
+		</dependency>
+        
 		<!-- Test -->
 		<dependency>
 			<groupId>se.sundsvall.dept44</groupId>

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -65,4 +66,14 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	 * @param statusList a List of statuses to delete by.
 	 */
 	void deleteByStatusIn(Status... statusList);
+
+	/**
+	 * Reorganizes the physical storage of table data and associated index data,
+	 * to reduce storage space and improve I/O efficiency when accessing the table.
+	 * The exact changes made to each table depend on the storage engine used by that table.
+	 *
+	 * @return the result as a list of operation result strings.
+	 */
+	@Query(value = "OPTIMIZE TABLE invoice", nativeQuery = true)
+	List<String> optimizeTable();
 }
