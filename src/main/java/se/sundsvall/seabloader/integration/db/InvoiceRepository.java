@@ -71,6 +71,8 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	 * Reorganizes the physical storage of table data and associated index data,
 	 * to reduce storage space and improve I/O efficiency when accessing the table.
 	 * The exact changes made to each table depend on the storage engine used by that table.
+	 *
+	 * @return the result as a list of operation result strings.
 	 */
 	@Query(value = "OPTIMIZE TABLE invoice", nativeQuery = true)
 	List<String> optimizeTable();
