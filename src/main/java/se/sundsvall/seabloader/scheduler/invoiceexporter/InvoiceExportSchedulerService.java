@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.seabloader.scheduler.AbstractScheduler;
 import se.sundsvall.seabloader.service.InvoiceService;
 
@@ -24,6 +25,8 @@ public class InvoiceExportSchedulerService extends AbstractScheduler {
 	@Override
 	@Scheduled(cron = "${scheduler.invoiceexporter.cron.expression:-}")
 	public void execute() {
+		RequestId.init();
+
 		LOGGER.info(LOG_SENDING_STARTED);
 		invoiceService.exportInvoices();
 		LOGGER.info(LOG_SENDING_ENDED);
