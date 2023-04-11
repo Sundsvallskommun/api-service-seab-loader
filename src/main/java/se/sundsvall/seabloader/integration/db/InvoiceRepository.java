@@ -68,7 +68,9 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	void deleteByStatusIn(Status... statusList);
 
 	/**
-	 * Optimizes the table.
+	 * Reorganizes the physical storage of table data and associated index data,
+	 * to reduce storage space and improve I/O efficiency when accessing the table.
+	 * The exact changes made to each table depend on the storage engine used by that table.
 	 */
 	@Query(value = "OPTIMIZE TABLE invoice", nativeQuery = true)
 	List<String> optimizeTable();
