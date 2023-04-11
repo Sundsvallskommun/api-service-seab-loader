@@ -21,7 +21,7 @@
 		<published.container.port.production>8911</published.container.port.production>
 		<app.jvm.xmx.mb>512</app.jvm.xmx.mb>
 		<!-- Service properties -->
-		<testcontainers.version>1.17.6</testcontainers.version>
+		<testcontainers.version>1.18.0</testcontainers.version>
 		<jaxb2-maven-plugin.version>2.5.0</jaxb2-maven-plugin.version>
 		<openapi-generator-maven-plugin.version>6.5.0</openapi-generator-maven-plugin.version>
 		<org-apache-pdfbox.version>2.0.27</org-apache-pdfbox.version>
