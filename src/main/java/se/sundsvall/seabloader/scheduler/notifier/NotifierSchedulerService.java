@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.EmailRequest;
+import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.integration.messaging.MessagingClient;
@@ -60,6 +61,8 @@ public class NotifierSchedulerService extends AbstractScheduler {
 	@Override
 	@Scheduled(cron = "${scheduler.notifier.cron.expression:-}")
 	public void execute() {
+		RequestId.init();
+
 		LOGGER.info(LOG_EXECUTE_STARTED);
 		sendFailureNotification();
 		LOGGER.info(LOG_EXECUTE_ENDED);

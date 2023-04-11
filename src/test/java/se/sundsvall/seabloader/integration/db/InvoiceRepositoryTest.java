@@ -188,6 +188,13 @@ class InvoiceRepositoryTest {
 		assertThat(repository.countByStatusIn(PROCESSED)).isZero();
 	}
 
+	@Test
+	void optimizeTable() {
+
+		// Call
+		repository.optimizeTable();
+	}
+
 	private static InvoiceEntity createInvoiceEntity() {
 		return new InvoiceEntity()
 			.withContent(CONTENT)
