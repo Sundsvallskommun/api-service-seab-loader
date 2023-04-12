@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import generated.se.sundsvall.messaging.EmailRequest;
-import generated.se.sundsvall.messaging.MessageResponse;
+import generated.se.sundsvall.messaging.MessageResult;
 import generated.se.sundsvall.messaging.SmsRequest;
 import se.sundsvall.seabloader.integration.messaging.configuration.MessagingConfiguration;
 
@@ -22,7 +22,7 @@ public interface MessagingClient {
 	 * @return response containing id for sent message
 	 */
 	@PostMapping(path = "/email", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-	MessageResponse sendEmail(@RequestBody EmailRequest emailRequest);
+	MessageResult sendEmail(@RequestBody EmailRequest emailRequest);
 
 	/**
 	 * Send a single sms
@@ -31,5 +31,5 @@ public interface MessagingClient {
 	 * @return response containing id for sent message
 	 */
 	@PostMapping(path = "/sms", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-	MessageResponse sendSms(@RequestBody SmsRequest smsRequest);
+	MessageResult sendSms(@RequestBody SmsRequest smsRequest);
 }

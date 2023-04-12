@@ -17,8 +17,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import generated.se.sundsvall.messaging.Email;
 import generated.se.sundsvall.messaging.EmailRequest;
+import generated.se.sundsvall.messaging.EmailSender;
 import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
@@ -102,7 +102,7 @@ public class NotifierSchedulerService extends AbstractScheduler {
 
 	private EmailRequest createEmailMessage(final String subject, final String message) {
 		return new EmailRequest()
-			.sender(new Email()
+			.sender(new EmailSender()
 				.name(applicationName)
 				.address(mailSenderAddress))
 			.emailAddress(mailRecipientAddress)
