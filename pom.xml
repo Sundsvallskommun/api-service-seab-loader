@@ -70,10 +70,10 @@
 			<version>${guava.version}</version>
 		</dependency>
 		<dependency>
-			<!-- Remove this dependency when SpringBoot 2.7.10 (or greater) is used. See: https://github.com/spring-projects/spring-boot/issues/34363 -->
+			<!-- Remove this dependency when SpringBoot 3.0.5 (or greater) is used. See: https://github.com/spring-projects/spring-boot/issues/34363 -->
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>2.7.10</version>
+			<version>3.0.5</version>
 		</dependency>
         
 		<!-- Test -->
