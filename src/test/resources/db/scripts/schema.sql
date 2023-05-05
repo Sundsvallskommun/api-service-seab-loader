@@ -1,4 +1,3 @@
-
     create table invoice (
        id bigint not null auto_increment,
         content longtext,
@@ -13,5 +12,5 @@
 create index invoice_invoice_id_index on invoice (invoice_id);
 create index invoice_status_index on invoice (status);
 
-    alter table invoice
+    alter table if exists invoice 
        add constraint invoice_unique_invoice_id_constraint unique (invoice_id);

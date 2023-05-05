@@ -8,8 +8,8 @@ import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCES
 
 import java.time.ZoneId;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 

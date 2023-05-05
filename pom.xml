@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>1.35</version>
+		<version>2.0.2</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
@@ -22,7 +22,7 @@
 		<app.jvm.xmx.mb>768</app.jvm.xmx.mb>
 		<!-- Service properties -->
 		<testcontainers.version>1.18.0</testcontainers.version>
-		<jaxb2-maven-plugin.version>2.5.0</jaxb2-maven-plugin.version>
+		<jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
 		<openapi-generator-maven-plugin.version>6.5.0</openapi-generator-maven-plugin.version>
 		<org-apache-pdfbox.version>2.0.28</org-apache-pdfbox.version>
 		<guava.version>31.1-jre</guava.version>

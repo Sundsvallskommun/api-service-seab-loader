@@ -13,14 +13,13 @@ import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.Locale;
 
-import javax.xml.bind.JAXBException;
-
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
+import jakarta.xml.bind.UnmarshalException;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 
@@ -121,7 +120,7 @@ class InvoiceMapperTest {
 	void toInExchangeInvoiceWhenExceptionOccurs(@Load(TEST_FAULTY_INVOICE_FILE) final String xml) {
 
 		// Call
-		final var exception = assertThrows(JAXBException.class, () -> InvoiceMapper.toInExchangeInvoice(xml));
+		final var exception = assertThrows(UnmarshalException.class, () -> InvoiceMapper.toInExchangeInvoice(xml));
 
 		// Verification
 		assertThat(getRootCauseMessage(exception)).isEqualTo("SAXParseException: Premature end of file.");
