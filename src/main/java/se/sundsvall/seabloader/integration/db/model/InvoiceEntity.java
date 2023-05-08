@@ -1,22 +1,22 @@
 package se.sundsvall.seabloader.integration.db.model;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import org.hibernate.Length;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import se.sundsvall.seabloader.integration.db.listener.InvoiceEntityListener;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 
@@ -40,8 +40,7 @@ public class InvoiceEntity {
 	@Column(name = "invoice_id")
 	private String invoiceId;
 
-	@Lob
-	@Column(name = "content")
+	@Column(name = "content", length = Length.LONG32)
 	private String content;
 
 	@Column(name = "created")
@@ -57,8 +56,7 @@ public class InvoiceEntity {
 	@Enumerated(STRING)
 	private Status status;
 
-	@Lob
-	@Column(name = "status_message")
+	@Column(name = "status_message", length = Length.LONG32)
 	private String statusMessage;
 
 	public static InvoiceEntity create() {

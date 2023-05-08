@@ -5,13 +5,15 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.groups.Tuple.tuple;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -23,7 +25,8 @@ import se.sundsvall.seabloader.integration.db.model.InvoiceId;
  *
  * @see /src/test/resources/db/testdata-junit.sql for data setup.
  */
-@SpringBootTest
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
 @ActiveProfiles("junit")
 @Sql(scripts = {
 	"/db/scripts/truncate.sql",
@@ -106,8 +109,8 @@ class InvoiceRepositoryTest {
 		assertThat(accessCard.getModified()).isNull();
 
 		// Update entity.
-		accessCard.setStatus(PROCESSED);
-		repository.save(accessCard);
+		repository.save(accessCard.withStatus(PROCESSED));
+		repository.flush();
 
 		// Verification
 		final var result = repository.findById(id).orElseThrow();
@@ -192,7 +195,10 @@ class InvoiceRepositoryTest {
 	void optimizeTable() {
 
 		// Call
-		repository.optimizeTable();
+		final var result = repository.optimizeTable();
+		assertThat(result).containsExactly(
+			"test.invoice,optimize,note,Table does not support optimize, doing recreate + analyze instead",
+			"test.invoice,optimize,status,OK");
 	}
 
 	private static InvoiceEntity createInvoiceEntity() {

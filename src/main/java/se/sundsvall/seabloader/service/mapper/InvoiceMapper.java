@@ -11,9 +11,6 @@ import java.io.StringReader;
 import java.util.Base64;
 import java.util.Objects;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
@@ -26,6 +23,9 @@ import org.xml.sax.SAXException;
 import generated.se.inexchange.InExchangeInvoiceStatusType;
 import generated.se.sundsvall.invoicecache.InvoicePdf;
 import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBIntrospector;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
 
