@@ -70,7 +70,7 @@ class InvoicesResourceFailuresTest {
 		assertThat(response).isNotNull();
 		assertThat(response.getTitle()).isEqualTo("Unsupported Media Type");
 		assertThat(response.getStatus()).isEqualTo(Status.UNSUPPORTED_MEDIA_TYPE);
-		assertThat(response.getDetail()).isEqualTo("Content type 'application/json' not supported");
+		assertThat(response.getDetail()).isEqualTo("Content-Type 'application/json' is not supported");
 
 		verifyNoInteractions(invoiceService);
 	}
