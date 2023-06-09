@@ -15,8 +15,8 @@ config:
       readTimeout: 20
   scheduler:
     cron:
-      dbcleaner: 0 0 7 * * 7
-      invoiceexporter: 0 0 */1 * * *
-      notifier: 0 0 8 * * MON-FRI
+      dbcleaner: "-"
+      invoiceexporter: "-"
+      notifier: "-"
   pdfutility:
     memory: 104857600
