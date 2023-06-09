@@ -1,0 +1,22 @@
+config:
+  jpa:
+    action: none
+  flyway:
+    enabled: false
+  notification:
+    recipient: dummy@host.com
+    sender: dummy@host.com
+  integration:
+    invoicecache:
+      connectTimeout: 10
+      readTimeout: 20
+    messaging:
+      connectTimeout: 10
+      readTimeout: 20
+  scheduler:
+    cron:
+      dbcleaner: 0 0 7 * * 7
+      invoiceexporter: 0 0 */1 * * *
+      notifier: 0 0 8 * * MON-FRI
+  pdfutility:
+    memory: 104857600

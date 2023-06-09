@@ -1,0 +1,128 @@
+#-------------------------------------------------------------------------------
+# OpenAPI/Swagger-UI
+#-------------------------------------------------------------------------------
+openapi:
+    name: ${spring.application.name}
+    title: ${spring.application.name}
+    version: '@project.version@'
+springdoc:
+    swagger-ui:
+        operationsSorter: method
+
+#-------------------------------------------------------------------------------
+# Spring
+#-------------------------------------------------------------------------------
+spring:
+    application:
+        name: api-seab-loader
+    datasource:
+        url: ${config.datasource.url}
+        username: ${config.datasource.username}
+        password: ${config.datasource.password}
+        driver-class-name: org.mariadb.jdbc.Driver
+        hikari:
+            pool-name: seab-loader-pool
+        type: com.zaxxer.hikari.HikariDataSource
+    flyway:
+        enabled: ${config.flyway.enabled}
+    jpa:
+        properties:
+            jakarta:
+                persistence:
+                    schema-generation:
+                        database:
+                            action: ${config.jpa.action}
+    security:
+        oauth2:
+            client:
+                registration:
+                    invoicecache:
+                        authorization-grant-type: client_credentials
+                        client-id: ${config.integration.invoicecache.client-id}
+                        client-secret: ${config.integration.invoicecache.client-secret}
+                        provider: invoicecache
+                    messaging:
+                        authorization-grant-type: client_credentials
+                        client-id: ${config.integration.messaging.client-id}
+                        client-secret: ${config.integration.messaging.client-secret}
+                        provider: messaging
+                provider:
+                    invoicecache:
+                        token-uri: ${config.integration.token-uri}
+                    messaging:
+                        token-uri: ${config.integration.token-uri}
+
+#-------------------------------------------------------------------------------
+# Integration settings
+#-------------------------------------------------------------------------------
+integration:
+    invoicecache:
+        url: ${config.integration.invoicecache.url}
+        connectTimeout: ${config.integration.invoicecache.connectTimeout}
+        readTimeout: ${config.integration.invoicecache.readTimeout}
+    messaging:
+        url: ${config.integration.messaging.url}
+        connectTimeout: ${config.integration.messaging.connectTimeout}
+        readTimeout: ${config.integration.messaging.readTimeout}
+
+resilience4j:
+    circuitbreaker:
+        instances:
+            invoicecache:
+                ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+            messaging:
+                ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+
+#-------------------------------------------------------------------------------
+# Log config
+#-------------------------------------------------------------------------------
+logbook:
+    exclusionfilters:
+        json-path: '{''$..content'' : ''[base64]''}'
+        x-path: '{''//*[contains(@name, ".pdf")]'' : ''[base64]''}'
+logging:
+    level:
+        org:
+            apache:
+                pdfbox:
+                    pdmodel: INFO
+        root: INFO
+
+#-------------------------------------------------------------------------------
+# Notification (e.g. mail notifications for system events)
+#-------------------------------------------------------------------------------
+notification:
+    mail:
+        enabled: true
+        recipient:
+            address: ${config.notification.recipient}
+        sender:
+            address: ${config.notification.sender}
+
+#-------------------------------------------------------------------------------
+# Scheduler settings
+# - To disable a specific schedule, set cron expression to "-"
+#   or remove property for the specific schedule.
+#-------------------------------------------------------------------------------
+scheduler:
+    dbcleaner:
+        cron:
+            expression: ${config.scheduler.cron.dbcleaner}
+    invoiceexporter:
+        cron:
+            expression: ${config.scheduler.cron.invoiceexporter}
+    notifier:
+        cron:
+            expression: ${config.scheduler.cron.notifier}
+
+#-------------------------------------------------------------------------------
+# Maximum main memory that can be used before temporary files are used while
+# merging pdfs.
+#
+# Currently 100 MB, since this is the theoretical max size.
+# InExchange can't send any larger files.
+#-------------------------------------------------------------------------------
+pdfutility:
+    max:
+        memory:
+            usage: ${config.pdfutility.memory}
