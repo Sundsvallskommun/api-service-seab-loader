@@ -1,0 +1,56 @@
+#===============================================================================
+# TEST SPECIFIC SETTINGS (junit-tests)
+#===============================================================================
+config:
+  datasource:
+    url: jdbc:tc:mariadb:10.6.4:///
+  jpa:
+    action: update
+  flyway:
+    enabled: false
+  notification:
+    recipient: dummy@host.com
+    sender: dummy@host.com
+  integration:
+    token-uri: http://tokenUrl
+    invoicecache:
+      url: http://invoiceCacheUrl
+      client-id: the-client-id
+      client-secret: the-client-secret
+      connectTimeout: 10
+      readTimeout: 20
+    messaging:
+      url: http://messaging.url
+      client-id: the-client-id
+      client-secret: the-client-secret
+      connectTimeout: 10
+      readTimeout: 20
+  scheduler:
+    cron:
+      dbcleaner: 0 0 7 * * 7
+      invoiceexporter: 0 0 */1 * * *
+      notifier: 0 0 8 * * MON-FRI
+  pdfutility:
+    memory: 1024
+
+#===============================================================================
+# DEFAULT OVERRIDE (junit-tests)
+#===============================================================================
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    properties:
+      jakarta:
+        persistence:
+          schema-generation:
+            create-source: metadata
+            scripts:
+              action: create
+              create-target: target/database/generated-schema.sql
+      hibernate:
+        format_sql: true
+        hbm2ddl:
+          schema-generation:
+            script:
+              append: false
