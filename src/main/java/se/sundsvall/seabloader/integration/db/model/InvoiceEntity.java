@@ -1,14 +1,5 @@
 package se.sundsvall.seabloader.integration.db.model;
 
-import static jakarta.persistence.EnumType.STRING;
-import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
-
-import java.time.OffsetDateTime;
-import java.util.Objects;
-
-import org.hibernate.Length;
-import org.hibernate.annotations.TimeZoneStorage;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -19,8 +10,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import org.hibernate.Length;
+import org.hibernate.annotations.TimeZoneStorage;
 import se.sundsvall.seabloader.integration.db.listener.InvoiceEntityListener;
+import se.sundsvall.seabloader.integration.db.model.enums.Source;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
+
+import java.time.OffsetDateTime;
+import java.util.Objects;
+
+import static jakarta.persistence.EnumType.STRING;
+import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 @Entity
 @Table(name = "invoice",
@@ -63,6 +63,10 @@ public class InvoiceEntity {
 
 	@Column(name = "status_message", length = Length.LONG32)
 	private String statusMessage;
+
+	@Column(name = "source", nullable = false)
+	@Enumerated(STRING)
+	private Source source;
 
 	public static InvoiceEntity create() {
 		return new InvoiceEntity();
@@ -172,9 +176,22 @@ public class InvoiceEntity {
 		return this;
 	}
 
+	public Source getSource() {
+		return source;
+	}
+
+	public void setSource(final Source source) {
+		this.source = source;
+	}
+
+	public InvoiceEntity withSource(final Source source) {
+		this.source = source;
+		return this;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(content, created, id, invoiceId, modified, processed, status, statusMessage);
+		return Objects.hash(content, created, id, invoiceId, modified, processed, status, statusMessage, source);
 	}
 
 	@Override
@@ -186,14 +203,14 @@ public class InvoiceEntity {
 			return false;
 		}
 		return Objects.equals(content, other.content) && Objects.equals(created, other.created) && (id == other.id) && Objects.equals(invoiceId, other.invoiceId) && Objects.equals(modified, other.modified) && Objects.equals(processed, other.processed)
-			&& (status == other.status) && Objects.equals(statusMessage, other.statusMessage);
+			&& (status == other.status) && Objects.equals(statusMessage, other.statusMessage) && Objects.equals(source, other.source);
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("InvoiceEntity [id=").append(id).append(", invoiceId=").append(invoiceId).append(", content=").append(content).append(", created=").append(created).append(", modified=").append(modified).append(", processed=").append(processed)
-			.append(", status=").append(status).append(", statusMessage=").append(statusMessage).append("]");
+			.append(", status=").append(status).append(", statusMessage=").append(statusMessage).append(", source=").append(source).append("]");
 		return builder.toString();
 	}
 }
