@@ -1,0 +1,41 @@
+#===============================================================================
+# TEST SPECIFIC SETTINGS (it-tests)
+#===============================================================================
+config:
+  datasource:
+    url: jdbc:tc:mariadb:10.6.4:///
+  jpa:
+    action: validate
+  flyway:
+    enabled: true
+  notification:
+    recipient: dummy@host.com
+    sender: dummy@host.com
+  integration:
+    token-uri: http://localhost:${wiremock.server.port:}/api-gateway/token
+    invoicecache:
+      url: http://localhost:${wiremock.server.port}/api-invoicecache
+      client-id: the-client-id
+      client-secret: the-client-secret
+      connectTimeout: 10
+      readTimeout: 20
+    messaging:
+      url: http://localhost:${wiremock.server.port:}/api-messaging
+      client-id: the-client-id
+      client-secret: the-client-secret
+      connectTimeout: 10
+      readTimeout: 20
+  scheduler:
+    cron:
+      dbcleaner: 0 0 7 * * 7
+      invoiceexporter: 0 0 */1 * * *
+      notifier: 0 0 8 * * MON-FRI
+  pdfutility:
+    memory: 1024
+
+#===============================================================================
+# DEFAULT OVERRIDE (it-tests)
+#===============================================================================
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
