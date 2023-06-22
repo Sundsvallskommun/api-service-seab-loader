@@ -1,6 +1,7 @@
 package se.sundsvall.seabloader.batchimport.service;
 
 import static java.lang.String.format;
+import static java.nio.charset.Charset.defaultCharset;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,7 +116,7 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 		try {
 			// Read and add pdf as base64 to file object
 			final var inFileBytes = Files.readAllBytes(Paths.get(directory + File.separator + stralforsFile.getName()));
-			stralforsFile.setPdf(new String(Base64.encodeBase64(inFileBytes)));
+			stralforsFile.setPdf(new String(Base64.encodeBase64(inFileBytes), defaultCharset()));
 			return stralforsFile;
 		} catch (IOException e) {
 			LOGGER.error("Exception when adding pdf data to entry for pdf {}", stralforsFile.getName(), e);

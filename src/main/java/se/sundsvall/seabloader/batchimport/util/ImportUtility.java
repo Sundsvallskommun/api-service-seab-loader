@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 
 import se.sundsvall.seabloader.batchimport.model.Entry;
+import se.sundsvall.seabloader.batchimport.model.StralforsFile;
 
 public class ImportUtility { // TODO: Remove after completion of Stralfors invoices import
 
@@ -18,8 +19,8 @@ public class ImportUtility { // TODO: Remove after completion of Stralfors invoi
 
 	private ImportUtility() {}
 
-	public static String extractLowestInvoiceNumber(se.sundsvall.seabloader.batchimport.model.StralforsFile file) {
-		final var value = ofNullable(getEntryValue(file, ENTRY_KEY_INVOICE_NUMBER)).orElse("");
+	public static String extractLowestInvoiceNumber(StralforsFile stralforsFile) {
+		final var value = ofNullable(getEntryValue(stralforsFile, ENTRY_KEY_INVOICE_NUMBER)).orElse("");
 		return List.of(value.split(";")).stream()
 			.sorted()
 			.findFirst()
@@ -27,10 +28,10 @@ public class ImportUtility { // TODO: Remove after completion of Stralfors invoi
 			.orElse(value);
 	}
 
-	public static boolean isProcessable(se.sundsvall.seabloader.batchimport.model.StralforsFile file) {
-		final var invoiceNumber = extractLowestInvoiceNumber(file);
+	public static boolean isProcessable(StralforsFile stralforsFile) {
+		final var invoiceNumber = extractLowestInvoiceNumber(stralforsFile);
 
-		final var isReminder = Stream.of(ofNullable(getEntryValue(file, ENTRY_KEY_INVOICE_TYPE)).orElse(""))
+		final var isReminder = Stream.of(ofNullable(getEntryValue(stralforsFile, ENTRY_KEY_INVOICE_TYPE)).orElse(""))
 			.map(StringUtils::trim)
 			.anyMatch(INVOICE_TYPE_REMINDER::equalsIgnoreCase);
 
@@ -40,13 +41,12 @@ public class ImportUtility { // TODO: Remove after completion of Stralfors invoi
 		return !isReminder && isInvoiceNumberPresent;
 	}
 
-	public static String getEntryValue(se.sundsvall.seabloader.batchimport.model.StralforsFile file, String key) {
-		return file.getDocument().getPage().getInformationEntries().stream()
+	public static String getEntryValue(StralforsFile stralforsFile, String key) {
+		return stralforsFile.getDocument().getPage().getInformationEntries().stream()
 			.filter(e -> key.equalsIgnoreCase(e.getKey()))
 			.findAny()
 			.map(Entry::getValue)
 			.map(StringUtils::trim)
 			.orElse(null);
 	}
-
 }
