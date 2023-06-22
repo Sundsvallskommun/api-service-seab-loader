@@ -1,4 +1,4 @@
-package se.sundsvall.seabloader.batchimport.util;
+package se.sundsvall.seabloader.batchimport.service;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -13,12 +13,11 @@ import org.springframework.stereotype.Service;
 import generated.se.sundsvall.messaging.EmailRequest;
 import generated.se.sundsvall.messaging.EmailSender;
 import se.sundsvall.seabloader.integration.messaging.MessagingClient;
-import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
 
 @Service
 public class NotificationService { // TODO: Remove after completion of Stralfors invoices import
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(NotifierSchedulerService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
 	private static final String LOG_MAIL_NOTIFICATION_DISABLED = "Mail notification disabled, returning. Enable this feature with: 'notification.mail.enabled=true'";
 
 	@Value("${spring.application.name:}")

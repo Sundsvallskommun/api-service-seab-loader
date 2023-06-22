@@ -32,7 +32,6 @@ import se.sundsvall.seabloader.batchimport.mapper.StralforsMapper;
 import se.sundsvall.seabloader.batchimport.model.StralforsFile;
 import se.sundsvall.seabloader.batchimport.model.XmlRoot;
 import se.sundsvall.seabloader.batchimport.util.ImportUtility;
-import se.sundsvall.seabloader.batchimport.util.NotificationService;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 
