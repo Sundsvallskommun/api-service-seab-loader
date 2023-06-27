@@ -126,3 +126,11 @@ pdfutility:
     max:
         memory:
             usage: ${config.pdfutility.memory}
+            
+#-------------------------------------------------------------------------------
+# TODO: Remove settings below after completion of Stralfors invoices import
+#-------------------------------------------------------------------------------
+api:
+    batchimportresource:
+        rootpath: ${config.api.batchimportresource.rootpath}
+            

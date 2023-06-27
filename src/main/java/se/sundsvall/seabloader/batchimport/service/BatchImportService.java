@@ -18,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,7 +40,8 @@ import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 public class BatchImportService { // TODO: Remove after completion of Stralfors invoices import
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BatchImportService.class);
-	private static final String ENTRY_ROW = "%n%nEntry for pdf file %s";
+	private static final String MAIL_PREFIX = "%s records have been processed, of which %s records were either present from previous runs, were missing crucial data or had an unprocessable status. Therefore %s records have been imported. ";
+	private static final String FAILED_RECORD_ROW = "%n%nRecord for pdf file %s";
 	private static final int BATCH_SIZE = 100;
 
 	@Autowired
@@ -59,6 +61,7 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 	}
 
+	@Async
 	public void execute(String pathToScan) {
 		RequestId.init();
 
@@ -67,6 +70,10 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 
 		if (directory.isDirectory() && directory.listFiles(filter).length > 0) {
 			processDescriptorFiles(directory.listFiles(filter));
+		} else {
+			notificationService.sendNotification(
+				String.format("Import for path %s", pathToScan),
+				"No records have been processed as directory does not exist or does not contain any descriptor files.");
 		}
 	}
 
@@ -106,8 +113,8 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 		// Save as entity in DB
 		repository.saveAllAndFlush(entitiesToSave);
 
-		// Remove pdf from file items in batch and clear entity manager to use minimum memory footprint
-		stralforsFiles.stream().forEach(StralforsFile::removePdf);
+		// Remove pdf and set to imported for each saved item in batch and clear entity manager to use minimum memory footprint
+		stralforsFiles.stream().forEach(StralforsFile::setImported);
 		entityManager.clear();
 	}
 
@@ -118,8 +125,8 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 			stralforsFile.setPdf(new String(Base64.encodeBase64(inFileBytes), defaultCharset()));
 			return stralforsFile;
 		} catch (IOException e) {
-			LOGGER.error("Exception when adding pdf data to entry for pdf {}", stralforsFile.getName(), e);
-			stralforsFile.setFailed(true);
+			LOGGER.error("Exception when adding pdf data to record for pdf {}", stralforsFile.getName(), e);
+			stralforsFile.setFailed();
 			return null;
 		}
 	}
@@ -128,28 +135,33 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 		try {
 			return StralforsMapper.toInvoiceEntity(stralforsFile);
 		} catch (JsonProcessingException e) {
-			LOGGER.error("Exception when mapping entry for pdf {} to an invoice entity", stralforsFile.getName(), e);
-			stralforsFile.setFailed(true);
+			LOGGER.error("Exception when mapping stralfors record for pdf {} to an invoice entity", stralforsFile.getName(), e);
+			stralforsFile.setFailed();
 			return null;
 		}
 	}
 
 	private void sendNotification(File descriptorFile, final XmlRoot xmlRoot) {
-		final var failedEntries = xmlRoot.getBody().getFiles().stream()
+		final var total = xmlRoot.getBody().getFiles().size();
+		final var imported = xmlRoot.getBody().getFiles().stream()
+			.filter(StralforsFile::isImported)
+			.count();
+		final var failedRecords = xmlRoot.getBody().getFiles().stream()
 			.filter(StralforsFile::isFailed)
 			.toList();
 
-		if (failedEntries.isEmpty()) {
+		if (failedRecords.isEmpty()) {
 			notificationService.sendNotification(
-				String.format("Successful import for path %s", descriptorFile.getParent()),
-				String.format("%s entries have been processed.", xmlRoot.getBody().getFiles().size()));
+				format("Successful import for path %s", descriptorFile.getParent()),
+				format(MAIL_PREFIX, total, total - imported, imported));
 		} else {
-			final var message = new StringBuilder().append(format("%s of %s entries resulted in error. The following entries threw exceptions:%n", failedEntries.size(), xmlRoot.getBody().getFiles().size()));
-			failedEntries.forEach(entry -> message.append(String.format(ENTRY_ROW, entry.getName())));
+			final var message = new StringBuilder().append(format(MAIL_PREFIX, total, total - imported, imported));
+			message.append(format("%s of the records resulted in error. The following records threw exceptions:%n", failedRecords.size()));
+			failedRecords.forEach(entry -> message.append(format(FAILED_RECORD_ROW, entry.getName())));
 			message.append(format("%n%n%nRequestId for operation is %s", RequestId.get()));
 
 			notificationService.sendNotification(
-				String.format("Import for path %s resulted in errors", descriptorFile.getParent()),
+				format("Import for path %s resulted in errors", descriptorFile.getParent()),
 				message.toString());
 		}
 	}
