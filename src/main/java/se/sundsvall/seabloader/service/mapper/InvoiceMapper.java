@@ -1,32 +1,34 @@
 package se.sundsvall.seabloader.service.mapper;
 
-import generated.se.inexchange.InExchangeInvoiceStatusType;
-import generated.se.sundsvall.invoicecache.InvoicePdf;
-import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.JAXBIntrospector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
-import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
+import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static se.sundsvall.seabloader.integration.db.model.enums.Source.IN_EXCHANGE;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.Base64;
 import java.util.Objects;
 
-import static java.lang.String.format;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static se.sundsvall.seabloader.integration.db.model.enums.Source.IN_EXCHANGE;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.sax.SAXSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import generated.se.inexchange.InExchangeInvoiceStatusType;
+import generated.se.sundsvall.invoicecache.InvoicePdf;
+import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBIntrospector;
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
 
 public class InvoiceMapper {
 
@@ -40,14 +42,14 @@ public class InvoiceMapper {
 		try {
 			final var inExchangeInvoice = toInExchangeInvoice(xmlContent);
 			return InvoiceEntity.create()
-				.withSource(IN_EXCHANGE)
+				.withSource(IN_EXCHANGE) // TODO: Remove after completion of Stralfors invoices import
 				.withContent(xmlContent)
 				.withInvoiceId(String.valueOf(inExchangeInvoice.getInvoice().getInvoiceId()));
 
 		} catch (final Exception e) {
 			LOGGER.error("Error during deserialization of XML content", e);
 			return InvoiceEntity.create()
-				.withSource(IN_EXCHANGE)
+				.withSource(IN_EXCHANGE) // TODO: Remove after completion of Stralfors invoices import
 				.withContent(xmlContent)
 				.withStatus(IMPORT_FAILED)
 				.withStatusMessage(format("Deserialization of received XML failed with message: %s", getRootCauseMessage(e)));

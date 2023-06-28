@@ -2,6 +2,7 @@ package se.sundsvall.seabloader.batchimport.model;
 
 import static java.util.Objects.nonNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class StralforsFile { // TODO: Remove after completion of Stralfors invoices import
@@ -16,8 +17,10 @@ public class StralforsFile { // TODO: Remove after completion of Stralfors invoi
 
 	private String pdf;
 
+	@JsonIgnore
 	private boolean failed;
 
+	@JsonIgnore
 	private boolean imported;
 
 	public String getName() {
