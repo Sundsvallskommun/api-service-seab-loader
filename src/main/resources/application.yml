@@ -170,5 +170,5 @@ pdfutility:
 #-------------------------------------------------------------------------------
 api:
     batchimportresource:
-        rootpath: ${config.api.batchimportresource.rootpath}
+        rootpath: ${config.api.batchimportresource.rootpath:}
             
