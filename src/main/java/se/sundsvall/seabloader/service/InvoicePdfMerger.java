@@ -22,6 +22,7 @@ import java.util.Base64;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
@@ -70,6 +71,10 @@ public class InvoicePdfMerger {
 	}
 
 	private OutputStream compress(ByteArrayOutputStream outputStream) {
+		if (isNull(outputStream)) {
+			return null;
+		}
+
 		try (final var pdfReader = new PdfReader(outputStream.toByteArray());
 			final var document = new Document()) {
 
