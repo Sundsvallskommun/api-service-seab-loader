@@ -1,5 +1,14 @@
 package se.sundsvall.seabloader.integration.db.model;
 
+import static jakarta.persistence.EnumType.STRING;
+import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
+
+import java.time.OffsetDateTime;
+import java.util.Objects;
+
+import org.hibernate.Length;
+import org.hibernate.annotations.TimeZoneStorage;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -10,17 +19,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import org.hibernate.Length;
-import org.hibernate.annotations.TimeZoneStorage;
 import se.sundsvall.seabloader.integration.db.listener.InvoiceEntityListener;
 import se.sundsvall.seabloader.integration.db.model.enums.Source;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
-
-import java.time.OffsetDateTime;
-import java.util.Objects;
-
-import static jakarta.persistence.EnumType.STRING;
-import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 @Entity
 @Table(name = "invoice",
@@ -64,6 +65,7 @@ public class InvoiceEntity {
 	@Column(name = "status_message", length = Length.LONG32)
 	private String statusMessage;
 
+	// TODO: Remove after completion of Stralfors invoices import
 	@Column(name = "source", nullable = false)
 	@Enumerated(STRING)
 	private Source source;

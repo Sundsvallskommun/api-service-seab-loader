@@ -13,8 +13,9 @@ import se.sundsvall.seabloader.batchimport.model.StralforsFile;
 
 public class ImportUtility { // TODO: Remove after completion of Stralfors invoices import
 
-	private static final String ENTRY_KEY_INVOICE_NUMBER = "invoice_number";
-	private static final String ENTRY_KEY_INVOICE_TYPE = "invoice_type";
+	public static final String ENTRY_KEY_INVOICE_NUMBER = "invoice_number";
+	public static final String ENTRY_KEY_INVOICE_TYPE = "invoice_type";
+	public static final String ENTRY_KEY_CUSTOMER_NBR = "customer_number";
 	private static final String INVOICE_TYPE_REMINDER = "påminnelse";
 
 	private ImportUtility() {}

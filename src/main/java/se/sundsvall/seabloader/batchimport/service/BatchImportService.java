@@ -15,17 +15,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import jakarta.persistence.EntityManager;
 import se.sundsvall.dept44.requestid.RequestId;
@@ -52,14 +47,6 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 
 	@Autowired
 	private NotificationService notificationService;
-
-	private ObjectMapper objectMapper;
-
-	public BatchImportService() {
-		objectMapper = new XmlMapper();
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-	}
 
 	@Async
 	public void execute(String pathToScan) {
@@ -88,7 +75,7 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 	}
 
 	private void processDescriptorFile(File descriptorFile) throws IOException {
-		final var xmlRoot = objectMapper.readValue(FileUtils.readFileToString(descriptorFile, StandardCharsets.UTF_8), XmlRoot.class);
+		final var xmlRoot = StralforsMapper.toXmlRoot(FileUtils.readFileToString(descriptorFile, StandardCharsets.UTF_8));
 		final var batches = ListUtils.partition(xmlRoot.getBody().getFiles(), BATCH_SIZE);
 		final var currentBatch = new AtomicInteger();
 
@@ -103,11 +90,10 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 	private void processEntriesInBatch(String directory, List<StralforsFile> stralforsFiles) {
 		final List<InvoiceEntity> entitiesToSave = stralforsFiles.stream()
 			.filter(ImportUtility::isProcessable)
-			.filter(stralforsFile -> !repository.existsByInvoiceId(ImportUtility.extractLowestInvoiceNumber(stralforsFile)))
+			.filter(stralforsFile -> !repository.existsByInvoiceId(FilenameUtils.removeExtension(stralforsFile.getName())))
 			.map(stralforsFile -> addPdfData(directory, stralforsFile))
 			.filter(Objects::nonNull)
-			.map(this::toInvoiceEntity)
-			.filter(Objects::nonNull)
+			.map(StralforsMapper::toInvoiceEntity)
 			.toList();
 
 		// Save as entity in DB
@@ -126,16 +112,6 @@ public class BatchImportService { // TODO: Remove after completion of Stralfors 
 			return stralforsFile;
 		} catch (IOException e) {
 			LOGGER.error("Exception when adding pdf data to record for pdf {}", stralforsFile.getName(), e);
-			stralforsFile.setFailed();
-			return null;
-		}
-	}
-
-	private InvoiceEntity toInvoiceEntity(StralforsFile stralforsFile) {
-		try {
-			return StralforsMapper.toInvoiceEntity(stralforsFile);
-		} catch (JsonProcessingException e) {
-			LOGGER.error("Exception when mapping stralfors record for pdf {} to an invoice entity", stralforsFile.getName(), e);
 			stralforsFile.setFailed();
 			return null;
 		}

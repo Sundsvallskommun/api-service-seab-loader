@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,11 +32,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import generated.se.sundsvall.datawarehousereader.CustomerEngagement;
+import generated.se.sundsvall.datawarehousereader.CustomerEngagementResponse;
+import generated.se.sundsvall.datawarehousereader.CustomerType;
+import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+import generated.se.sundsvall.party.PartyType;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
+import se.sundsvall.seabloader.batchimport.integration.datawarehousereader.DataWarehouseReaderClient;
+import se.sundsvall.seabloader.batchimport.integration.party.PartyClient;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
+import se.sundsvall.seabloader.integration.db.model.enums.Source;
 import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
 
 @ExtendWith({ MockitoExtension.class, ResourceLoaderExtension.class })
@@ -47,6 +56,8 @@ class InvoiceServiceTest {
 	private static final String TEST_INVOICE_FILE_WITH_ATTACHMENTS = "files/pdfutility/invoice1.xml";
 	private static final String TEST_INVOICE_FILE_WITHOUT_ATTACHMENTS = "files/pdfutility/invoice2.xml";
 
+	private static final String TEST_STRALFORS_INVOICE_FILE = "files/invoice/stralfors_invoice.xml";
+
 	@Mock
 	private InvoiceRepository invoiceRepositoryMock;
 
@@ -55,6 +66,15 @@ class InvoiceServiceTest {
 
 	@Mock
 	private InvoicePdfMerger invoicePdfMergerMock;
+
+	@Mock // TODO: Remove after completion of Stralfors invoices import
+	private DataWarehouseReaderClient dataWarehouseReaderClientMock;
+
+	@Mock // TODO: Remove after completion of Stralfors invoices import
+	private PartyClient partyClientMock;
+
+	@Captor
+	private ArgumentCaptor<InvoicePdfRequest> invoicePdfRequestCaptor;
 
 	@Captor
 	private ArgumentCaptor<InvoiceEntity> invoiceEntityCaptor;
@@ -125,9 +145,9 @@ class InvoiceServiceTest {
 
 		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(createInvoiceIds());
 		when(invoiceRepositoryMock.findById(1L))
-			.thenReturn(Optional.of(new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml)));
+			.thenReturn(Optional.of(new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml).withSource(Source.IN_EXCHANGE)));
 		when(invoiceRepositoryMock.findById(2L))
-			.thenReturn(Optional.of(new InvoiceEntity().withInvoiceId("INVOICE_ID_2").withContent(xml)));
+			.thenReturn(Optional.of(new InvoiceEntity().withInvoiceId("INVOICE_ID_2").withContent(xml).withSource(Source.IN_EXCHANGE)));
 		when(invoicePdfMergerMock.mergePdfs(any())).thenReturn(pdfs);
 
 		// Call.
@@ -165,14 +185,32 @@ class InvoiceServiceTest {
 	}
 
 	@Test
+	void exportInvoicesWhenNoInvoiceIdMatchInDb() {
+
+		// Setup.
+		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(List.of(createInvoiceIdInstance(1L)));
+		when(invoiceRepositoryMock.findById(1L))
+			.thenReturn(Optional.empty());
+
+		// Call.
+		service.exportInvoices();
+
+		// Verification.
+		verify(invoiceRepositoryMock).findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED);
+		verify(invoiceRepositoryMock).findById(1L);
+		verifyNoMoreInteractions(invoiceRepositoryMock);
+		verifyNoInteractions(invoiceCacheClientMock);
+	}
+
+	@Test
 	void exportInvoicesWhenExceptionInSending(@Load(TEST_INVOICE_FILE_WITH_ATTACHMENTS) final String xml) {
 
 		final var pdfs = new ByteArrayOutputStream();
 		pdfs.writeBytes("pdfs".getBytes(UTF_8));
 
 		final var invoiceIds = createInvoiceIds();
-		final var invoiceEntity1 = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml);
-		final var invoiceEntity2 = new InvoiceEntity().withInvoiceId("INVOICE_ID_2").withContent(xml);
+		final var invoiceEntity1 = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml).withSource(Source.IN_EXCHANGE);;
+		final var invoiceEntity2 = new InvoiceEntity().withInvoiceId("INVOICE_ID_2").withContent(xml).withSource(Source.IN_EXCHANGE);;
 		// Setup.
 		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(invoiceIds);
 		when(invoiceRepositoryMock.findById(1L))
@@ -204,7 +242,7 @@ class InvoiceServiceTest {
 	@Test
 	void exportInvoicesWhenNoAttachments(@Load(TEST_INVOICE_FILE_WITHOUT_ATTACHMENTS) final String xml) {
 
-		final var invoiceEntity1 = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml);
+		final var invoiceEntity1 = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml).withSource(Source.IN_EXCHANGE);
 		// Setup.
 		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(List.of(createInvoiceIdInstance(1L)));
 		when(invoiceRepositoryMock.findById(1L))
@@ -224,6 +262,99 @@ class InvoiceServiceTest {
 		assertThat(capturedInvoiceEntities.get(0).getContent()).isNotNull();
 		assertThat(capturedInvoiceEntities.get(0).getStatus()).isEqualTo(EXPORT_FAILED);
 		assertThat(capturedInvoiceEntities.get(0).getStatusMessage()).isEqualTo("OriginalInvoice or attachments not found in invoice with invoiceId: 683288");
+	}
+
+	@Test
+	void exportStralforsInvoiceForPrivateCustomerType(@Load(TEST_STRALFORS_INVOICE_FILE) final String xml) { // TODO: Remove after completion of Stralfors invoices import
+		// Setup
+		final var invoiceEntity = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml).withSource(Source.STRALFORS);
+		final var partyId = UUID.randomUUID().toString();
+		final var legalId = "privateLegalId";
+		final var customerNumber = "100987";
+		
+		// Mock
+		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(List.of(createInvoiceIdInstance(1L)));
+		when(invoiceRepositoryMock.findById(1L)).thenReturn(Optional.of(invoiceEntity));
+		when(dataWarehouseReaderClientMock.getCustomerEngagement(customerNumber)).thenReturn(
+			new CustomerEngagementResponse().addCustomerEngagementsItem(new CustomerEngagement().partyId(partyId).customerType(CustomerType.PRIVATE)));
+		when(partyClientMock.getLegalId(PartyType.PRIVATE, partyId)).thenReturn(Optional.of(legalId));
+
+		// Execute
+		service.exportInvoices();
+		
+		// Verify and assert
+		verify(invoiceRepositoryMock).findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED);
+		verify(invoiceRepositoryMock).findById(1L);
+		verify(dataWarehouseReaderClientMock).getCustomerEngagement(customerNumber);
+		verify(partyClientMock).getLegalId(PartyType.PRIVATE, partyId);
+		verify(invoiceCacheClientMock).sendInvoice(invoicePdfRequestCaptor.capture());
+		verify(invoiceRepositoryMock).save(invoiceEntityCaptor.capture());
+
+		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isEqualTo(legalId);
+		assertThat(invoiceEntityCaptor.getValue().getInvoiceId()).isEqualTo("INVOICE_ID_1");
+		assertThat(invoiceEntityCaptor.getValue().getContent()).isEqualTo(xml);
+		assertThat(invoiceEntityCaptor.getValue().getStatus()).isEqualTo(PROCESSED);
+	}
+
+	@Test
+	void exportStralforsInvoiceForEnterpriseCustomerType(@Load(TEST_STRALFORS_INVOICE_FILE) final String xml) { // TODO: Remove after completion of Stralfors invoices import
+		// Setup
+		final var invoiceEntity = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml).withSource(Source.STRALFORS);
+		final var partyId = UUID.randomUUID().toString();
+		final var legalId = "enterpriseLegalId";
+		final var customerNumber = "100987";
+
+		// Mock
+		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(List.of(createInvoiceIdInstance(1L)));
+		when(invoiceRepositoryMock.findById(1L)).thenReturn(Optional.of(invoiceEntity));
+		when(dataWarehouseReaderClientMock.getCustomerEngagement("100987")).thenReturn(
+			new CustomerEngagementResponse().addCustomerEngagementsItem(new CustomerEngagement().partyId(partyId).customerType(CustomerType.ENTERPRISE)));
+		when(partyClientMock.getLegalId(PartyType.ENTERPRISE, partyId)).thenReturn(Optional.of(legalId));
+
+		// Execute
+		service.exportInvoices();
+
+		// Verify and assert
+		verify(invoiceRepositoryMock).findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED);
+		verify(invoiceRepositoryMock).findById(1L);
+		verify(dataWarehouseReaderClientMock).getCustomerEngagement(customerNumber);
+		verify(partyClientMock).getLegalId(PartyType.ENTERPRISE, partyId);
+		verify(invoiceCacheClientMock).sendInvoice(invoicePdfRequestCaptor.capture());
+		verify(invoiceRepositoryMock).save(invoiceEntityCaptor.capture());
+
+		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isEqualTo(legalId);
+		assertThat(invoiceEntityCaptor.getValue().getInvoiceId()).isEqualTo("INVOICE_ID_1");
+		assertThat(invoiceEntityCaptor.getValue().getContent()).isEqualTo(xml);
+		assertThat(invoiceEntityCaptor.getValue().getStatus()).isEqualTo(PROCESSED);
+	}
+
+	@Test
+	void exportStralforsInvoiceForNullCustomerType(@Load(TEST_STRALFORS_INVOICE_FILE) final String xml) { // TODO: Remove after completion of Stralfors invoices import
+		// Setup
+		final var invoiceEntity = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml).withSource(Source.STRALFORS);
+		final var partyId = UUID.randomUUID().toString();
+		final var customerNumber = "100987";
+
+		// Mock
+		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(List.of(createInvoiceIdInstance(1L)));
+		when(invoiceRepositoryMock.findById(1L)).thenReturn(Optional.of(invoiceEntity));
+		when(dataWarehouseReaderClientMock.getCustomerEngagement("100987")).thenReturn(
+			new CustomerEngagementResponse().addCustomerEngagementsItem(new CustomerEngagement().partyId(partyId)));
+
+		// Execute
+		service.exportInvoices();
+
+		// Verify and assert
+		verify(invoiceRepositoryMock).findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED);
+		verify(invoiceRepositoryMock).findById(1L);
+		verify(dataWarehouseReaderClientMock).getCustomerEngagement(customerNumber);
+		verify(invoiceCacheClientMock).sendInvoice(invoicePdfRequestCaptor.capture());
+		verify(invoiceRepositoryMock).save(invoiceEntityCaptor.capture());
+
+		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isNull();
+		assertThat(invoiceEntityCaptor.getValue().getInvoiceId()).isEqualTo("INVOICE_ID_1");
+		assertThat(invoiceEntityCaptor.getValue().getContent()).isEqualTo(xml);
+		assertThat(invoiceEntityCaptor.getValue().getStatus()).isEqualTo(PROCESSED);
 	}
 
 	private List<InvoiceId> createInvoiceIds() {

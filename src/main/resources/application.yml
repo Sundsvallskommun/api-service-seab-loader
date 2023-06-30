@@ -46,10 +46,30 @@ spring:
                         client-id: ${config.integration.messaging.client-id}
                         client-secret: ${config.integration.messaging.client-secret}
                         provider: messaging
+#-------------------------------------------------------------------------------
+# TODO: Remove settings for dwr and party after completion of Stralfors invoices import
+#-------------------------------------------------------------------------------
+                    datawarehousereader:
+                        authorization-grant-type: client_credentials
+                        client-id: ${config.integration.datawarehousereader.client-id}
+                        client-secret: ${config.integration.datawarehousereader.client-secret}
+                        provider: datawarehousereader
+                    party:
+                        authorization-grant-type: client_credentials
+                        client-id: ${config.integration.party.client-id}
+                        client-secret: ${config.integration.party.client-secret}
+                        provider: party
                 provider:
                     invoicecache:
                         token-uri: ${config.integration.token-uri}
                     messaging:
+                        token-uri: ${config.integration.token-uri}
+#-------------------------------------------------------------------------------
+# TODO: Remove settings for dwr and party after completion of Stralfors invoices import
+#-------------------------------------------------------------------------------
+                    datawarehousereader:
+                        token-uri: ${config.integration.token-uri}
+                    party:
                         token-uri: ${config.integration.token-uri}
 
 #-------------------------------------------------------------------------------
@@ -64,6 +84,17 @@ integration:
         url: ${config.integration.messaging.url}
         connectTimeout: ${config.integration.messaging.connectTimeout}
         readTimeout: ${config.integration.messaging.readTimeout}
+#-------------------------------------------------------------------------------
+# TODO: Remove settings for dwr and party after completion of Stralfors invoices import
+#-------------------------------------------------------------------------------
+    datawarehousereader:
+        url: ${config.integration.datawarehousereader.url}
+        connectTimeout: ${config.integration.datawarehousereader.connectTimeout}
+        readTimeout: ${config.integration.datawarehousereader.readTimeout}
+    party:
+        url: ${config.integration.party.url}
+        connectTimeout: ${config.integration.party.connectTimeout}
+        readTimeout: ${config.integration.party.readTimeout}
 
 resilience4j:
     circuitbreaker:
@@ -71,6 +102,13 @@ resilience4j:
             invoicecache:
                 ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
             messaging:
+                ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+#-------------------------------------------------------------------------------
+# TODO: Remove settings for dwr and party after completion of Stralfors invoices import
+#-------------------------------------------------------------------------------
+            datawarehousereader:
+                ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
+            party:
                 ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
 
 #-------------------------------------------------------------------------------
@@ -126,11 +164,11 @@ pdfutility:
     max:
         memory:
             usage: ${config.pdfutility.memory}
-            
+
 #-------------------------------------------------------------------------------
 # TODO: Remove settings below after completion of Stralfors invoices import
 #-------------------------------------------------------------------------------
 api:
     batchimportresource:
-        rootpath: ${config.api.batchimportresource.rootpath}
+        rootpath: ${config.api.batchimportresource.rootpath:}
             
