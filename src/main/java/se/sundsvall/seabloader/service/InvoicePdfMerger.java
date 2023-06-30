@@ -1,18 +1,9 @@
 package se.sundsvall.seabloader.service;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfSmartCopy;
-import generated.se.inexchange.InExchangeInvoiceStatusType;
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
-import org.apache.pdfbox.io.MemoryUsageSetting;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.zalando.problem.Problem;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.isNull;
+import static java.util.Optional.ofNullable;
+import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,10 +12,21 @@ import java.io.OutputStream;
 import java.util.Base64;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.isNull;
-import static java.util.Optional.ofNullable;
-import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.zalando.problem.Problem;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSmartCopy;
+
+import generated.se.inexchange.InExchangeInvoiceStatusType;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
 
 @Component
 public class InvoicePdfMerger {
@@ -70,7 +72,17 @@ public class InvoicePdfMerger {
 		return new ByteArrayInputStream(Base64.getDecoder().decode(pdf.getBytes(UTF_8)));
 	}
 
-	private OutputStream compress(ByteArrayOutputStream outputStream) {
+	public static String compress(String base64PdfData) { // TODO: Remove after completion of Stralfors invoices import
+		if (isNull(base64PdfData)) {
+			return null;
+		}
+
+		final var outputStream = new ByteArrayOutputStream();
+		outputStream.writeBytes(Base64.getDecoder().decode(base64PdfData.getBytes(UTF_8)));
+		return Base64.getEncoder().encodeToString((compress(outputStream)).toByteArray());
+	}
+
+	private static ByteArrayOutputStream compress(ByteArrayOutputStream outputStream) {
 		if (isNull(outputStream)) {
 			return null;
 		}
@@ -91,7 +103,7 @@ public class InvoicePdfMerger {
 			return result;
 
 		} catch (IOException e) {
-			LOGGER.warn("A problem occured during compression of PDF:s. {}", e.getMessage());
+			LOGGER.warn("A problem occured during compression of PDF. {}", e.getMessage());
 			return outputStream;
 		}
 	}

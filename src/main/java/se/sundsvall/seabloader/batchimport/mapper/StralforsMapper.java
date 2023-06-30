@@ -23,6 +23,7 @@ import se.sundsvall.seabloader.batchimport.model.StralforsFile;
 import se.sundsvall.seabloader.batchimport.model.XmlRoot;
 import se.sundsvall.seabloader.batchimport.util.ImportUtility;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.service.InvoicePdfMerger;
 import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
 
 public class StralforsMapper { // TODO: Remove after completion of Stralfors invoices import
@@ -65,7 +66,7 @@ public class StralforsMapper { // TODO: Remove after completion of Stralfors inv
 		}
 
 		return new InvoicePdf()
-			.content(file.getPdf())
+			.content(InvoicePdfMerger.compress(file.getPdf()))
 			.name(file.getName());
 	}
 
