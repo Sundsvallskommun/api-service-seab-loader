@@ -22,7 +22,6 @@ public interface PartyClient { // TODO: Remove all logic regarding Stralfors inv
 	 * @param partyType the type of party.
 	 * @param partyId   the ID of the party. I.e. the personId or organizationId.
 	 * @return an optional string containing the legalId that corresponds to the provided partyType and partyId if found.
-	 * @throws org.zalando.problem.ThrowableProblem
 	 */
 	@GetMapping(path = "/{type}/{partyId}/legalId", produces = { TEXT_PLAIN_VALUE, APPLICATION_PROBLEM_JSON_VALUE })
 	Optional<String> getLegalId(@PathVariable("type") PartyType partyType, @PathVariable("partyId") String partyId);
