@@ -11,6 +11,7 @@ import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInExchangeI
 import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInvoiceEntity;
 import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInvoicePdfRequest;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -51,6 +52,10 @@ public class InvoiceService {
 
 	@Autowired
 	private DataWarehouseReaderClient dwrClient; // TODO: Remove all logic regarding Stralfors invoices after completion of Stralfors invoices import
+
+	private static final List<String> ACCEPTED_LEGALID_TRANSLATION_ERROR_RESPONSES = List.of( // TODO: Remove all logic regarding Stralfors invoices after completion of Stralfors invoices import
+		"Bad Gateway: datawarehousereader error: {detail=Could not determine partyId for customer connected to returned data, status=500 Internal Server Error, title=Internal Server Error}",
+		"Bad Gateway: datawarehousereader error: {detail=party error: {status=400 Bad Request, title=Constraint Violation}, status=502 Bad Gateway, title=Bad Gateway}");
 
 	public void create(final byte[] content) {
 		final var invoiceEntity = toInvoiceEntity(content);
@@ -129,13 +134,21 @@ public class InvoiceService {
 	}
 
 	private String translateToLegalId(String customerNbr) {
-		final var engagements = dwrClient.getCustomerEngagement(customerNbr);
+		try {
+			final var engagements = dwrClient.getCustomerEngagement(customerNbr);
 
-		return engagements.getCustomerEngagements().stream()
-			.findAny()
-			.map(this::fetchLegalId)
-			.map(Optional::get)
-			.orElse(null);
+			return engagements.getCustomerEngagements().stream()
+				.findAny()
+				.map(this::fetchLegalId)
+				.orElse(Optional.empty())
+				.orElse(null);
+
+		} catch (final Exception e) {
+			if (ACCEPTED_LEGALID_TRANSLATION_ERROR_RESPONSES.contains(e.getMessage())) {
+				return null;
+			}
+			throw e;
+		}
 	}
 
 	private Optional<String> fetchLegalId(CustomerEngagement customerEngagement) {
@@ -143,7 +156,7 @@ public class InvoiceService {
 			.map(this::toPartyType)
 			.map(partyType -> partyClient.getLegalId(partyType, customerEngagement.getPartyId()))
 			.findAny()
-			.orElse(null);
+			.orElse(Optional.empty());
 	}
 
 	private PartyType toPartyType(CustomerType customerType) {
