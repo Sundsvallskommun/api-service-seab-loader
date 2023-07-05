@@ -1,5 +1,10 @@
 package se.sundsvall.seabloader.integration.db.model;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import java.time.OffsetDateTime;
+
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanConstructor;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanEquals;
 import static com.google.code.beanmatchers.BeanMatchers.hasValidBeanHashCode;
@@ -11,12 +16,8 @@ import static org.apache.commons.lang3.RandomUtils.nextInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
+import static se.sundsvall.seabloader.integration.db.model.enums.Source.IN_EXCHANGE;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
-
-import java.time.OffsetDateTime;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
 class InvoiceEntityTest {
 
@@ -46,6 +47,7 @@ class InvoiceEntityTest {
 		final var invoiceId = "invoiceId";
 		final var status = UNPROCESSED;
 		final var statusMessage = "statusMessage";
+		final var source = IN_EXCHANGE;
 
 		final var entity = InvoiceEntity.create()
 			.withCreated(created)
@@ -55,7 +57,8 @@ class InvoiceEntityTest {
 			.withId(id)
 			.withInvoiceId(invoiceId)
 			.withStatus(status)
-			.withStatusMessage(statusMessage);
+			.withStatusMessage(statusMessage)
+			.withSource(source);
 
 		assertThat(entity).hasNoNullFieldsOrProperties();
 		assertThat(entity.getCreated()).isEqualTo(created);
@@ -66,6 +69,7 @@ class InvoiceEntityTest {
 		assertThat(entity.getInvoiceId()).isEqualTo(invoiceId);
 		assertThat(entity.getStatus()).isEqualTo(status);
 		assertThat(entity.getStatusMessage()).isEqualTo(statusMessage);
+		assertThat(entity.getSource()).isEqualTo(source);
 	}
 
 	@Test
