@@ -290,7 +290,8 @@ class InvoiceServiceTest {
 		verify(invoiceCacheClientMock).sendInvoice(invoicePdfRequestCaptor.capture());
 		verify(invoiceRepositoryMock).save(invoiceEntityCaptor.capture());
 
-		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isEqualTo(legalId);
+		assertThat(invoicePdfRequestCaptor.getValue().getDebtorLegalId()).isEqualTo(legalId);
+		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isEqualTo("5564786647");
 		assertThat(invoiceEntityCaptor.getValue().getInvoiceId()).isEqualTo("INVOICE_ID_1");
 		assertThat(invoiceEntityCaptor.getValue().getContent()).isEqualTo(xml);
 		assertThat(invoiceEntityCaptor.getValue().getStatus()).isEqualTo(PROCESSED);
@@ -322,7 +323,8 @@ class InvoiceServiceTest {
 		verify(invoiceCacheClientMock).sendInvoice(invoicePdfRequestCaptor.capture());
 		verify(invoiceRepositoryMock).save(invoiceEntityCaptor.capture());
 
-		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isEqualTo(legalId);
+		assertThat(invoicePdfRequestCaptor.getValue().getDebtorLegalId()).isEqualTo(legalId);
+		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isEqualTo("5564786647");
 		assertThat(invoiceEntityCaptor.getValue().getInvoiceId()).isEqualTo("INVOICE_ID_1");
 		assertThat(invoiceEntityCaptor.getValue().getContent()).isEqualTo(xml);
 		assertThat(invoiceEntityCaptor.getValue().getStatus()).isEqualTo(PROCESSED);
@@ -351,7 +353,8 @@ class InvoiceServiceTest {
 		verify(invoiceCacheClientMock).sendInvoice(invoicePdfRequestCaptor.capture());
 		verify(invoiceRepositoryMock).save(invoiceEntityCaptor.capture());
 
-		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isNull();
+		assertThat(invoicePdfRequestCaptor.getValue().getDebtorLegalId()).isNull();
+		assertThat(invoicePdfRequestCaptor.getValue().getIssuerLegalId()).isEqualTo("5564786647");
 		assertThat(invoiceEntityCaptor.getValue().getInvoiceId()).isEqualTo("INVOICE_ID_1");
 		assertThat(invoiceEntityCaptor.getValue().getContent()).isEqualTo(xml);
 		assertThat(invoiceEntityCaptor.getValue().getStatus()).isEqualTo(PROCESSED);
