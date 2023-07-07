@@ -127,7 +127,7 @@ public class InvoiceService {
 
 	private void hibernate() {
 		try {
-			Thread.sleep(1);
+			Thread.sleep(2);
 		} catch (final InterruptedException e) { // NOSONAR
 			LOGGER.info("Hibernation interrupted");
 		}
