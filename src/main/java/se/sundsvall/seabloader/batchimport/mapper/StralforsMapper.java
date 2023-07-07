@@ -47,13 +47,13 @@ public class StralforsMapper { // TODO: Remove after completion of Stralfors inv
 		return OBJECT_MAPPER.readValue(input, StralforsFile.class);
 	}
 
-	public static InvoicePdfRequest toInvoicePdfRequest(final StralforsFile file, String issuerLegalId) {
+	public static InvoicePdfRequest toInvoicePdfRequest(final StralforsFile file, String debtorLegalId) {
 		return new InvoicePdfRequest()
 			.invoiceNumber(ImportUtility.extractLowestInvoiceNumber(file))
 			.invoiceId(FilenameUtils.removeExtension(file.getName()))
 			.invoiceType(InvoicePdfRequest.InvoiceTypeEnum.valueOf(InvoiceType.fromValue(ImportUtility.getEntryValue(file, ImportUtility.ENTRY_KEY_INVOICE_TYPE)).toString()))
-			.issuerLegalId(issuerLegalId)
-			.debtorLegalId("5564786647") // Debtor is always Sundsvall Energi AB (5564786647)
+			.debtorLegalId(debtorLegalId)
+			.issuerLegalId("5564786647") // Issuer is always Sundsvall Energi AB (5564786647)
 			.attachment(toInvoicePdf(file));
 	}
 
