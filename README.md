@@ -1,9 +1,5 @@
 # SeabLoader
 
-## Leverantör
-
-Sundsvalls kommun
-
 ## Beskrivning
 SeabLoader är en tjänst som gör det möjligt att från InXchange ladda SEAB:s pdf-fakturor till InvoiceCache.
 
@@ -14,50 +10,19 @@ Tjänsten integrerar mot:
 
 * Mikrotjänst InvoiceCache
 
-### Starta tjänsten
+## Leverantör
 
-| Konfigurationsnyckel|Beskrivning|
-|---|---|
-|**Databasinställningar**||
-|`spring.datasource.url`|JDBC-URL för anslutning till databas|
-|`spring.datasource.username`|Användarnamn för anslutning till databas|
-|`spring.datasource.password`|Lösenord för anslutning till databas|
-|**InvoiceCache**||
-| `integration.invoicecache.url`|URL för endpoint till InvoiceCache-tjänsten i WSO2|
-| `spring.security.oauth2.client.registration.invoicecache.client-id`|Klient-ID som ska användas för InvoiceCache-tjänsten|
-| `spring.security.oauth2.client.registration.invoicecache.client-secret`|Klient-secret som ska användas för InvoiceCache-tjänsten|
-| `spring.security.oauth2.client.provider.invoicecache.token-uri`|URI till endpoint för att förnya token för InvoiceCache-tjänsten|
+Sundsvalls kommun
 
-### Paketera och starta tjänsten
-Applikationen kan paketeras genom:
+## Status
 
-```
-./mvnw package
-```
-Kommandot skapar filen `api-service-seab-loader-<version>.jar` i katalogen `target`. Tjänsten kan nu köras genom kommandot `java -jar target/api-service-seab-loader-<version>.jar`.
-
-### Bygga och starta med Docker
-Exekvera följande kommando för att bygga en Docker-image:
-
-```
-docker build -f src/main/docker/Dockerfile -t api.sundsvall.se/ms-seab-loader:latest .
-```
-
-Exekvera följande kommando för att starta samma Docker-image i en container:
-
-```
-docker run -i --rm -p8080:8080 api.sundsvall.se/ms-seab-loader
-
-```
-
-#### Kör applikationen lokalt
-
-Exekvera följande kommando för att bygga och starta en container i sandbox mode:  
-
-```
-docker-compose -f src/main/docker/docker-compose-sandbox.yaml build && docker-compose -f src/main/docker/docker-compose-sandbox.yaml up
-```
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_api-service-seab-loader&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Sundsvallskommun_api-service-seab-loader)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_api-service-seab-loader&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Sundsvallskommun_api-service-seab-loader)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_api-service-seab-loader&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=Sundsvallskommun_api-service-seab-loader)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_api-service-seab-loader&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Sundsvallskommun_api-service-seab-loader)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_api-service-seab-loader&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=Sundsvallskommun_api-service-seab-loader)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=Sundsvallskommun_api-service-seab-loader&metric=bugs)](https://sonarcloud.io/summary/new_code?id=Sundsvallskommun_api-service-seab-loader)
 
 
 ## 
-Copyright (c) 2022 Sundsvalls kommun
+Copyright (c) 2021 Sundsvalls kommun
