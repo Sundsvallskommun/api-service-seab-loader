@@ -27,5 +27,3 @@ config:
       dbcleaner: "-"
       invoiceexporter: "-"
       notifier: "-"
-  pdfutility:
-    memory: 104857600
