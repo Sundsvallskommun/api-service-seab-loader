@@ -154,18 +154,6 @@ scheduler:
             expression: ${config.scheduler.cron.notifier}
 
 #-------------------------------------------------------------------------------
-# Maximum main memory that can be used before temporary files are used while
-# merging pdfs.
-#
-# Currently 100 MB, since this is the theoretical max size.
-# InExchange can't send any larger files.
-#-------------------------------------------------------------------------------
-pdfutility:
-    max:
-        memory:
-            usage: ${config.pdfutility.memory}
-
-#-------------------------------------------------------------------------------
 # TODO: Remove settings below after completion of Stralfors invoices import
 #-------------------------------------------------------------------------------
 api:

@@ -3,10 +3,9 @@ package se.sundsvall.seabloader.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.Loader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ class InvoicePdfMergerTest {
 		// Call
 		final var inExchangeInvoice = InvoiceMapper.toInExchangeInvoice(xml);
 		final var byteArrayOutput = pdfUtil.mergePdfs(inExchangeInvoice);
-		final var pdfDocument = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) byteArrayOutput).toByteArray()));
+		final var pdfDocument = Loader.loadPDF(((ByteArrayOutputStream) byteArrayOutput).toByteArray());
 
 		// Verification
 		assertThat(byteArrayOutput).isNotNull();
@@ -50,7 +49,7 @@ class InvoicePdfMergerTest {
 		// Call
 		final var inExchangeInvoice = InvoiceMapper.toInExchangeInvoice(xml);
 		final var byteArrayOutput = pdfUtil.mergePdfs(inExchangeInvoice);
-		final var pdfDocument = PDDocument.load(new ByteArrayInputStream(((ByteArrayOutputStream) byteArrayOutput).toByteArray()));
+		final var pdfDocument = Loader.loadPDF(((ByteArrayOutputStream) byteArrayOutput).toByteArray());
 
 		// Verification
 		assertThat(byteArrayOutput).isNotNull();

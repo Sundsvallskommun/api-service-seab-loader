@@ -3,6 +3,7 @@ package se.sundsvall.seabloader.service;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
+import static org.apache.pdfbox.io.RandomAccessReadBuffer.createBufferFromStream;
 import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
 import java.io.ByteArrayInputStream;
@@ -12,11 +13,11 @@ import java.io.OutputStream;
 import java.util.Base64;
 import java.util.List;
 
-import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.commons.lang3.function.Failable;
+import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.zalando.problem.Problem;
 
@@ -33,20 +34,17 @@ public class InvoicePdfMerger {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoicePdfMerger.class);
 
-	@Value("${pdfutility.max.memory.usage:10485760}") // Default the pdf merger is allowed to use 10MB
-	private long maxMemory;
-	private final MemoryUsageSetting memoryUsageSetting = MemoryUsageSetting.setupMixed(maxMemory);
-
 	public OutputStream mergePdfs(InExchangeInvoiceStatusType inExchangeInvoice) {
 		try {
 			final var merger = initializePDFMergerUtility();
 			final var originalInvoice = toInputStream(inExchangeInvoice.getOriginalInvoice().getValue());
 
-			merger.addSource(originalInvoice);
-			toInputStreams(inExchangeInvoice.getAttachments())
-				.forEach(merger::addSource);
+			merger.addSource(createBufferFromStream(originalInvoice));
 
-			merger.mergeDocuments(memoryUsageSetting);
+			Failable.stream(toInputStreams(inExchangeInvoice.getAttachments()))
+				.forEach(inputStream -> merger.addSource(createBufferFromStream(inputStream)));
+
+			merger.mergeDocuments(IOUtils.createMemoryOnlyStreamCache());
 			return compress((ByteArrayOutputStream) merger.getDestinationStream());
 
 		} catch (final Exception e) {
@@ -91,18 +89,18 @@ public class InvoicePdfMerger {
 			final var document = new Document()) {
 
 			final var result = new ByteArrayOutputStream();
-			final var  pdfSmartCopy = new PdfSmartCopy(document, result);
+			final var pdfSmartCopy = new PdfSmartCopy(document, result);
 			pdfSmartCopy.setFullCompression();
 			document.open();
 
 			for (int pageNumber = 1; pageNumber <= pdfReader.getNumberOfPages(); pageNumber++) {
-				var page = pdfSmartCopy.getImportedPage(pdfReader, pageNumber);
+				final var page = pdfSmartCopy.getImportedPage(pdfReader, pageNumber);
 				pdfSmartCopy.addPage(page);
 			}
 			pdfSmartCopy.close();
 			return result;
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			LOGGER.warn("A problem occured during compression of PDF. {}", e.getMessage());
 			return outputStream;
 		}
