@@ -22,7 +22,7 @@
 		<app.jvm.xmx.mb>768</app.jvm.xmx.mb>
 		<!-- Service properties -->
 		<jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
-		<openapi-generator-maven-plugin.version>6.6.0</openapi-generator-maven-plugin.version>
+		<openapi-generator-maven-plugin.version>7.0.0</openapi-generator-maven-plugin.version>
 		<org-apache-pdfbox.version>3.0.0</org-apache-pdfbox.version>
 		<guava.version>32.1.2-jre</guava.version>
 		<cron-expression-descriptor.version>1.2.6</cron-expression-descriptor.version>
