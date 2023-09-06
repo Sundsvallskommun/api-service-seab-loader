@@ -16,7 +16,6 @@
 	<properties>
 		<!-- Pipeline properties -->
 		<docker.image.name>ms-seab-loader</docker.image.name>
-		<published.container.port.sandbox>8913</published.container.port.sandbox>
 		<published.container.port.test>8912</published.container.port.test>
 		<published.container.port.production>8911</published.container.port.production>
 		<app.jvm.xmx.mb>768</app.jvm.xmx.mb>
