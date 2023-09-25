@@ -48,9 +48,10 @@ class CreateInvoiceIT extends AbstractAppTest {
 		setupCall()
 			.withServicePath("/invoices")
 			.withHttpMethod(POST)
+			.withContentType(APPLICATION_XML)
 			.withRequest(REQUEST_FILE)
 			.withExpectedResponseStatus(NO_CONTENT)
-			.sendRequestAndVerifyResponse(APPLICATION_XML);
+			.sendRequestAndVerifyResponse();
 
 		// Assert that invoice exists with expected values.
 		assertThat(repository.findByInvoiceId("555")).get()
@@ -71,9 +72,10 @@ class CreateInvoiceIT extends AbstractAppTest {
 		setupCall()
 			.withServicePath("/invoices")
 			.withHttpMethod(POST)
+			.withContentType(APPLICATION_XML)
 			.withRequest(REQUEST_FILE)
 			.withExpectedResponseStatus(NO_CONTENT)
-			.sendRequestAndVerifyResponse(APPLICATION_XML);
+			.sendRequestAndVerifyResponse();
 
 		// Assert that we have two failed invoices (with null as invoiceId).
 		assertThat(repository.findByStatusIn(IMPORT_FAILED))
