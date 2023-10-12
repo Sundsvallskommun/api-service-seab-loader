@@ -3,7 +3,6 @@ package se.sundsvall.seabloader.service.mapper;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static se.sundsvall.seabloader.integration.db.model.enums.Source.IN_EXCHANGE;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
 import java.io.ByteArrayOutputStream;
@@ -42,14 +41,12 @@ public class InvoiceMapper {
 		try {
 			final var inExchangeInvoice = toInExchangeInvoice(xmlContent);
 			return InvoiceEntity.create()
-				.withSource(IN_EXCHANGE) // TODO: Remove after completion of Stralfors invoices import
 				.withContent(xmlContent)
 				.withInvoiceId(String.valueOf(inExchangeInvoice.getInvoice().getInvoiceId()));
 
 		} catch (final Exception e) {
 			LOGGER.error("Error during deserialization of XML content", e);
 			return InvoiceEntity.create()
-				.withSource(IN_EXCHANGE) // TODO: Remove after completion of Stralfors invoices import
 				.withContent(xmlContent)
 				.withStatus(IMPORT_FAILED)
 				.withStatusMessage(format("Deserialization of received XML failed with message: %s", getRootCauseMessage(e)));
