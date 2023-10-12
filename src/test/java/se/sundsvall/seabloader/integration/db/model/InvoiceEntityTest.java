@@ -10,7 +10,6 @@ import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.AllOf.allOf;
-import static se.sundsvall.seabloader.integration.db.model.enums.Source.IN_EXCHANGE;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
 import java.time.OffsetDateTime;
@@ -47,7 +46,6 @@ class InvoiceEntityTest {
 		final var invoiceId = "invoiceId";
 		final var status = UNPROCESSED;
 		final var statusMessage = "statusMessage";
-		final var source = IN_EXCHANGE;
 
 		final var entity = InvoiceEntity.create()
 			.withCreated(created)
@@ -57,8 +55,7 @@ class InvoiceEntityTest {
 			.withId(id)
 			.withInvoiceId(invoiceId)
 			.withStatus(status)
-			.withStatusMessage(statusMessage)
-			.withSource(source);
+			.withStatusMessage(statusMessage);
 
 		assertThat(entity).hasNoNullFieldsOrProperties();
 		assertThat(entity.getCreated()).isEqualTo(created);
@@ -69,7 +66,6 @@ class InvoiceEntityTest {
 		assertThat(entity.getInvoiceId()).isEqualTo(invoiceId);
 		assertThat(entity.getStatus()).isEqualTo(status);
 		assertThat(entity.getStatusMessage()).isEqualTo(statusMessage);
-		assertThat(entity.getSource()).isEqualTo(source);
 	}
 
 	@Test

@@ -25,24 +25,6 @@ config:
       client-secret: the-client-secret
       connectTimeout: 10
       readTimeout: 20
-#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# TODO: Remove rows between these lines after stralfors import is complete
-#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    datawarehousereader:
-      url: http://localhost:${wiremock.server.port}/api-datawarehousereader
-      client-id: the-client-id
-      client-secret: the-client-secret
-      connectTimeout: 10
-      readTimeout: 20
-    party:
-      url: http://localhost:${wiremock.server.port}/api-party
-      client-id: the-client-id
-      client-secret: the-client-secret
-      connectTimeout: 10
-      readTimeout: 20
-#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-# TODO: Remove rows between these lines after stralfors import is complete
-#=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
   scheduler:
     cron:
       dbcleaner: 0 0 7 * * 7

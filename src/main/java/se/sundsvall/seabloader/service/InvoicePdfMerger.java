@@ -70,16 +70,6 @@ public class InvoicePdfMerger {
 		return new ByteArrayInputStream(Base64.getDecoder().decode(pdf.getBytes(UTF_8)));
 	}
 
-	public static String compress(String base64PdfData) { // TODO: Remove after completion of Stralfors invoices import
-		if (isNull(base64PdfData)) {
-			return null;
-		}
-
-		final var outputStream = new ByteArrayOutputStream();
-		outputStream.writeBytes(Base64.getDecoder().decode(base64PdfData.getBytes(UTF_8)));
-		return Base64.getEncoder().encodeToString((compress(outputStream)).toByteArray());
-	}
-
 	private static ByteArrayOutputStream compress(ByteArrayOutputStream outputStream) {
 		if (isNull(outputStream)) {
 			return null;

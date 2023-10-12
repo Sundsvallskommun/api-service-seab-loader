@@ -13,15 +13,6 @@ config:
     messaging:
       connectTimeout: 10
       readTimeout: 20
-#-------------------------------------------------------------------------------
-# TODO: Remove settings for dwr and party after completion of Stralfors invoices import
-#-------------------------------------------------------------------------------
-    datawarehousereader:
-      connectTimeout: 10
-      readTimeout: 20
-    party:
-      connectTimeout: 10
-      readTimeout: 20
   scheduler:
     cron:
       dbcleaner: "-"
