@@ -5,7 +5,6 @@
         modified datetime(6),
         processed datetime(6),
         invoice_id varchar(255),
-        source enum ('IN_EXCHANGE','STRALFORS') not null,
         status enum ('EXPORT_FAILED','IMPORT_FAILED','PROCESSED','UNPROCESSED') not null,
         content longtext,
         status_message longtext,

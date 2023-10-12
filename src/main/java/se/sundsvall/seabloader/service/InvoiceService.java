@@ -2,8 +2,6 @@ package se.sundsvall.seabloader.service;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static se.sundsvall.seabloader.integration.db.model.enums.Source.IN_EXCHANGE;
-import static se.sundsvall.seabloader.integration.db.model.enums.Source.STRALFORS;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
@@ -11,22 +9,11 @@ import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInExchangeI
 import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInvoiceEntity;
 import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInvoicePdfRequest;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import generated.se.sundsvall.datawarehousereader.CustomerEngagement;
-import generated.se.sundsvall.datawarehousereader.CustomerType;
-import generated.se.sundsvall.party.PartyType;
-import se.sundsvall.seabloader.batchimport.integration.datawarehousereader.DataWarehouseReaderClient;
-import se.sundsvall.seabloader.batchimport.integration.party.PartyClient;
-import se.sundsvall.seabloader.batchimport.mapper.StralforsMapper;
-import se.sundsvall.seabloader.batchimport.util.ImportUtility;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
@@ -46,16 +33,6 @@ public class InvoiceService {
 
 	@Autowired
 	private InvoiceCacheClient invoiceCacheClient;
-
-	@Autowired
-	private PartyClient partyClient; // TODO: Remove all logic regarding Stralfors invoices after completion of Stralfors invoices import
-
-	@Autowired
-	private DataWarehouseReaderClient dwrClient; // TODO: Remove all logic regarding Stralfors invoices after completion of Stralfors invoices import
-
-	private static final List<String> ACCEPTED_LEGALID_TRANSLATION_ERROR_RESPONSES = List.of( // TODO: Remove all logic regarding Stralfors invoices after completion of Stralfors invoices import
-		"Bad Gateway: datawarehousereader error: {detail=Could not determine partyId for customer connected to returned data, status=500 Internal Server Error, title=Internal Server Error}",
-		"Bad Gateway: datawarehousereader error: {detail=party error: {status=400 Bad Request, title=Constraint Violation}, status=502 Bad Gateway, title=Bad Gateway}");
 
 	public void create(final byte[] content) {
 		final var invoiceEntity = toInvoiceEntity(content);
@@ -97,72 +74,14 @@ public class InvoiceService {
 		}
 
 		try {
-			if (IN_EXCHANGE == invoiceEntity.getSource()) {
-				final var inExchangeInvoice = toInExchangeInvoice(invoiceEntity.getContent());
-				invoiceCacheClient.sendInvoice(toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice)));
-				invoiceRepository.save(invoiceEntity.withStatus(PROCESSED));
-			}
-
-			 // TODO: Remove all logic regarding Stralfors invoices after completion of Stralfors invoices import
-			else if (STRALFORS == invoiceEntity.getSource()) {
-				final var stralforsFile = StralforsMapper.toStralforsFile(invoiceEntity.getContent());
-				invoiceCacheClient.sendInvoice(
-					StralforsMapper.toInvoicePdfRequest(stralforsFile,
-						translateToLegalId(
-							ImportUtility.getEntryValue(stralforsFile, ImportUtility.ENTRY_KEY_CUSTOMER_NBR))));
-
-				invoiceRepository.save(invoiceEntity.withStatus(PROCESSED));
-
-				// Put to sleep 1ms
-				hibernate();
-			}
-
+			final var inExchangeInvoice = toInExchangeInvoice(invoiceEntity.getContent());
+			invoiceCacheClient.sendInvoice(toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice)));
+			invoiceRepository.save(invoiceEntity.withStatus(PROCESSED));
 		} catch (final Exception e) {
 			LOGGER.error("Error when sending invoice with id: {}. Message: {}", id, e.getMessage());
 			invoiceRepository.save(invoiceEntity
 				.withStatus(EXPORT_FAILED)
 				.withStatusMessage(e.getMessage()));
 		}
-	}
-
-	private void hibernate() {
-		try {
-			Thread.sleep(2);
-		} catch (final InterruptedException e) { // NOSONAR
-			LOGGER.info("Hibernation interrupted");
-		}
-	}
-
-	private String translateToLegalId(String customerNbr) {
-		try {
-			final var engagements = dwrClient.getCustomerEngagement(customerNbr);
-
-			return engagements.getCustomerEngagements().stream()
-				.findAny()
-				.map(this::fetchLegalId)
-				.orElse(Optional.empty())
-				.orElse(null);
-
-		} catch (final Exception e) {
-			if (ACCEPTED_LEGALID_TRANSLATION_ERROR_RESPONSES.contains(e.getMessage())) {
-				return null;
-			}
-			throw e;
-		}
-	}
-
-	private Optional<String> fetchLegalId(CustomerEngagement customerEngagement) {
-		return Stream.ofNullable(customerEngagement.getCustomerType())
-			.map(this::toPartyType)
-			.map(partyType -> partyClient.getLegalId(partyType, customerEngagement.getPartyId()))
-			.findAny()
-			.orElse(Optional.empty());
-	}
-
-	private PartyType toPartyType(CustomerType customerType) {
-		return switch (customerType) {
-			case ENTERPRISE -> PartyType.ENTERPRISE;
-			case PRIVATE -> PartyType.PRIVATE;
-		};
 	}
 }
