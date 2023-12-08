@@ -57,7 +57,7 @@ public class InvoiceEntity {
 	@TimeZoneStorage(NORMALIZE)
 	private OffsetDateTime processed;
 
-	@Column(name = "status", nullable = false)
+	@Column(name = "status", nullable = false, columnDefinition = "varchar(255)")
 	@Enumerated(STRING)
 	private Status status;
 

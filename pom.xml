@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>3.4</version>
+		<version>4.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
@@ -27,7 +27,6 @@
 		<cron-expression-descriptor.version>1.2.8</cron-expression-descriptor.version>
 		<librepdf.version>1.3.33</librepdf.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
-		<generated-sources-java-path>src/main/java</generated-sources-java-path>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -101,30 +100,11 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${generated-sources-path}/${generated-sources-java-path}</source>
+								<source>${generated-sources-path}</source>
 							</sources>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>${jaxb2-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<sources>
-						<source>src/main/resources/schema/InExchangeInvoiceStatusSchema.xsd</source>
-					</sources>
-					<packageName>generated.se.inexchange</packageName>
-					<outputDirectory>${generated-sources-path}/${generated-sources-java-path}</outputDirectory>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -139,7 +119,6 @@
 			<plugin>
 				<groupId>org.openapitools</groupId>
 				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>${openapi-generator-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>invoicecache-api</id>
@@ -156,7 +135,7 @@
 								<useSpringBoot3>true</useSpringBoot3>
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
-								<sourceFolder>${generated-sources-java-path}</sourceFolder>
+								<sourceFolder>models</sourceFolder>
 								<dateLibrary>java8</dateLibrary>
 								<modelPackage>generated.se.sundsvall.invoicecache</modelPackage>
 								<openApiNullable>false</openApiNullable>
@@ -180,7 +159,7 @@
 								<useSpringBoot3>true</useSpringBoot3>
 								<useBeanValidation>false</useBeanValidation>
 								<useSwaggerAnnotations>false</useSwaggerAnnotations>
-								<sourceFolder>${generated-sources-java-path}</sourceFolder>
+								<sourceFolder>models</sourceFolder>
 								<dateLibrary>java8</dateLibrary>
 								<modelPackage>generated.se.sundsvall.messaging</modelPackage>
 								<openApiNullable>false</openApiNullable>
@@ -190,6 +169,26 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>${jaxb2-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<sources>
+						<source>src/main/resources/schema/InExchangeInvoiceStatusSchema.xsd</source>
+					</sources>
+					<packageName>generated.se.inexchange</packageName>
+					<clearOutputDir>false</clearOutputDir>
+					<outputDirectory>${generated-sources-path}</outputDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
