@@ -11,7 +11,6 @@ import static se.sundsvall.seabloader.service.mapper.InvoiceMapper.toInvoicePdfR
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
@@ -25,14 +24,15 @@ public class InvoiceService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
 	private static final Status[] STATUSES_OF_INVOICES_TO_SEND = { UNPROCESSED, EXPORT_FAILED };
 
-	@Autowired
-	private InvoiceRepository invoiceRepository;
+	private final InvoiceRepository invoiceRepository;
+	private final InvoicePdfMerger invoicePdfMerger;
+	private final InvoiceCacheClient invoiceCacheClient;
 
-	@Autowired
-	private InvoicePdfMerger invoicePdfMerger;
-
-	@Autowired
-	private InvoiceCacheClient invoiceCacheClient;
+	public InvoiceService(InvoiceRepository invoiceRepository, InvoicePdfMerger invoicePdfMerger, InvoiceCacheClient invoiceCacheClient) {
+		this.invoiceRepository = invoiceRepository;
+		this.invoicePdfMerger = invoicePdfMerger;
+		this.invoiceCacheClient = invoiceCacheClient;
+	}
 
 	public void create(final byte[] content) {
 		final var invoiceEntity = toInvoiceEntity(content);

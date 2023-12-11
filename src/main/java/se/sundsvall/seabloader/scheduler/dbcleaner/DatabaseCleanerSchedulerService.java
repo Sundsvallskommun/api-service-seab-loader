@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -32,8 +31,11 @@ public class DatabaseCleanerSchedulerService extends AbstractScheduler {
 	private static final int DELETE_CHUNK_SIZE = 10;
 	private static final Status[] STATUS_FOR_ENTITIES_TO_REMOVE = { PROCESSED };
 
-	@Autowired
-	private InvoiceRepository invoiceRepository;
+	private final InvoiceRepository invoiceRepository;
+
+	public DatabaseCleanerSchedulerService(InvoiceRepository invoiceRepository) {
+		this.invoiceRepository = invoiceRepository;
+	}
 
 	@Override
 	@Scheduled(cron = "${scheduler.dbcleaner.cron.expression:-}")
