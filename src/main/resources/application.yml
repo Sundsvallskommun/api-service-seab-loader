@@ -78,8 +78,10 @@ resilience4j:
 #-------------------------------------------------------------------------------
 logbook:
     exclusionfilters:
-        json-path: '{''$..content'' : ''[base64]''}'
-        x-path: '{''//*[contains(@name, ".pdf")]'' : ''[base64]''}'
+        json-path:
+            $..content: [base64]
+        x-path: 
+            '*[contains(@name, ".pdf")]': [base64]
 logging:
     level:
         org:

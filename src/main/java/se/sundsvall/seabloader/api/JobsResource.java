@@ -4,7 +4,6 @@ import static org.springframework.http.MediaType.ALL_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.noContent;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +25,11 @@ import se.sundsvall.seabloader.service.AsyncExecutorService;
 @RequestMapping("/jobs")
 public class JobsResource {
 
-	@Autowired
-	private AsyncExecutorService asyncExecutorService;
+	private final AsyncExecutorService asyncExecutorService;
+
+	public JobsResource(AsyncExecutorService asyncExecutorService) {
+		this.asyncExecutorService = asyncExecutorService;
+	}
 
 	@PostMapping(path = "/invoiceexporter", produces = APPLICATION_PROBLEM_JSON_VALUE)
 	@Operation(summary = "Triggers export invoices (to InvoiceCache) job.", description = "Triggers export invoices (to InvoiceCache) job.")

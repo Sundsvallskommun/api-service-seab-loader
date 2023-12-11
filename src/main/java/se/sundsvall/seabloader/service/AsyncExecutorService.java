@@ -1,6 +1,5 @@
 package se.sundsvall.seabloader.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +16,19 @@ import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
 @Service
 public class AsyncExecutorService {
 
-	@Autowired
-	private InvoiceExportSchedulerService invoiceExportSchedulerService;
+	private final InvoiceExportSchedulerService invoiceExportSchedulerService;
+	private final NotifierSchedulerService notifierSchedulerService;
+	private final DatabaseCleanerSchedulerService databaseCleanerSchedulerService;
 
-	@Autowired
-	private NotifierSchedulerService notifierSchedulerService;
+	public AsyncExecutorService(
+		InvoiceExportSchedulerService invoiceExportSchedulerService,
+		NotifierSchedulerService notifierSchedulerService,
+		DatabaseCleanerSchedulerService databaseCleanerSchedulerService) {
 
-	@Autowired
-	private DatabaseCleanerSchedulerService databaseCleanerSchedulerService;
+		this.invoiceExportSchedulerService = invoiceExportSchedulerService;
+		this.notifierSchedulerService = notifierSchedulerService;
+		this.databaseCleanerSchedulerService = databaseCleanerSchedulerService;
+	}
 
 	@Async
 	public void invoiceExportExecute() {

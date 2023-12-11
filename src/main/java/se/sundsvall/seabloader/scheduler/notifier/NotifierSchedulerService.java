@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -52,11 +51,13 @@ public class NotifierSchedulerService extends AbstractScheduler {
 	@Value("${notification.mail.sender.address:}")
 	private String mailSenderAddress;
 
-	@Autowired
-	private InvoiceRepository invoiceRepository;
+	private final InvoiceRepository invoiceRepository;
+	private final MessagingClient messagingClient;
 
-	@Autowired
-	private MessagingClient messagingClient;
+	public NotifierSchedulerService(InvoiceRepository invoiceRepository, MessagingClient messagingClient) {
+		this.invoiceRepository = invoiceRepository;
+		this.messagingClient = messagingClient;
+	}
 
 	@Override
 	@Scheduled(cron = "${scheduler.notifier.cron.expression:-}")
@@ -116,8 +117,8 @@ public class NotifierSchedulerService extends AbstractScheduler {
 	 * - The status map is not empty
 	 * - The status map contains one of the keys EXPORT_FAILED or IMPORT_FAILED with a positive entry-value.
 	 *
-	 * @param statusMap the statusMap to check
-	 * @return true if condition is met, false otherwise.
+	 * @param  statusMap the statusMap to check
+	 * @return           true if condition is met, false otherwise.
 	 */
 	private boolean matchesSendFailureNotificationCondition(final EnumMap<Status, Long> statusMap) {
 		if (isEmpty(statusMap)) {

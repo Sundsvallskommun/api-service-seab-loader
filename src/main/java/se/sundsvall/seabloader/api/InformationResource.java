@@ -6,7 +6,6 @@ import static org.springframework.http.ResponseEntity.ok;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +28,11 @@ import se.sundsvall.seabloader.scheduler.SchedulerService;
 @Tag(name = "Information", description = "Information resources")
 public class InformationResource {
 
-	@Autowired
-	private List<SchedulerService> scheduleServiceList;
+	private final List<SchedulerService> scheduleServiceList;
+
+	public InformationResource(List<SchedulerService> scheduleServiceList) {
+		this.scheduleServiceList = scheduleServiceList;
+	}
 
 	@GetMapping(path = "/schedulers", produces = { APPLICATION_JSON_VALUE })
 	@Operation(summary = "Scheduler information")
