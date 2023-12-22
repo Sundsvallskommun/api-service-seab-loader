@@ -15,6 +15,6 @@ config:
       readTimeout: 20
   scheduler:
     cron:
-      dbcleaner: "-"
-      invoiceexporter: "-"
-      notifier: "-"
+      dbcleaner: '-'
+      invoiceexporter: '-'
+      notifier: '-'
