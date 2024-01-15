@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>4.0</version>
+		<version>4.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
@@ -24,7 +24,7 @@
 		<org-apache-pdfbox.version>3.0.1</org-apache-pdfbox.version>
 		<guava.version>33.0.0-jre</guava.version>
 		<cron-expression-descriptor.version>1.2.8</cron-expression-descriptor.version>
-		<librepdf.version>1.3.35</librepdf.version>
+		<librepdf.version>1.3.36</librepdf.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 	</properties>
 	<dependencies>
