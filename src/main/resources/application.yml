@@ -61,11 +61,13 @@ resilience4j:
       messaging:
         ignoreExceptions: se.sundsvall.dept44.exception.ClientProblem
 logbook:
-  exclusionfilters:
+  body-filters:
     json-path:
-      '$..content': '[base64]'
+     - key: '$..content'
+       value: '[base64]'
     x-path:
-      '*[contains(@name, ".pdf")]': '[base64]'
+     - key: '*[contains(@name, ".pdf")]'
+       value: '[base64]'
 logging:
   level:
     org:
