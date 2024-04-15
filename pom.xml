@@ -20,7 +20,7 @@
 		<published.container.port.production>8911</published.container.port.production>
 		<app.jvm.xmx.mb>768</app.jvm.xmx.mb>
 		<!-- Service properties -->
-		<jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
+		<jaxb2-maven-plugin.version>3.2.0</jaxb2-maven-plugin.version>
 		<org-apache-pdfbox.version>3.0.2</org-apache-pdfbox.version>
 		<guava.version>33.1.0-jre</guava.version>
 		<cron-expression-descriptor.version>1.2.10</cron-expression-descriptor.version>
