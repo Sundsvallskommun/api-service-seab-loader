@@ -23,7 +23,7 @@
 		<jaxb2-maven-plugin.version>3.1.0</jaxb2-maven-plugin.version>
 		<org-apache-pdfbox.version>3.0.2</org-apache-pdfbox.version>
 		<guava.version>33.1.0-jre</guava.version>
-		<cron-expression-descriptor.version>1.2.9</cron-expression-descriptor.version>
+		<cron-expression-descriptor.version>1.2.10</cron-expression-descriptor.version>
 		<librepdf.version>2.0.2</librepdf.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 	</properties>
