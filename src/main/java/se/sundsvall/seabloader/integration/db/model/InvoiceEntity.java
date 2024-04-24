@@ -1,6 +1,5 @@
 package se.sundsvall.seabloader.integration.db.model;
 
-import static jakarta.persistence.EnumType.STRING;
 import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 import java.time.OffsetDateTime;
@@ -12,7 +11,6 @@ import org.hibernate.annotations.TimeZoneStorage;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -57,8 +55,7 @@ public class InvoiceEntity {
 	@TimeZoneStorage(NORMALIZE)
 	private OffsetDateTime processed;
 
-	@Column(name = "status", nullable = false, columnDefinition = "varchar(255)")
-	@Enumerated(STRING)
+	@Column(name = "status", nullable = false)
 	private Status status;
 
 	@Column(name = "status_message", length = Length.LONG32)

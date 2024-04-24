@@ -21,6 +21,7 @@ import se.sundsvall.seabloader.scheduler.AbstractScheduler;
 @Service
 @ConfigurationProperties("scheduler.dbcleaner.cron")
 public class DatabaseCleanerSchedulerService extends AbstractScheduler {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseCleanerSchedulerService.class);
 	private static final String LOG_CLEANING_STARTED = "Beginning removal of obsolete entities in the database";
 	private static final String LOG_ENTITIES_REMOVAL = "Removing a total of {} obsolete entities having status {}";

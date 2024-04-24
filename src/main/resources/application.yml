@@ -66,7 +66,9 @@ logbook:
      - key: '$..content'
        value: '[base64]'
     x-path:
-     - key: '*[contains(@name, ".pdf")]'
+     - key: '//OriginalInvoice'
+       value: '[base64]'
+     - key: '//Attachments'
        value: '[base64]'
 logging:
   level:
