@@ -20,7 +20,8 @@
 					"sender": {
 						"name": "api-seab-loader",
 						"address": "dummy@host.com"
-					}
+					},
+					"attachments" : [ ]
 				}
 			}
 		]
