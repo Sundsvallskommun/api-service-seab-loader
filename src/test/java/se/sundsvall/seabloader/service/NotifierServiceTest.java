@@ -26,7 +26,7 @@ import se.sundsvall.seabloader.integration.messaging.MessagingClient;
 import generated.se.sundsvall.messaging.EmailRequest;
 
 @ExtendWith(MockitoExtension.class)
-public class NotifierServiceTest {
+class NotifierServiceTest {
 
 	@Mock
 	private InvoiceRepository invoiceRepositoryMock;

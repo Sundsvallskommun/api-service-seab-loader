@@ -20,7 +20,7 @@ import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 
 @ExtendWith(MockitoExtension.class)
-public class DatabaseCleanerServiceTest {
+class DatabaseCleanerServiceTest {
 
 	@Mock
 	private InvoiceRepository invoiceRepositoryMock;
