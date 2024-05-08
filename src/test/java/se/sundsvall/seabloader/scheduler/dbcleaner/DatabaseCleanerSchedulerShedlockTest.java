@@ -36,7 +36,7 @@ import se.sundsvall.seabloader.service.DatabaseCleanerService;
 	"spring.lifecycle.timeout-per-shutdown-phase=0s"
 })
 @ActiveProfiles("junit")
-public class DatabaseCleanerSchedulerShedlockTest {
+class DatabaseCleanerSchedulerShedlockTest {
 
 	@TestConfiguration
 	public static class ShedlockTestConfiguration {

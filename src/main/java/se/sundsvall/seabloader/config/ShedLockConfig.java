@@ -13,10 +13,10 @@ import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 
 @Configuration
 @ExcludeFromJacocoGeneratedCoverageReport
-public class ShedLockConfig {
+class ShedLockConfig {
 
 	@Bean
-	public LockProvider lockProvider(DataSource dataSource) {
+	LockProvider lockProvider(DataSource dataSource) {
 		return new JdbcTemplateLockProvider(
 			JdbcTemplateLockProvider.Configuration.builder()
 				.usingDbTime()

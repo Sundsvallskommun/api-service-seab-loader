@@ -36,7 +36,7 @@ import se.sundsvall.seabloader.service.NotifierService;
 	"spring.lifecycle.timeout-per-shutdown-phase=0s"
 })
 @ActiveProfiles("junit")
-public class NotifierSchedulerShedlockTest {
+class NotifierSchedulerShedlockTest {
 
 	@TestConfiguration
 	public static class ShedlockTestConfiguration {

@@ -36,7 +36,7 @@ import se.sundsvall.seabloader.service.InvoiceService;
 	"spring.lifecycle.timeout-per-shutdown-phase=0s"
 })
 @ActiveProfiles("junit")
-public class InvoiceExportSchedulerShedlockTest {
+class InvoiceExportSchedulerShedlockTest {
 
 
 	@TestConfiguration
