@@ -9,21 +9,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerSchedulerService;
-import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportSchedulerService;
-import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
+import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerScheduler;
+import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportScheduler;
+import se.sundsvall.seabloader.scheduler.notifier.NotifierScheduler;
 
 @ExtendWith(MockitoExtension.class)
 class AsyncExecutorServiceTest {
 
 	@Mock
-	private InvoiceExportSchedulerService invoiceExportSchedulerServiceMock;
+	private InvoiceExportScheduler invoiceExportSchedulerMock;
 
 	@Mock
-	private NotifierSchedulerService notifierSchedulerServiceMock;
+	private NotifierScheduler notifierSchedulerMock;
 
 	@Mock
-	private DatabaseCleanerSchedulerService databaseCleanerSchedulerServiceMock;
+	private DatabaseCleanerScheduler databaseCleanerSchedulerMock;
 
 	@InjectMocks
 	private AsyncExecutorService asyncExecutorService;
@@ -35,9 +35,9 @@ class AsyncExecutorServiceTest {
 		asyncExecutorService.databaseCleanerExecute();
 
 		// Verification
-		verify(databaseCleanerSchedulerServiceMock).execute();
-		verifyNoInteractions(notifierSchedulerServiceMock);
-		verifyNoInteractions(invoiceExportSchedulerServiceMock);
+		verify(databaseCleanerSchedulerMock).execute();
+		verifyNoInteractions(notifierSchedulerMock);
+		verifyNoInteractions(invoiceExportSchedulerMock);
 	}
 
 	@Test
@@ -46,9 +46,9 @@ class AsyncExecutorServiceTest {
 		// Call
 		asyncExecutorService.invoiceExportExecute();
 
-		verify(invoiceExportSchedulerServiceMock).execute();
-		verifyNoInteractions(notifierSchedulerServiceMock);
-		verifyNoInteractions(databaseCleanerSchedulerServiceMock);
+		verify(invoiceExportSchedulerMock).execute();
+		verifyNoInteractions(notifierSchedulerMock);
+		verifyNoInteractions(databaseCleanerSchedulerMock);
 	}
 
 	@Test
@@ -57,8 +57,8 @@ class AsyncExecutorServiceTest {
 		// Call
 		asyncExecutorService.notifierExecute();
 
-		verify(notifierSchedulerServiceMock).execute();
-		verifyNoInteractions(invoiceExportSchedulerServiceMock);
-		verifyNoInteractions(databaseCleanerSchedulerServiceMock);
+		verify(notifierSchedulerMock).execute();
+		verifyNoInteractions(invoiceExportSchedulerMock);
+		verifyNoInteractions(databaseCleanerSchedulerMock);
 	}
 }

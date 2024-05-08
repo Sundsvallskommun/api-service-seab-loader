@@ -11,8 +11,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerSchedulerService;
-import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
+import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerScheduler;
+import se.sundsvall.seabloader.scheduler.notifier.NotifierScheduler;
 import se.sundsvall.seabloader.service.AsyncExecutorService;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -24,10 +24,10 @@ class JobsResourceTest {
 	private AsyncExecutorService asyncExecutorService;
 
 	@MockBean
-	private NotifierSchedulerService notifierSchedulerService;
+	private NotifierScheduler notifierScheduler;
 
 	@MockBean
-	private DatabaseCleanerSchedulerService databaseCleanerSchedulerService;
+	private DatabaseCleanerScheduler databaseCleanerScheduler;
 
 	@Autowired
 	private WebTestClient webTestClient;

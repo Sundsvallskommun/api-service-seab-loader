@@ -8,10 +8,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import se.sundsvall.dept44.ServiceApplication;
 
+import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
+
 @ServiceApplication
 @EnableFeignClients
 @EnableScheduling
 @EnableAsync
+@EnableSchedulerLock(defaultLockAtMostFor = "PT2M")
 public class Application {
 	public static void main(final String... args) {
 		run(Application.class, args);

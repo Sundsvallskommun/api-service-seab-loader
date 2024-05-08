@@ -7,7 +7,7 @@ config:
   jpa:
     action: update
   flyway:
-    enabled: false
+    enabled: true
   notification:
     recipient: dummy@host.com
     sender: dummy@host.com
@@ -37,12 +37,15 @@ config:
 spring:
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mariadb:10.6.4:///
   jpa:
     properties:
       jakarta:
         persistence:
           schema-generation:
             create-source: metadata
+            database:
+              action: update
             scripts:
               action: create
               create-target: target/database/generated-schema.sql
