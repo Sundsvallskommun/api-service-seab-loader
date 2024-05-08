@@ -30,7 +30,7 @@ public class NotifierService {
 	private static final String NOTIFICATION_BODY_INTRODUCTION = "Failed record(s) exist in %s-database! \n";
 	private static final String NOTIFICATION_BODY_ROW = "\n%-20s\t%s records";
 
-	@Value("${spring.application.name:}")
+	@Value("${spring.application.name}")
 	private String applicationName;
 
 	@Value("${spring.profiles.active:}")
@@ -39,10 +39,10 @@ public class NotifierService {
 	@Value("${notification.mail.enabled:true}")
 	private boolean mailNotificationEnabled;
 
-	@Value("${notification.mail.recipient.address:}")
+	@Value("${notification.mail.recipient.address}")
 	private String mailRecipientAddress;
 
-	@Value("${notification.mail.sender.address:}")
+	@Value("${notification.mail.sender.address}")
 	private String mailSenderAddress;
 
 	private final InvoiceRepository invoiceRepository;
