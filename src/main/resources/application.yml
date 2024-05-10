@@ -63,13 +63,13 @@ resilience4j:
 logbook:
   body-filters:
     json-path:
-     - key: '$..content'
-       value: '[base64]'
+      - key: '$..content'
+        value: '[base64]'
     x-path:
-     - key: '//OriginalInvoice'
-       value: '[base64]'
-     - key: '//Attachments'
-       value: '[base64]'
+      - key: '//OriginalInvoice'
+        value: '[base64]'
+      - key: '//Attachments'
+        value: '[base64]'
 logging:
   level:
     org:
@@ -94,3 +94,4 @@ scheduler:
   notifier:
     cron:
       expression: '${config.scheduler.cron.notifier}'
+  shedlock-lock-at-most-for: PT2M

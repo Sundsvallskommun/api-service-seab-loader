@@ -1,4 +1,4 @@
-package se.sundsvall.seabloader.scheduler.notifier;
+package se.sundsvall.seabloader.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,12 +20,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import generated.se.sundsvall.messaging.EmailRequest;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.messaging.MessagingClient;
 
+import generated.se.sundsvall.messaging.EmailRequest;
+
 @ExtendWith(MockitoExtension.class)
-class NotifierSchedulerServiceTest {
+class NotifierServiceTest {
 
 	@Mock
 	private InvoiceRepository invoiceRepositoryMock;
@@ -37,7 +38,7 @@ class NotifierSchedulerServiceTest {
 	private ArgumentCaptor<EmailRequest> emailRequestCaptor;
 
 	@InjectMocks
-	private NotifierSchedulerService service;
+	private NotifierService service;
 
 	@BeforeEach
 	void setup() {
@@ -55,7 +56,7 @@ class NotifierSchedulerServiceTest {
 		when(invoiceRepositoryMock.countByStatusIn(any())).thenReturn(0L);
 
 		// Call.
-		service.execute();
+		service.sendFailureNotification();
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(UNPROCESSED);
@@ -75,7 +76,7 @@ class NotifierSchedulerServiceTest {
 		when(invoiceRepositoryMock.countByStatusIn(PROCESSED)).thenReturn(0L);
 
 		// Call.
-		service.execute();
+		service.sendFailureNotification();
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(UNPROCESSED);
@@ -110,7 +111,7 @@ class NotifierSchedulerServiceTest {
 		when(invoiceRepositoryMock.countByStatusIn(PROCESSED)).thenReturn(0L);
 
 		// Call.
-		service.execute();
+		service.sendFailureNotification();
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(UNPROCESSED);
@@ -142,7 +143,7 @@ class NotifierSchedulerServiceTest {
 		setField(service, "mailNotificationEnabled", false);
 
 		// Call.
-		service.execute();
+		service.sendFailureNotification();
 
 		// Verification.
 		verifyNoInteractions(invoiceRepositoryMock);

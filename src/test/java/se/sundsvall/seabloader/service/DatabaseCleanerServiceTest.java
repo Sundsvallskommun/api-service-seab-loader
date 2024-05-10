@@ -1,4 +1,4 @@
-package se.sundsvall.seabloader.scheduler.dbcleaner;
+package se.sundsvall.seabloader.service;
 
 import static java.util.stream.LongStream.rangeClosed;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,13 +20,13 @@ import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 
 @ExtendWith(MockitoExtension.class)
-class DatabaseCleanerSchedulerServiceTest {
+class DatabaseCleanerServiceTest {
 
 	@Mock
 	private InvoiceRepository invoiceRepositoryMock;
 
 	@InjectMocks
-	private DatabaseCleanerSchedulerService service;
+	private DatabaseCleanerService service;
 
 	@Test
 	void executeWithEntitiesToRemove() {
@@ -38,7 +38,7 @@ class DatabaseCleanerSchedulerServiceTest {
 		when(invoiceRepositoryMock.findIdsByStatusIn(PROCESSED)).thenReturn(entityIdsToRemove);
 
 		// Call.
-		service.execute();
+		service.cleanDatabase();
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(PROCESSED);
@@ -53,7 +53,7 @@ class DatabaseCleanerSchedulerServiceTest {
 	@Test
 	void executeWithNoEntitiesToRemove() {
 		// Call.
-		service.execute();
+		service.cleanDatabase();
 
 		// Verification.
 		verify(invoiceRepositoryMock).countByStatusIn(PROCESSED);

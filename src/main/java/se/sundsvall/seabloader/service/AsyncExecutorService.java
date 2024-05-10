@@ -3,45 +3,45 @@ package se.sundsvall.seabloader.service;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerSchedulerService;
-import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportSchedulerService;
-import se.sundsvall.seabloader.scheduler.notifier.NotifierSchedulerService;
+import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerScheduler;
+import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportScheduler;
+import se.sundsvall.seabloader.scheduler.notifier.NotifierScheduler;
 
 /**
  * Class responsible for async-execution of the *SchedulerServices.
- *
+ * <p>
  * The purpose with this is to detach the execution from the calling thread
  * when the call is initialized from the REST-API.
  */
 @Service
 public class AsyncExecutorService {
 
-	private final InvoiceExportSchedulerService invoiceExportSchedulerService;
-	private final NotifierSchedulerService notifierSchedulerService;
-	private final DatabaseCleanerSchedulerService databaseCleanerSchedulerService;
+	private final InvoiceExportScheduler invoiceExportScheduler;
+	private final NotifierScheduler notifierScheduler;
+	private final DatabaseCleanerScheduler databaseCleanerScheduler;
 
 	public AsyncExecutorService(
-		InvoiceExportSchedulerService invoiceExportSchedulerService,
-		NotifierSchedulerService notifierSchedulerService,
-		DatabaseCleanerSchedulerService databaseCleanerSchedulerService) {
+		InvoiceExportScheduler invoiceExportScheduler,
+		NotifierScheduler notifierScheduler,
+		DatabaseCleanerScheduler databaseCleanerScheduler) {
 
-		this.invoiceExportSchedulerService = invoiceExportSchedulerService;
-		this.notifierSchedulerService = notifierSchedulerService;
-		this.databaseCleanerSchedulerService = databaseCleanerSchedulerService;
+		this.invoiceExportScheduler = invoiceExportScheduler;
+		this.notifierScheduler = notifierScheduler;
+		this.databaseCleanerScheduler = databaseCleanerScheduler;
 	}
 
 	@Async
 	public void invoiceExportExecute() {
-		invoiceExportSchedulerService.execute();
+		invoiceExportScheduler.execute();
 	}
 
 	@Async
 	public void notifierExecute() {
-		notifierSchedulerService.execute();
+		notifierScheduler.execute();
 	}
 
 	@Async
 	public void databaseCleanerExecute() {
-		databaseCleanerSchedulerService.execute();
+		databaseCleanerScheduler.execute();
 	}
 }

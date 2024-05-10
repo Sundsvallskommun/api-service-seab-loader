@@ -39,8 +39,8 @@ class InformationResourceTest {
 			.extracting(
 				SchedulerInformation::getDescription, SchedulerInformation::getExpression, SchedulerInformation::getName)
 			.containsExactly(
-				tuple("At 07:00, every day, only on Sunday", "0 0 7 * * 7", "DatabaseCleanerSchedulerService"),
-				tuple("Every hour, every day", "0 0 */1 * * *", "InvoiceExportSchedulerService"),
-				tuple("At 08:00, every day, Monday through Friday", "0 0 8 * * MON-FRI", "NotifierSchedulerService"));
+				tuple("At 07:00, every day, only on Sunday", "0 0 7 * * 7", "DatabaseCleanerScheduler"),
+				tuple("Every hour, every day", "0 0 */1 * * *", "InvoiceExportScheduler"),
+				tuple("At 08:00, every day, Monday through Friday", "0 0 8 * * MON-FRI", "NotifierScheduler"));
 	}
 }
