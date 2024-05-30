@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>se.sundsvall.dept44</groupId>
 		<artifactId>dept44-service-parent</artifactId>
-		<version>5.0.0</version>
+		<version>5.0.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>se.sundsvall</groupId>
@@ -14,10 +14,6 @@
 	<name>api-service-seab-loader</name>
 	<description>Load pdf-invoices to InvoiceCache</description>
 	<properties>
-		<!-- Pipeline properties -->
-		<docker.image.name>ms-seab-loader</docker.image.name>
-		<published.container.port.test>8912</published.container.port.test>
-		<published.container.port.production>8911</published.container.port.production>
 		<app.jvm.xmx.mb>768</app.jvm.xmx.mb>
 		<!-- Service properties -->
 		<jaxb2-maven-plugin.version>3.2.0</jaxb2-maven-plugin.version>
