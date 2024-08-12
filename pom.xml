@@ -20,7 +20,7 @@
 		<org-apache-pdfbox.version>3.0.3</org-apache-pdfbox.version>
 		<guava.version>33.2.1-jre</guava.version>
 		<cron-expression-descriptor.version>1.2.10</cron-expression-descriptor.version>
-		<librepdf.version>2.0.2</librepdf.version>
+		<librepdf.version>2.0.3</librepdf.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 		<shedlock.version>5.14.0</shedlock.version>
 	</properties>
