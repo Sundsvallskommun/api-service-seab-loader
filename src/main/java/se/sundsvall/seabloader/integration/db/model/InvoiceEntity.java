@@ -5,9 +5,6 @@ import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
-import org.hibernate.Length;
-import org.hibernate.annotations.TimeZoneStorage;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -17,17 +14,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+
+import org.hibernate.Length;
+import org.hibernate.annotations.TimeZoneStorage;
+
 import se.sundsvall.seabloader.integration.db.listener.InvoiceEntityListener;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 
 @Entity
 @Table(name = "invoice",
 	uniqueConstraints = {
-		@UniqueConstraint(name = "invoice_unique_invoice_id_constraint", columnNames = { "invoice_id" })
+		@UniqueConstraint(name = "invoice_unique_invoice_id_constraint", columnNames = {"invoice_id"})
 	},
 	indexes = {
 		@Index(name = "invoice_invoice_id_index", columnList = "invoice_id"),
-		@Index(name = "invoice_status_index", columnList = "status")
+		@Index(name = "invoice_status_index", columnList = "status"),
+		@Index(name = "invoice_municipality_id_index", columnList = "municipality_id")
 	})
 @EntityListeners(InvoiceEntityListener.class)
 public class InvoiceEntity {
@@ -36,6 +38,9 @@ public class InvoiceEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
+
+	@Column(name = "municipality_id", length = 4)
+	private String municipalityId;
 
 	@Column(name = "invoice_id")
 	private String invoiceId;
@@ -75,6 +80,19 @@ public class InvoiceEntity {
 
 	public InvoiceEntity withId(final long id) {
 		this.id = id;
+		return this;
+	}
+
+	public String getMunicipalityId() {
+		return municipalityId;
+	}
+
+	public void setMunicipalityId(final String municipalityId) {
+		this.municipalityId = municipalityId;
+	}
+
+	public InvoiceEntity withMunicipalityId(final String municipalityId) {
+		this.municipalityId = municipalityId;
 		return this;
 	}
 
@@ -170,27 +188,30 @@ public class InvoiceEntity {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(content, created, id, invoiceId, modified, processed, status, statusMessage);
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof final InvoiceEntity other)) {
-			return false;
-		}
-		return Objects.equals(content, other.content) && Objects.equals(created, other.created) && (id == other.id) && Objects.equals(invoiceId, other.invoiceId) && Objects.equals(modified, other.modified) && Objects.equals(processed, other.processed)
-			&& (status == other.status) && Objects.equals(statusMessage, other.statusMessage);
-	}
-
-	@Override
 	public String toString() {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("InvoiceEntity [id=").append(id).append(", invoiceId=").append(invoiceId).append(", content=").append(content).append(", created=").append(created).append(", modified=").append(modified).append(", processed=").append(processed)
-			.append(", status=").append(status).append(", statusMessage=").append(statusMessage).append("]");
-		return builder.toString();
+		return "InvoiceEntity{" +
+			"id=" + id +
+			", municipalityId='" + municipalityId + '\'' +
+			", invoiceId='" + invoiceId + '\'' +
+			", content='" + content + '\'' +
+			", created=" + created +
+			", modified=" + modified +
+			", processed=" + processed +
+			", status=" + status +
+			", statusMessage='" + statusMessage + '\'' +
+			'}';
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final InvoiceEntity that = (InvoiceEntity) o;
+		return id == that.id && Objects.equals(municipalityId, that.municipalityId) && Objects.equals(invoiceId, that.invoiceId) && Objects.equals(content, that.content) && Objects.equals(created, that.created) && Objects.equals(modified, that.modified) && Objects.equals(processed, that.processed) && status == that.status && Objects.equals(statusMessage, that.statusMessage);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, municipalityId, invoiceId, content, created, modified, processed, status, statusMessage);
 	}
 }

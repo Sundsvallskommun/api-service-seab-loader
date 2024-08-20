@@ -7,7 +7,7 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 
-import java.io.IOException;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,8 @@ import se.sundsvall.seabloader.service.InvoiceService;
 @ActiveProfiles("junit")
 class InvoicesResourceFailuresTest {
 
-	private static final String PATH = "/invoices";
+	private static final String MUNICIPALITY_ID = "2281";
+	private static final String PATH = "/{municipalityId}/invoices";
 
 	@MockBean
 	private InvoiceService invoiceService;
@@ -33,10 +34,10 @@ class InvoicesResourceFailuresTest {
 	private WebTestClient webTestClient;
 
 	@Test
-	void createInvoiceEmptyContent() throws IOException {
+	void createInvoiceEmptyContent() {
 
 		// Call
-		final var response = webTestClient.post().uri(PATH)
+		final var response = webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_XML)
 			.exchange()
 			.expectStatus().isBadRequest()
@@ -49,16 +50,16 @@ class InvoicesResourceFailuresTest {
 		assertThat(response.getTitle()).isEqualTo("Bad Request");
 		assertThat(response.getStatus()).isEqualTo(Status.BAD_REQUEST);
 		assertThat(response.getDetail()).isEqualTo("Required request body is missing: "
-			+ "public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.seabloader.api.InvoicesResource.createInvoice(byte[])");
+			+ "public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.seabloader.api.InvoicesResource.createInvoice(java.lang.String,byte[])");
 
 		verifyNoInteractions(invoiceService);
 	}
 
 	@Test
-	void createInvoiceWrongContentType() throws IOException {
+	void createInvoiceWrongContentType() {
 
 		// Call
-		final var response = webTestClient.post().uri(PATH)
+		final var response = webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.exchange()
 			.expectStatus().isEqualTo(UNSUPPORTED_MEDIA_TYPE)

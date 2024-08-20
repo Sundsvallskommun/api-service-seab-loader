@@ -4,6 +4,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +20,9 @@ import se.sundsvall.seabloader.service.AsyncExecutorService;
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
 class JobsResourceTest {
-	private static final String PATH = "/jobs";
+
+	private static final String MUNICIPALITY_ID = "2281";
+	private static final String PATH = "/{municipalityId}/jobs";
 
 	@MockBean
 	private AsyncExecutorService asyncExecutorService;
@@ -36,7 +40,8 @@ class JobsResourceTest {
 	void invoiceexporter() {
 
 		// Call
-		webTestClient.post().uri(PATH + "/invoiceexporter")
+		webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH + "/invoiceexporter")
+				.build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isNoContent();
 
@@ -50,7 +55,8 @@ class JobsResourceTest {
 	void dbcleaner() {
 
 		// Call
-		webTestClient.post().uri(PATH + "/dbcleaner")
+		webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH + "/dbcleaner")
+				.build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isNoContent();
 
@@ -64,7 +70,8 @@ class JobsResourceTest {
 	void notifier() {
 
 		// Call
-		webTestClient.post().uri(PATH + "/notifier")
+		webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH + "/notifier")
+				.build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isNoContent();
 

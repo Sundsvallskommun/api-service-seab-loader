@@ -15,12 +15,15 @@ import se.sundsvall.seabloader.Application;
 @WireMockAppTestSuite(files = "classpath:/ReadInformationIT/", classes = Application.class)
 class ReadInformationIT extends AbstractAppTest {
 
+	private static final String MUNICIPALITY_ID = "2281";
+	private static final String PATH = "/" + MUNICIPALITY_ID + "/information/schedulers";
+
 	@Test
 	void test01_readSchedulerInformation() {
 
 		// Call
 		setupCall()
-			.withServicePath("/information/schedulers")
+			.withServicePath(PATH)
 			.withHttpMethod(GET)
 			.withExpectedResponseStatus(OK)
 			.withExpectedResponse("response.json")

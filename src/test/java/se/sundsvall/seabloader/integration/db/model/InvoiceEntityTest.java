@@ -46,6 +46,7 @@ class InvoiceEntityTest {
 		final var invoiceId = "invoiceId";
 		final var status = UNPROCESSED;
 		final var statusMessage = "statusMessage";
+		final var municipalityId = "2281";
 
 		final var entity = InvoiceEntity.create()
 			.withCreated(created)
@@ -55,7 +56,8 @@ class InvoiceEntityTest {
 			.withId(id)
 			.withInvoiceId(invoiceId)
 			.withStatus(status)
-			.withStatusMessage(statusMessage);
+			.withStatusMessage(statusMessage)
+			.withMunicipalityId(municipalityId);
 
 		assertThat(entity).hasNoNullFieldsOrProperties();
 		assertThat(entity.getCreated()).isEqualTo(created);
@@ -66,6 +68,7 @@ class InvoiceEntityTest {
 		assertThat(entity.getInvoiceId()).isEqualTo(invoiceId);
 		assertThat(entity.getStatus()).isEqualTo(status);
 		assertThat(entity.getStatusMessage()).isEqualTo(statusMessage);
+		assertThat(entity.getMunicipalityId()).isEqualTo(municipalityId);
 	}
 
 	@Test

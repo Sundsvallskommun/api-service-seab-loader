@@ -5,6 +5,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -31,7 +32,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
@@ -39,8 +39,12 @@ import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
 
-@ExtendWith({ MockitoExtension.class, ResourceLoaderExtension.class })
+import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+
+@ExtendWith({MockitoExtension.class, ResourceLoaderExtension.class})
 class InvoiceServiceTest {
+
+	private static final String MUNICIPALITY_ID = "2281";
 
 	private static final String TEST_INVOICE_FILE = "files/invoice/invoice1.xml";
 	private static final String TEST_FAULTY_INVOICE_FILE = "files/invoice/invoice2.xml";
@@ -75,10 +79,10 @@ class InvoiceServiceTest {
 	void create(@Load(TEST_INVOICE_FILE) final String xml) {
 
 		// Call
-		service.create(xml.getBytes(UTF_8));
+		service.create(MUNICIPALITY_ID, xml.getBytes(UTF_8));
 
 		// Verification
-		verify(invoiceRepositoryMock).existsByInvoiceId("683288");
+		verify(invoiceRepositoryMock).existsByMunicipalityIdAndInvoiceId(MUNICIPALITY_ID, "683288");
 		verify(invoiceRepositoryMock).save(invoiceEntityCaptor.capture());
 
 		final var capturedInvoiceEntity = invoiceEntityCaptor.getValue();
@@ -91,13 +95,13 @@ class InvoiceServiceTest {
 	void createWhenInvoiceIdExists(@Load(TEST_INVOICE_FILE) final String xml) {
 
 		// Setup
-		when(invoiceRepositoryMock.existsByInvoiceId(any())).thenReturn(true);
+		when(invoiceRepositoryMock.existsByMunicipalityIdAndInvoiceId(eq(MUNICIPALITY_ID), any())).thenReturn(true);
 
 		// Call
-		service.create(xml.getBytes(UTF_8));
+		service.create(MUNICIPALITY_ID, xml.getBytes(UTF_8));
 
 		// Verification
-		verify(invoiceRepositoryMock).existsByInvoiceId("683288");
+		verify(invoiceRepositoryMock).existsByMunicipalityIdAndInvoiceId(MUNICIPALITY_ID, "683288");
 		verify(invoiceRepositoryMock, never()).save(any());
 	}
 
@@ -105,10 +109,10 @@ class InvoiceServiceTest {
 	void createWhenXmlIsFaulty(@Load(TEST_FAULTY_INVOICE_FILE) final String xml) {
 
 		// Call
-		service.create(xml.getBytes(UTF_8));
+		service.create(MUNICIPALITY_ID, xml.getBytes(UTF_8));
 
 		// Verification
-		verify(invoiceRepositoryMock, never()).existsByInvoiceId(any());
+		verify(invoiceRepositoryMock, never()).existsByMunicipalityIdAndInvoiceId(eq(MUNICIPALITY_ID), any());
 		verify(invoiceRepositoryMock).save(invoiceEntityCaptor.capture());
 
 		final var capturedInvoiceEntity = invoiceEntityCaptor.getValue();

@@ -33,6 +33,8 @@ import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 })
 class CreateInvoiceIT extends AbstractAppTest {
 
+	private static final String MUNICIPALITY_ID = "2281";
+	private static final String PATH = "/" + MUNICIPALITY_ID + "/invoices";
 	private static final String REQUEST_FILE = "invoice.xml";
 
 	@Autowired
@@ -42,11 +44,11 @@ class CreateInvoiceIT extends AbstractAppTest {
 	void test01_createInvoice() throws IOException, URISyntaxException {
 
 		// Assert that invoice doesn't exist yet.
-		assertThat(repository.existsByInvoiceId("555")).isFalse();
+		assertThat(repository.existsByMunicipalityIdAndInvoiceId(MUNICIPALITY_ID, "555")).isFalse();
 
 		// Call.
 		setupCall()
-			.withServicePath("/invoices")
+			.withServicePath(PATH)
 			.withHttpMethod(POST)
 			.withContentType(APPLICATION_XML)
 			.withRequest(REQUEST_FILE)
@@ -54,7 +56,7 @@ class CreateInvoiceIT extends AbstractAppTest {
 			.sendRequestAndVerifyResponse();
 
 		// Assert that invoice exists with expected values.
-		assertThat(repository.findByInvoiceId("555")).get()
+		assertThat(repository.findByMunicipalityIdAndInvoiceId(MUNICIPALITY_ID, "555")).get()
 			.extracting(InvoiceEntity::getContent, InvoiceEntity::getInvoiceId, InvoiceEntity::getStatus)
 			.containsExactly(getResourceAsString("CreateInvoiceIT/__files/test01_createInvoice/invoice.xml"), "555", UNPROCESSED);
 	}
@@ -70,7 +72,7 @@ class CreateInvoiceIT extends AbstractAppTest {
 
 		// Call.
 		setupCall()
-			.withServicePath("/invoices")
+			.withServicePath(PATH)
 			.withHttpMethod(POST)
 			.withContentType(APPLICATION_XML)
 			.withRequest(REQUEST_FILE)

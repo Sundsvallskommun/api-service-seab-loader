@@ -34,6 +34,7 @@ import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 })
 class InvoiceRepositoryTest {
 
+	private static final String MUNICIPALITY_ID = "2281";
 	private static final String INVOICE_ID = "123456";
 	private static final String CONTENT = "<xml></xml>";
 
@@ -77,13 +78,13 @@ class InvoiceRepositoryTest {
 	}
 
 	@Test
-	void findByInvoiceId() {
+	void findByMunicipalityIdAndInvoiceId() {
 
 		// Setup
 		final var id = 2L;
 		final var invoiceId = "INV-2023-002";
 
-		final var result = repository.findByInvoiceId(invoiceId).orElseThrow();
+		final var result = repository.findByMunicipalityIdAndInvoiceId(MUNICIPALITY_ID, invoiceId).orElseThrow();
 
 		// Verification
 		assertThat(result).isNotNull();
@@ -92,8 +93,8 @@ class InvoiceRepositoryTest {
 	}
 
 	@Test
-	void findByInvoiceIdNotFound() {
-		assertThat(repository.findByInvoiceId("non-existing-flowInstanceId")).isNotPresent();
+	void findByMunicipalityIdAndInvoiceIdNotFound() {
+		assertThat(repository.findByMunicipalityIdAndInvoiceId(MUNICIPALITY_ID, "non-existing-flowInstanceId")).isNotPresent();
 	}
 
 	@Test
@@ -134,13 +135,13 @@ class InvoiceRepositoryTest {
 	}
 
 	@Test
-	void existsByInvoiceId() {
-		assertThat(repository.existsByInvoiceId("INV-2023-002")).isTrue();
+	void existsByMunicipalityIdAndInvoiceId() {
+		assertThat(repository.existsByMunicipalityIdAndInvoiceId(MUNICIPALITY_ID, "INV-2023-002")).isTrue();
 	}
 
 	@Test
-	void existsByInvoiceIdNotFound() {
-		assertThat(repository.existsByInvoiceId("DOES-NOT-EXIST")).isFalse();
+	void existsByMunicipalityIdAndInvoiceIdNotFound() {
+		assertThat(repository.existsByMunicipalityIdAndInvoiceId(MUNICIPALITY_ID, "DOES-NOT-EXIST")).isFalse();
 	}
 
 	@Test

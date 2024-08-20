@@ -15,19 +15,21 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBIntrospector;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
+
 import generated.se.inexchange.InExchangeInvoiceStatusType;
 import generated.se.sundsvall.invoicecache.InvoicePdf;
 import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.JAXBIntrospector;
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
-import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
 
 public class InvoiceMapper {
 
@@ -35,18 +37,20 @@ public class InvoiceMapper {
 
 	private InvoiceMapper() {}
 
-	public static InvoiceEntity toInvoiceEntity(final byte[] fileContent) {
+	public static InvoiceEntity toInvoiceEntity(final String municipalityId, final byte[] fileContent) {
 		final var xmlContent = new String(fileContent, UTF_8);
 
 		try {
 			final var inExchangeInvoice = toInExchangeInvoice(xmlContent);
 			return InvoiceEntity.create()
+				.withMunicipalityId(municipalityId)
 				.withContent(xmlContent)
 				.withInvoiceId(String.valueOf(inExchangeInvoice.getInvoice().getInvoiceId()));
 
 		} catch (final Exception e) {
 			LOGGER.error("Error during deserialization of XML content", e);
 			return InvoiceEntity.create()
+				.withMunicipalityId(municipalityId)
 				.withContent(xmlContent)
 				.withStatus(IMPORT_FAILED)
 				.withStatusMessage(format("Deserialization of received XML failed with message: %s", getRootCauseMessage(e)));

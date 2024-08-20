@@ -25,6 +25,9 @@ import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 })
 class JobsIT extends AbstractAppTest {
 
+	private static final String MUNICIPALITY_ID = "2281";
+	private static final String PATH = "/" + MUNICIPALITY_ID + "/jobs";
+
 	@Autowired
 	private InvoiceRepository repository;
 
@@ -33,21 +36,21 @@ class JobsIT extends AbstractAppTest {
 
 		// Call
 		setupCall()
-			.withServicePath("/jobs/notifier")
+			.withServicePath(PATH + "/notifier")
 			.withHttpMethod(POST)
 			.withExpectedResponseStatus(NO_CONTENT)
 			.sendRequestAndVerifyResponse();
 	}
 
 	@Test
-	void test02_invoiceexporter() throws InterruptedException {
+	void test02_invoiceexporter() {
 
 		// Assert that we have records with status UNPROCESSED.
 		assertThat(repository.findByStatusIn(UNPROCESSED)).isNotEmpty();
 
 		// Call
 		setupCall()
-			.withServicePath("/jobs/invoiceexporter")
+			.withServicePath(PATH + "/invoiceexporter")
 			.withHttpMethod(POST)
 			.withExpectedResponseStatus(NO_CONTENT)
 			.sendRequestAndVerifyResponse()
@@ -62,7 +65,7 @@ class JobsIT extends AbstractAppTest {
 
 		// Call
 		setupCall()
-			.withServicePath("/jobs/dbcleaner")
+			.withServicePath(PATH + "/dbcleaner")
 			.withHttpMethod(POST)
 			.withExpectedResponseStatus(NO_CONTENT)
 			.sendRequestAndVerifyResponse()

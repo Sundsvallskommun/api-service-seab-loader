@@ -22,7 +22,7 @@ import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
 public class InvoiceService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
-	private static final Status[] STATUSES_OF_INVOICES_TO_SEND = { UNPROCESSED, EXPORT_FAILED };
+	private static final Status[] STATUSES_OF_INVOICES_TO_SEND = {UNPROCESSED, EXPORT_FAILED};
 
 	private final InvoiceRepository invoiceRepository;
 	private final InvoicePdfMerger invoicePdfMerger;
@@ -34,11 +34,11 @@ public class InvoiceService {
 		this.invoiceCacheClient = invoiceCacheClient;
 	}
 
-	public void create(final byte[] content) {
-		final var invoiceEntity = toInvoiceEntity(content);
+	public void create(final String municipalityId, final byte[] content) {
+		final var invoiceEntity = toInvoiceEntity(municipalityId, content);
 
 		final var invoiceId = invoiceEntity.getInvoiceId();
-		if (nonNull(invoiceId) && invoiceRepository.existsByInvoiceId(invoiceId)) {
+		if (nonNull(invoiceId) && invoiceRepository.existsByMunicipalityIdAndInvoiceId(municipalityId, invoiceId)) {
 			LOGGER.info("Invoice with invoiceId: '{}' already exists in database. Nothing will be persisted.", invoiceId);
 			return;
 		}

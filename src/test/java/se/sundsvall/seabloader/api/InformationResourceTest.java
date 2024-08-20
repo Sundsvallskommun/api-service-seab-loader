@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +19,8 @@ import se.sundsvall.seabloader.api.model.SchedulerInformation;
 @ActiveProfiles("junit")
 class InformationResourceTest {
 
-	private static final String PATH = "/information/schedulers";
+	private static final String MUNICIPALITY_ID = "2260";
+	private static final String PATH = "/{municipalityId}/information/schedulers";
 
 	@Autowired
 	private WebTestClient webTestClient;
@@ -26,7 +29,7 @@ class InformationResourceTest {
 	void getSchedulerInformation() {
 
 		// Call
-		final var response = webTestClient.get().uri(builder -> builder.path(PATH).build())
+		final var response = webTestClient.get().uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isOk()
 			.expectBodyList(SchedulerInformation.class)
