@@ -40,7 +40,7 @@ public class InvoiceService {
 
 		final var invoiceId = invoiceEntity.getInvoiceId();
 		if (nonNull(invoiceId) && invoiceRepository.existsByMunicipalityIdAndInvoiceId(municipalityId, invoiceId)) {
-			LOGGER.info("Invoice with municipalityId: '{}' and invoiceId: '{}' already exists in database. Nothing will be persisted.", municipalityId, invoiceId);
+			LOGGER.info("Invoice with invoiceId: '{}' already exists in database. Nothing will be persisted.", invoiceId);
 			return;
 		}
 
