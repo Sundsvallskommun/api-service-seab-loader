@@ -5,6 +5,7 @@
         modified datetime(6),
         processed datetime(6),
         invoice_id varchar(255),
+        municipality_id varchar(255),
         status varchar(255) not null,
         content longtext,
         status_message longtext,
@@ -17,5 +18,8 @@
     create index invoice_status_index 
        on invoice (status);
 
-    alter table if exists invoice 
+    create index invoice_municipality_id_index
+       on invoice (municipality_id);
+
+    alter table if exists invoice
        add constraint invoice_unique_invoice_id_constraint unique (invoice_id);
