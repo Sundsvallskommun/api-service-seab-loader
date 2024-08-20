@@ -35,8 +35,7 @@ public class InvoiceService {
 	}
 
 	public void create(final String municipalityId, final byte[] content) {
-		final var invoiceEntity = toInvoiceEntity(content);
-		invoiceEntity.setMunicipalityId(municipalityId);
+		final var invoiceEntity = toInvoiceEntity(municipalityId, content);
 
 		final var invoiceId = invoiceEntity.getInvoiceId();
 		if (nonNull(invoiceId) && invoiceRepository.existsByMunicipalityIdAndInvoiceId(municipalityId, invoiceId)) {

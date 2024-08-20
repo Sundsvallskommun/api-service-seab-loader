@@ -35,7 +35,7 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	 *
 	 * @param municipalityId id of the municipality.
 	 * @param invoiceId must not be {@literal null}.
-	 * @return {@literal true} if an entity with the given invoiceI d exists, {@literal false} otherwise.
+	 * @return {@literal true} if an entity with the given invoiceId exists, {@literal false} otherwise.
 	 * @throws IllegalArgumentException if {@literal invoiceId} is {@literal null}.
 	 */
 	boolean existsByMunicipalityIdAndInvoiceId(final String municipalityId, final String invoiceId);

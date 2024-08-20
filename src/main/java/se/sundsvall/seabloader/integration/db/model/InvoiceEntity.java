@@ -39,7 +39,7 @@ public class InvoiceEntity {
 	@Column(name = "id")
 	private long id;
 
-	@Column(name = "municipality_id")
+	@Column(name = "municipality_id", length = 4)
 	private String municipalityId;
 
 	@Column(name = "invoice_id")

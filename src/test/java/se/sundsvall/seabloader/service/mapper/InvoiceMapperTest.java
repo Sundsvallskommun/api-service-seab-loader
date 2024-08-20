@@ -13,19 +13,22 @@ import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.Locale;
 
+import jakarta.xml.bind.UnmarshalException;
+
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
-import jakarta.xml.bind.UnmarshalException;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
+
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
 
 @ExtendWith(ResourceLoaderExtension.class)
 class InvoiceMapperTest {
 
+	private static final String MUNICIPALITY_ID = "2281";
 	private static final String TEST_INVOICE_FILE = "files/invoice/invoice1.xml";
 	private static final String TEST_FAULTY_INVOICE_FILE = "files/invoice/invoice2.xml";
 
@@ -41,10 +44,11 @@ class InvoiceMapperTest {
 	void toInvoiceEntity(@Load(TEST_INVOICE_FILE) final String xml) {
 
 		// Call
-		final var result = InvoiceMapper.toInvoiceEntity(xml.getBytes(UTF_8));
+		final var result = InvoiceMapper.toInvoiceEntity(MUNICIPALITY_ID, xml.getBytes(UTF_8));
 
 		// Verification
 		assertThat(result).isNotNull();
+		assertThat(result.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
 		assertThat(result.getContent()).isEqualTo(xml);
 		assertThat(result.getInvoiceId()).isEqualTo("683288");
 	}
@@ -53,11 +57,11 @@ class InvoiceMapperTest {
 	void toInvoiceEntityWhenXmlIsFaulty(@Load(TEST_FAULTY_INVOICE_FILE) final String xml) {
 
 		// Call
-		final var result = InvoiceMapper.toInvoiceEntity(xml.getBytes(UTF_8));
+		final var result = InvoiceMapper.toInvoiceEntity(MUNICIPALITY_ID, xml.getBytes(UTF_8));
 
 		// Verification
 		assertThat(result).isNotNull();
-
+		assertThat(result.getMunicipalityId()).isEqualTo(MUNICIPALITY_ID);
 		assertThat(result.getContent()).isEqualTo(xml);
 		assertThat(result.getInvoiceId()).isNull();
 		assertThat(result.getStatus()).isEqualTo(IMPORT_FAILED);
