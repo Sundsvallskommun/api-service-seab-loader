@@ -24,7 +24,7 @@
         <librepdf.version>2.0.3</librepdf.version>
         <generated-sources-path>${project.build.directory}/generated-sources
         </generated-sources-path>
-        <shedlock.version>5.15.0</shedlock.version>
+        <shedlock.version>5.15.1</shedlock.version>
     </properties>
     <dependencies>
         <dependency>
