@@ -4,6 +4,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static se.sundsvall.seabloader.integration.messaging.configuration.MessagingConfiguration.CLIENT_ID;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -21,8 +22,8 @@ public interface MessagingClient {
 	 * @param emailRequest containing email information
 	 * @return response containing id for sent message
 	 */
-	@PostMapping(path = "/email", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-	MessageResult sendEmail(@RequestBody EmailRequest emailRequest);
+	@PostMapping(path = "/{municipalityId}/email", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+	MessageResult sendEmail(@PathVariable(name = "municipalityId") final String municipalityId, @RequestBody EmailRequest emailRequest);
 
 	/**
 	 * Send a single sms
@@ -30,6 +31,8 @@ public interface MessagingClient {
 	 * @param smsRequest containing sms information
 	 * @return response containing id for sent message
 	 */
-	@PostMapping(path = "/sms", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-	MessageResult sendSms(@RequestBody SmsRequest smsRequest);
+	@PostMapping(path = "/{municipalityId}/sms", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+	MessageResult sendSms(
+		@PathVariable(name = "municipalityId") final String municipalityId,
+		@RequestBody SmsRequest smsRequest);
 }
