@@ -44,6 +44,10 @@ spring:
             token-uri: '${config.integration.token-uri}'
           messaging:
             token-uri: '${config.integration.token-uri}'
+mdc:
+  municipalityId:
+    enabled: true
+
 integration:
   invoicecache:
     url: '${config.integration.invoicecache.url}'
