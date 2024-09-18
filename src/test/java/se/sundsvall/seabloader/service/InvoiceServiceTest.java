@@ -47,9 +47,11 @@ class InvoiceServiceTest {
 	private static final String MUNICIPALITY_ID = "2281";
 
 	private static final String TEST_INVOICE_FILE = "files/invoice/invoice1.xml";
+
 	private static final String TEST_FAULTY_INVOICE_FILE = "files/invoice/invoice2.xml";
 
 	private static final String TEST_INVOICE_FILE_WITH_ATTACHMENTS = "files/pdfutility/invoice1.xml";
+
 	private static final String TEST_INVOICE_FILE_WITHOUT_ATTACHMENTS = "files/pdfutility/invoice2.xml";
 
 	@Mock
@@ -128,12 +130,13 @@ class InvoiceServiceTest {
 	void exportInvoicesWhenInvoicesToSend(@Load(TEST_INVOICE_FILE_WITH_ATTACHMENTS) final String xml) {
 
 		// Setup.
+		final var municipalityId = "2281";
 		final var pdfs = new ByteArrayOutputStream();
 		pdfs.writeBytes("pdfs".getBytes(UTF_8));
 
 		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(createInvoiceIds());
-		when(invoiceRepositoryMock.findById(1L)).thenReturn(Optional.of(new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml)));
-		when(invoiceRepositoryMock.findById(2L)).thenReturn(Optional.of(new InvoiceEntity().withInvoiceId("INVOICE_ID_2").withContent(xml)));
+		when(invoiceRepositoryMock.findById(1L)).thenReturn(Optional.of(new InvoiceEntity().withMunicipalityId(municipalityId).withInvoiceId("INVOICE_ID_1").withContent(xml)));
+		when(invoiceRepositoryMock.findById(2L)).thenReturn(Optional.of(new InvoiceEntity().withMunicipalityId(municipalityId).withInvoiceId("INVOICE_ID_2").withContent(xml)));
 		when(invoicePdfMergerMock.mergePdfs(any())).thenReturn(pdfs);
 
 		// Call.
@@ -144,12 +147,12 @@ class InvoiceServiceTest {
 		verify(invoiceRepositoryMock).findById(1L);
 		verify(invoiceRepositoryMock).findById(2L);
 		verify(invoiceRepositoryMock, times(2)).save(invoiceEntityCaptor.capture());
-		verify(invoiceCacheClientMock, times(2)).sendInvoice(any());
+		verify(invoiceCacheClientMock, times(2)).sendInvoice(eq(municipalityId), any());
 		final var capturedInvoiceEntities = invoiceEntityCaptor.getAllValues();
 		assertThat(capturedInvoiceEntities).hasSize(2);
-		assertThat(capturedInvoiceEntities.get(0).getInvoiceId()).isEqualTo("INVOICE_ID_1");
-		assertThat(capturedInvoiceEntities.get(0).getContent()).isEqualTo(xml);
-		assertThat(capturedInvoiceEntities.get(0).getStatus()).isEqualTo(PROCESSED);
+		assertThat(capturedInvoiceEntities.getFirst().getInvoiceId()).isEqualTo("INVOICE_ID_1");
+		assertThat(capturedInvoiceEntities.getFirst().getContent()).isEqualTo(xml);
+		assertThat(capturedInvoiceEntities.getFirst().getStatus()).isEqualTo(PROCESSED);
 		assertThat(capturedInvoiceEntities.get(1).getInvoiceId()).isEqualTo("INVOICE_ID_2");
 		assertThat(capturedInvoiceEntities.get(1).getStatus()).isEqualTo(PROCESSED);
 		assertThat(capturedInvoiceEntities.get(1).getContent()).isEqualTo(xml);
@@ -191,18 +194,19 @@ class InvoiceServiceTest {
 	@Test
 	void exportInvoicesWhenExceptionInSending(@Load(TEST_INVOICE_FILE_WITH_ATTACHMENTS) final String xml) {
 
+		final var municipalityId = "2281";
 		final var pdfs = new ByteArrayOutputStream();
 		pdfs.writeBytes("pdfs".getBytes(UTF_8));
 
 		final var invoiceIds = createInvoiceIds();
-		final var invoiceEntity1 = new InvoiceEntity().withInvoiceId("INVOICE_ID_1").withContent(xml);
-		final var invoiceEntity2 = new InvoiceEntity().withInvoiceId("INVOICE_ID_2").withContent(xml);
+		final var invoiceEntity1 = new InvoiceEntity().withMunicipalityId(municipalityId).withInvoiceId("INVOICE_ID_1").withContent(xml);
+		final var invoiceEntity2 = new InvoiceEntity().withMunicipalityId(municipalityId).withInvoiceId("INVOICE_ID_2").withContent(xml);
 		// Setup.
 		when(invoiceRepositoryMock.findIdsByStatusIn(UNPROCESSED, EXPORT_FAILED)).thenReturn(invoiceIds);
 		when(invoiceRepositoryMock.findById(1L)).thenReturn(Optional.of(invoiceEntity1));
 		when(invoiceRepositoryMock.findById(2L)).thenReturn(Optional.of(invoiceEntity2));
 		when(invoicePdfMergerMock.mergePdfs(any())).thenReturn(pdfs);
-		doThrow(new RuntimeException("Test exception")).when(invoiceCacheClientMock).sendInvoice(any());
+		doThrow(new RuntimeException("Test exception")).when(invoiceCacheClientMock).sendInvoice(eq(municipalityId), any());
 
 		// Call.
 		service.exportInvoices();
@@ -212,12 +216,12 @@ class InvoiceServiceTest {
 		verify(invoiceRepositoryMock).findById(1L);
 		verify(invoiceRepositoryMock).findById(2L);
 		verify(invoiceRepositoryMock, times(2)).save(invoiceEntityCaptor.capture());
-		verify(invoiceCacheClientMock, times(2)).sendInvoice(any());
+		verify(invoiceCacheClientMock, times(2)).sendInvoice(eq(municipalityId), any());
 		final var capturedInvoiceEntities = invoiceEntityCaptor.getAllValues();
 		assertThat(capturedInvoiceEntities).hasSize(2);
-		assertThat(capturedInvoiceEntities.get(0).getInvoiceId()).isEqualTo("INVOICE_ID_1");
-		assertThat(capturedInvoiceEntities.get(0).getContent()).isNotNull();
-		assertThat(capturedInvoiceEntities.get(0).getStatus()).isEqualTo(EXPORT_FAILED);
+		assertThat(capturedInvoiceEntities.getFirst().getInvoiceId()).isEqualTo("INVOICE_ID_1");
+		assertThat(capturedInvoiceEntities.getFirst().getContent()).isNotNull();
+		assertThat(capturedInvoiceEntities.getFirst().getStatus()).isEqualTo(EXPORT_FAILED);
 		assertThat(capturedInvoiceEntities.get(1).getInvoiceId()).isEqualTo("INVOICE_ID_2");
 		assertThat(capturedInvoiceEntities.get(1).getStatus()).isEqualTo(EXPORT_FAILED);
 		assertThat(capturedInvoiceEntities.get(1).getContent()).isNotNull();
@@ -241,10 +245,10 @@ class InvoiceServiceTest {
 		verifyNoInteractions(invoiceCacheClientMock);
 		final var capturedInvoiceEntities = invoiceEntityCaptor.getAllValues();
 		assertThat(capturedInvoiceEntities).hasSize(1);
-		assertThat(capturedInvoiceEntities.get(0).getInvoiceId()).isEqualTo("INVOICE_ID_1");
-		assertThat(capturedInvoiceEntities.get(0).getContent()).isNotNull();
-		assertThat(capturedInvoiceEntities.get(0).getStatus()).isEqualTo(EXPORT_FAILED);
-		assertThat(capturedInvoiceEntities.get(0).getStatusMessage()).isEqualTo("OriginalInvoice or attachments not found in invoice with invoiceId: 683288");
+		assertThat(capturedInvoiceEntities.getFirst().getInvoiceId()).isEqualTo("INVOICE_ID_1");
+		assertThat(capturedInvoiceEntities.getFirst().getContent()).isNotNull();
+		assertThat(capturedInvoiceEntities.getFirst().getStatus()).isEqualTo(EXPORT_FAILED);
+		assertThat(capturedInvoiceEntities.getFirst().getStatusMessage()).isEqualTo("OriginalInvoice or attachments not found in invoice with invoiceId: 683288");
 	}
 
 	private List<InvoiceId> createInvoiceIds() {
@@ -254,4 +258,5 @@ class InvoiceServiceTest {
 	private InvoiceId createInvoiceIdInstance(final long id) {
 		return () -> id;
 	}
+
 }
