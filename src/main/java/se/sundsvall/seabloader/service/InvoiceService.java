@@ -22,13 +22,16 @@ import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
 public class InvoiceService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceService.class);
+
 	private static final Status[] STATUSES_OF_INVOICES_TO_SEND = {UNPROCESSED, EXPORT_FAILED};
 
 	private final InvoiceRepository invoiceRepository;
+
 	private final InvoicePdfMerger invoicePdfMerger;
+
 	private final InvoiceCacheClient invoiceCacheClient;
 
-	public InvoiceService(InvoiceRepository invoiceRepository, InvoicePdfMerger invoicePdfMerger, InvoiceCacheClient invoiceCacheClient) {
+	public InvoiceService(final InvoiceRepository invoiceRepository, final InvoicePdfMerger invoicePdfMerger, final InvoiceCacheClient invoiceCacheClient) {
 		this.invoiceRepository = invoiceRepository;
 		this.invoicePdfMerger = invoicePdfMerger;
 		this.invoiceCacheClient = invoiceCacheClient;
@@ -75,7 +78,7 @@ public class InvoiceService {
 
 		try {
 			final var inExchangeInvoice = toInExchangeInvoice(invoiceEntity.getContent());
-			invoiceCacheClient.sendInvoice(toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice)));
+			invoiceCacheClient.sendInvoice(invoiceEntity.getMunicipalityId(), toInvoicePdfRequest(inExchangeInvoice, invoicePdfMerger.mergePdfs(inExchangeInvoice)));
 			invoiceRepository.save(invoiceEntity.withStatus(PROCESSED));
 		} catch (final Exception e) {
 			LOGGER.error("Error when sending invoice with id: {}. Message: {}", id, e.getMessage());
@@ -84,4 +87,5 @@ public class InvoiceService {
 				.withStatusMessage(e.getMessage()));
 		}
 	}
+
 }
