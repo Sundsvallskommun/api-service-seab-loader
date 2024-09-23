@@ -37,10 +37,46 @@ import se.sundsvall.seabloader.service.InvoiceService;
 })
 @ActiveProfiles("junit")
 class InvoiceExportSchedulerShedlockTest {
+	
+	private static LocalDateTime mockCalledTime;
 
+	@Autowired
+	private InvoiceService invoiceService;
+
+	@Autowired
+	private NamedParameterJdbcTemplate jdbcTemplate;
+
+	@Test
+	void verifyShedLockForExportInvoices() {
+		// Make sure scheduling occurs multiple times
+		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
+
+		// Verify lock
+		await().atMost(5, SECONDS)
+			.untilAsserted(() -> assertThat(getLockedAt("exportinvoices"))
+				.isCloseTo(LocalDateTime.now(systemUTC()), within(10, ChronoUnit.SECONDS)));
+
+		verify(invoiceService).exportInvoices();
+		verifyNoMoreInteractions(invoiceService);
+	}
+
+	private LocalDateTime getLockedAt(final String name) {
+		return jdbcTemplate.query(
+			"SELECT locked_at FROM shedlock WHERE name = :name",
+			Map.of("name", name),
+			this::mapTimestamp);
+	}
+
+	private LocalDateTime mapTimestamp(final ResultSet rs) throws SQLException {
+		if (rs.next()) {
+			return LocalDateTime.parse(rs.getString("locked_at"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
+		}
+		return null;
+	}
 
 	@TestConfiguration
 	public static class ShedlockTestConfiguration {
+
 		@Bean
 		@Primary
 		public InvoiceService createMock() {
@@ -57,41 +93,7 @@ class InvoiceExportSchedulerShedlockTest {
 
 			return mockBean;
 		}
+
 	}
 
-	@Autowired
-	private InvoiceService invoiceService;
-
-	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
-
-	private static LocalDateTime mockCalledTime;
-
-	@Test
-	void verifyShedLockForExportInvoices() throws InterruptedException {
-		// Make sure scheduling occurs multiple times
-		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
-
-		// Verify lock
-		await().atMost(5, SECONDS)
-			.untilAsserted(() -> assertThat(getLockedAt("exportinvoices"))
-				.isCloseTo(LocalDateTime.now(systemUTC()), within(10, ChronoUnit.SECONDS)));
-
-		verify(invoiceService).exportInvoices();
-		verifyNoMoreInteractions(invoiceService);
-	}
-
-	private LocalDateTime getLockedAt(String name) {
-		return jdbcTemplate.query(
-			"SELECT locked_at FROM shedlock WHERE name = :name",
-			Map.of("name", name),
-			this::mapTimestamp);
-	}
-
-	private LocalDateTime mapTimestamp(final ResultSet rs) throws SQLException {
-		if (rs.next()) {
-			return LocalDateTime.parse(rs.getString("locked_at"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
-		}
-		return null;
-	}
 }

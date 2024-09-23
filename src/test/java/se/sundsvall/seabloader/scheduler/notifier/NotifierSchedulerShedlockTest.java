@@ -38,8 +38,45 @@ import se.sundsvall.seabloader.service.NotifierService;
 @ActiveProfiles("junit")
 class NotifierSchedulerShedlockTest {
 
+	private static LocalDateTime mockCalledTime;
+
+	@Autowired
+	private NotifierService notifierService;
+
+	@Autowired
+	private NamedParameterJdbcTemplate jdbcTemplate;
+
+	@Test
+	void verifyShedLockForSendNotifications() {
+		// Make sure scheduling occurs multiple times
+		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
+
+		// Verify lock
+		await().atMost(5, SECONDS)
+			.untilAsserted(() -> assertThat(getLockedAt("sendnotifications"))
+				.isCloseTo(LocalDateTime.now(systemUTC()), within(10, ChronoUnit.SECONDS)));
+
+		verify(notifierService).sendFailureNotification();
+		verifyNoMoreInteractions(notifierService);
+	}
+
+	private LocalDateTime getLockedAt(final String name) {
+		return jdbcTemplate.query(
+			"SELECT locked_at FROM shedlock WHERE name = :name",
+			Map.of("name", name),
+			this::mapTimestamp);
+	}
+
+	private LocalDateTime mapTimestamp(final ResultSet rs) throws SQLException {
+		if (rs.next()) {
+			return LocalDateTime.parse(rs.getString("locked_at"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
+		}
+		return null;
+	}
+
 	@TestConfiguration
 	public static class ShedlockTestConfiguration {
+
 		@Bean
 		@Primary
 		public NotifierService createMock() {
@@ -56,41 +93,7 @@ class NotifierSchedulerShedlockTest {
 
 			return mockBean;
 		}
+
 	}
 
-	@Autowired
-	private NotifierService notifierService;
-
-	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
-
-	private static LocalDateTime mockCalledTime;
-
-	@Test
-	void verifyShedLockForSendNotifications() throws InterruptedException {
-		// Make sure scheduling occurs multiple times
-		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
-
-		// Verify lock
-		await().atMost(5, SECONDS)
-			.untilAsserted(() -> assertThat(getLockedAt("sendnotifications"))
-				.isCloseTo(LocalDateTime.now(systemUTC()), within(10, ChronoUnit.SECONDS)));
-
-		verify(notifierService).sendFailureNotification();
-		verifyNoMoreInteractions(notifierService);
-	}
-
-	private LocalDateTime getLockedAt(String name) {
-		return jdbcTemplate.query(
-			"SELECT locked_at FROM shedlock WHERE name = :name",
-			Map.of("name", name),
-			this::mapTimestamp);
-	}
-
-	private LocalDateTime mapTimestamp(final ResultSet rs) throws SQLException {
-		if (rs.next()) {
-			return LocalDateTime.parse(rs.getString("locked_at"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
-		}
-		return null;
-	}
 }
