@@ -38,8 +38,45 @@ import se.sundsvall.seabloader.service.DatabaseCleanerService;
 @ActiveProfiles("junit")
 class DatabaseCleanerSchedulerShedlockTest {
 
+	private static LocalDateTime mockCalledTime;
+
+	@Autowired
+	private DatabaseCleanerService databaseCleanerService;
+
+	@Autowired
+	private NamedParameterJdbcTemplate jdbcTemplate;
+
+	@Test
+	void verifyShedLockForDatabaseCleaner() {
+		// Make sure scheduling occurs multiple times
+		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
+
+		// Verify lock
+		await().atMost(5, SECONDS)
+			.untilAsserted(() -> assertThat(getLockedAt("dbcleaner"))
+				.isCloseTo(LocalDateTime.now(systemUTC()), within(10, ChronoUnit.SECONDS)));
+
+		verify(databaseCleanerService).cleanDatabase();
+		verifyNoMoreInteractions(databaseCleanerService);
+	}
+
+	private LocalDateTime getLockedAt(final String name) {
+		return jdbcTemplate.query(
+			"SELECT locked_at FROM shedlock WHERE name = :name",
+			Map.of("name", name),
+			this::mapTimestamp);
+	}
+
+	private LocalDateTime mapTimestamp(final ResultSet rs) throws SQLException {
+		if (rs.next()) {
+			return LocalDateTime.parse(rs.getString("locked_at"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
+		}
+		return null;
+	}
+
 	@TestConfiguration
 	public static class ShedlockTestConfiguration {
+
 		@Bean
 		@Primary
 		public DatabaseCleanerService createMock() {
@@ -56,41 +93,7 @@ class DatabaseCleanerSchedulerShedlockTest {
 
 			return mockBean;
 		}
+
 	}
 
-	@Autowired
-	private DatabaseCleanerService databaseCleanerService;
-
-	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
-
-	private static LocalDateTime mockCalledTime;
-
-	@Test
-	void verifyShedLockForDatabaseCleaner() throws InterruptedException {
-		// Make sure scheduling occurs multiple times
-		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
-
-		// Verify lock
-		await().atMost(5, SECONDS)
-			.untilAsserted(() -> assertThat(getLockedAt("dbcleaner"))
-				.isCloseTo(LocalDateTime.now(systemUTC()), within(10, ChronoUnit.SECONDS)));
-
-		verify(databaseCleanerService).cleanDatabase();
-		verifyNoMoreInteractions(databaseCleanerService);
-	}
-
-	private LocalDateTime getLockedAt(String name) {
-		return jdbcTemplate.query(
-			"SELECT locked_at FROM shedlock WHERE name = :name",
-			Map.of("name", name),
-			this::mapTimestamp);
-	}
-
-	private LocalDateTime mapTimestamp(final ResultSet rs) throws SQLException {
-		if (rs.next()) {
-			return LocalDateTime.parse(rs.getString("locked_at"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
-		}
-		return null;
-	}
 }
