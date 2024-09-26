@@ -41,7 +41,7 @@ class JobsResourceTest {
 
 		// Call
 		webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH + "/invoiceexporter")
-				.build(Map.of("municipalityId", MUNICIPALITY_ID)))
+			.build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isNoContent();
 
@@ -55,8 +55,8 @@ class JobsResourceTest {
 	void dbcleaner() {
 
 		// Call
-		webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH + "/dbcleaner")
-				.build(Map.of("municipalityId", MUNICIPALITY_ID)))
+		webTestClient.post()
+			.uri(uriBuilder -> uriBuilder.path(PATH + "/dbcleaner").build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isNoContent();
 
@@ -70,8 +70,8 @@ class JobsResourceTest {
 	void notifier() {
 
 		// Call
-		webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH + "/notifier")
-				.build(Map.of("municipalityId", MUNICIPALITY_ID)))
+		webTestClient.post()
+			.uri(uriBuilder -> uriBuilder.path(PATH + "/notifier").build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isNoContent();
 

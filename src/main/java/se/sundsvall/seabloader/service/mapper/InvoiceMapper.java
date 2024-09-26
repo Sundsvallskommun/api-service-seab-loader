@@ -1,6 +1,5 @@
 package se.sundsvall.seabloader.service.mapper;
 
-import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
@@ -15,23 +14,21 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.JAXBIntrospector;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
-import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
-
 import generated.se.inexchange.InExchangeInvoiceStatusType;
 import generated.se.sundsvall.invoicecache.InvoicePdf;
 import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBIntrospector;
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
 
-public class InvoiceMapper {
+public final class InvoiceMapper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceMapper.class);
 
@@ -53,7 +50,7 @@ public class InvoiceMapper {
 				.withMunicipalityId(municipalityId)
 				.withContent(xmlContent)
 				.withStatus(IMPORT_FAILED)
-				.withStatusMessage(format("Deserialization of received XML failed with message: %s", getRootCauseMessage(e)));
+				.withStatusMessage("Deserialization of received XML failed with message: %s".formatted(getRootCauseMessage(e)));
 		}
 	}
 
@@ -84,7 +81,7 @@ public class InvoiceMapper {
 
 		if (Objects.isNull(inExchangeInvoiceStatusType.getOriginalInvoice()) || Objects.isNull(outputStream)) {
 			LOGGER.error("OriginalInvoice or attachments not found in invoice with invoiceId: {}", inExchangeInvoiceStatusType.getInvoice().getInvoiceId());
-			throw new IllegalArgumentException(format("OriginalInvoice or attachments not found in invoice with invoiceId: %s", inExchangeInvoiceStatusType.getInvoice().getInvoiceId()));
+			throw new IllegalArgumentException("OriginalInvoice or attachments not found in invoice with invoiceId: %s".formatted(inExchangeInvoiceStatusType.getInvoice().getInvoiceId()));
 		}
 
 		return new InvoicePdf()

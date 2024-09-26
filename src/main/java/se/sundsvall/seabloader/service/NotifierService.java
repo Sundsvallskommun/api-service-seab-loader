@@ -16,13 +16,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import generated.se.sundsvall.messaging.EmailRequest;
+import generated.se.sundsvall.messaging.EmailSender;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.integration.messaging.MessagingClient;
-
-import generated.se.sundsvall.messaging.EmailRequest;
-import generated.se.sundsvall.messaging.EmailSender;
 
 @Service
 public class NotifierService {
@@ -78,9 +77,7 @@ public class NotifierService {
 				groupingBy(
 					InvoiceEntity::getStatus,
 					() -> new EnumMap<>(Status.class),
-					counting()
-				)
-			));
+					counting())));
 
 		// Initialize missing statuses to 0
 		failedStatusMap.values().forEach(statusMap -> Arrays.stream(Status.values()).forEach(s -> statusMap.putIfAbsent(s, 0L)));
@@ -90,8 +87,8 @@ public class NotifierService {
 			failedStatusMap.forEach((municipalityId, statusMap) -> {
 				// Format message
 				final var subject = format(NOTIFICATION_SUBJECT, applicationName, applicationEnvironment);
-				final var message = new StringBuilder().append(format(NOTIFICATION_BODY_INTRODUCTION, applicationEnvironment));
-				statusMap.forEach((key, value) -> message.append(format(NOTIFICATION_BODY_ROW, key, value)));
+				final var message = new StringBuilder().append(NOTIFICATION_BODY_INTRODUCTION.formatted(applicationEnvironment));
+				statusMap.forEach((key, value) -> message.append(NOTIFICATION_BODY_ROW.formatted(key, value)));
 
 				// Send mail.
 				sendMail(subject, message.toString(), municipalityId);
@@ -119,8 +116,8 @@ public class NotifierService {
 	 * - The status map is not empty
 	 * - The status map contains one of the keys EXPORT_FAILED or IMPORT_FAILED with a positive entry-value.
 	 *
-	 * @param statusMap the statusMap to check
-	 * @return true if condition is met, false otherwise.
+	 * @param  statusMap the statusMap to check
+	 * @return           true if condition is met, false otherwise.
 	 */
 	private boolean matchesSendFailureNotificationCondition(final Map<String, EnumMap<Status, Long>> statusMap) {
 		if (isEmpty(statusMap)) {
@@ -132,5 +129,4 @@ public class NotifierService {
 			.filter(entry -> Arrays.asList(IMPORT_FAILED, EXPORT_FAILED).contains(entry.getKey()))
 			.anyMatch(entry -> entry.getValue() > 0);
 	}
-
 }

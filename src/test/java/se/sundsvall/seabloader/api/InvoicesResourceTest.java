@@ -39,7 +39,8 @@ class InvoicesResourceTest {
 		final var fileContent = readAllBytes(getFile(FILE_PATH).toPath());
 
 		// Call
-		webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
+		webTestClient.post()
+			.uri(uriBuilder -> uriBuilder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_XML)
 			.bodyValue(fileContent)
 			.exchange()

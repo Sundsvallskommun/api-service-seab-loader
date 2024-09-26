@@ -10,11 +10,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
-
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @Transactional(isolation = READ_COMMITTED)
 @CircuitBreaker(name = "InvoiceRepository")
@@ -23,19 +22,19 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	/**
 	 * Find by invoiceId.
 	 *
-	 * @param municipalityId the id of the municipality.
-	 * @param invoiceId the invoiceId of the entity to find.
-	 * @return An optional InvoiceEntity.
+	 * @param  municipalityId the id of the municipality.
+	 * @param  invoiceId      the invoiceId of the entity to find.
+	 * @return                An optional InvoiceEntity.
 	 */
 	Optional<InvoiceEntity> findByMunicipalityIdAndInvoiceId(final String municipalityId, final String invoiceId);
-
 
 	/**
 	 * Returns whether an entity with the given municipalityid and invoiceId exists.
 	 *
-	 * @param municipalityId id of the municipality.
-	 * @param invoiceId must not be {@literal null}.
-	 * @return {@literal true} if an entity with the given invoiceId exists, {@literal false} otherwise.
+	 * @param  municipalityId           id of the municipality.
+	 * @param  invoiceId                must not be {@literal null}.
+	 * @return                          {@literal true} if an entity with the given invoiceId exists, {@literal false}
+	 *                                  otherwise.
 	 * @throws IllegalArgumentException if {@literal invoiceId} is {@literal null}.
 	 */
 	boolean existsByMunicipalityIdAndInvoiceId(final String municipalityId, final String invoiceId);
@@ -43,24 +42,24 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	/**
 	 * Get ids of entities matching status in sent in status list.
 	 *
-	 * @param statusList a List of statuses to filter on.
-	 * @return A List of InvoiceId:s
+	 * @param  statusList a List of statuses to filter on.
+	 * @return            A List of InvoiceId:s
 	 */
 	List<InvoiceId> findIdsByStatusIn(Status... statusList);
 
 	/**
 	 * Find by status list.
 	 *
-	 * @param statusList a List of statuses to filter on.
-	 * @return A List of InvoiceEntity
+	 * @param  statusList a List of statuses to filter on.
+	 * @return            A List of InvoiceEntity
 	 */
 	List<InvoiceEntity> findByStatusIn(Status... statusList);
 
 	/**
 	 * Count occurences of entities with statuses equal to sent in statuses.
 	 *
-	 * @param statusList a List of statuses to filter on.
-	 * @return amount of entities having matching the sent in statuses.
+	 * @param  statusList a List of statuses to filter on.
+	 * @return            amount of entities having matching the sent in statuses.
 	 */
 	long countByStatusIn(Status... statusList);
 
@@ -80,6 +79,4 @@ public interface InvoiceRepository extends JpaRepository<InvoiceEntity, Long>, J
 	 */
 	@Query(value = "OPTIMIZE TABLE invoice", nativeQuery = true)
 	List<String> optimizeTable();
-
-
 }
