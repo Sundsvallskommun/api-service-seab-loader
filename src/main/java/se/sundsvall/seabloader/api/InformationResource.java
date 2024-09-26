@@ -29,11 +29,11 @@ import se.sundsvall.seabloader.scheduler.SchedulerService;
 @Validated
 @RequestMapping("/{municipalityId}/information")
 @Tag(name = "Information", description = "Information resources")
-public class InformationResource {
+class InformationResource {
 
 	private final List<SchedulerService> scheduleServiceList;
 
-	public InformationResource(List<SchedulerService> scheduleServiceList) {
+	InformationResource(List<SchedulerService> scheduleServiceList) {
 		this.scheduleServiceList = scheduleServiceList;
 	}
 
@@ -42,7 +42,7 @@ public class InformationResource {
 	@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<List<SchedulerInformation>> getSchedulerInformation(
+	ResponseEntity<List<SchedulerInformation>> getSchedulerInformation(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId) {
 
 		return ok(scheduleServiceList.stream()

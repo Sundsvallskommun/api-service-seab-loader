@@ -49,8 +49,8 @@ class InvoicesResourceFailuresTest {
 		assertThat(response).isNotNull();
 		assertThat(response.getTitle()).isEqualTo("Bad Request");
 		assertThat(response.getStatus()).isEqualTo(Status.BAD_REQUEST);
-		assertThat(response.getDetail()).isEqualTo("Required request body is missing: "
-			+ "public org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.seabloader.api.InvoicesResource.createInvoice(java.lang.String,byte[])");
+		assertThat(response.getDetail()).isEqualTo(
+			"Required request body is missing: org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.seabloader.api.InvoicesResource.createInvoice(java.lang.String,byte[])");
 
 		verifyNoInteractions(invoiceService);
 	}
@@ -59,7 +59,8 @@ class InvoicesResourceFailuresTest {
 	void createInvoiceWrongContentType() {
 
 		// Call
-		final var response = webTestClient.post().uri(uriBuilder -> uriBuilder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
+		final var response = webTestClient.post()
+			.uri(uriBuilder -> uriBuilder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.contentType(APPLICATION_JSON)
 			.exchange()
 			.expectStatus().isEqualTo(UNSUPPORTED_MEDIA_TYPE)

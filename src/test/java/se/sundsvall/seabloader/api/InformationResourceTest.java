@@ -29,7 +29,8 @@ class InformationResourceTest {
 	void getSchedulerInformation() {
 
 		// Call
-		final var response = webTestClient.get().uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
+		final var response = webTestClient.get()
+			.uri(builder -> builder.path(PATH).build(Map.of("municipalityId", MUNICIPALITY_ID)))
 			.exchange()
 			.expectStatus().isOk()
 			.expectBodyList(SchedulerInformation.class)
@@ -40,7 +41,9 @@ class InformationResourceTest {
 		assertThat(response)
 			.hasSize(3)
 			.extracting(
-				SchedulerInformation::getDescription, SchedulerInformation::getExpression, SchedulerInformation::getName)
+				SchedulerInformation::getDescription,
+				SchedulerInformation::getExpression,
+				SchedulerInformation::getName)
 			.containsExactly(
 				tuple("At 07:00, every day, only on Sunday", "0 0 7 * * 7", "DatabaseCleanerScheduler"),
 				tuple("Every hour, every day", "0 0 */1 * * *", "InvoiceExportScheduler"),

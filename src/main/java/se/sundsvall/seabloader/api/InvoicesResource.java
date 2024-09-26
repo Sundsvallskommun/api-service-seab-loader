@@ -31,11 +31,11 @@ import se.sundsvall.seabloader.service.InvoiceService;
 @Validated
 @Tag(name = "Invoices", description = "Invoice resource")
 @RequestMapping("/{municipalityId}/invoices")
-public class InvoicesResource {
+class InvoicesResource {
 
 	private final InvoiceService invoiceService;
 
-	public InvoicesResource(final InvoiceService invoiceService) {
+	InvoicesResource(final InvoiceService invoiceService) {
 		this.invoiceService = invoiceService;
 	}
 
@@ -44,7 +44,7 @@ public class InvoicesResource {
 	@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> createInvoice(
+	ResponseEntity<Void> createInvoice(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId,
 		@NotNull @RequestBody final byte[] body) {
 

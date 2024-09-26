@@ -27,20 +27,20 @@ import se.sundsvall.seabloader.service.AsyncExecutorService;
 @Validated
 @Tag(name = "Jobs", description = "Jobs resource")
 @RequestMapping("/{municipalityId}/jobs")
-public class JobsResource {
+@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
+@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
+@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
+class JobsResource {
 
 	private final AsyncExecutorService asyncExecutorService;
 
-	public JobsResource(final AsyncExecutorService asyncExecutorService) {
+	JobsResource(final AsyncExecutorService asyncExecutorService) {
 		this.asyncExecutorService = asyncExecutorService;
 	}
 
 	@PostMapping(path = "/invoiceexporter", produces = APPLICATION_PROBLEM_JSON_VALUE)
 	@Operation(summary = "Triggers export invoices (to InvoiceCache) job.", description = "Triggers export invoices (to InvoiceCache) job.")
-	@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> invoiceexporter(
+	ResponseEntity<Void> invoiceExporter(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId) {
 
 		asyncExecutorService.invoiceExportExecute();
@@ -51,10 +51,7 @@ public class JobsResource {
 
 	@PostMapping(path = "/notifier", produces = APPLICATION_PROBLEM_JSON_VALUE)
 	@Operation(summary = "Triggers notification job.", description = "Triggers notification job.")
-	@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> notifier(
+	ResponseEntity<Void> notifier(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId) {
 
 		asyncExecutorService.notifierExecute();
@@ -65,10 +62,7 @@ public class JobsResource {
 
 	@PostMapping(path = "/dbcleaner", produces = APPLICATION_PROBLEM_JSON_VALUE)
 	@Operation(summary = "Triggers database cleaning job.", description = "Triggers database cleaning job.")
-	@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
-	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
-	public ResponseEntity<Void> dbcleaner(
+	ResponseEntity<Void> dbCleaner(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId) {
 
 		asyncExecutorService.databaseCleanerExecute();
