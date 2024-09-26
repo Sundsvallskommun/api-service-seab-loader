@@ -6,11 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.seabloader.scheduler.AbstractScheduler;
 import se.sundsvall.seabloader.service.DatabaseCleanerService;
-
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 @Service
 @ConfigurationProperties("scheduler.dbcleaner.cron")
@@ -36,5 +35,4 @@ public class DatabaseCleanerScheduler extends AbstractScheduler {
 		databaseCleanerService.cleanDatabase();
 		LOGGER.info(LOG_CLEANING_ENDED);
 	}
-
 }

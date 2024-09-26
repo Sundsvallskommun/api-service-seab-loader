@@ -25,6 +25,6 @@ public enum InvoiceType {
 	public static InvoiceType fromValue(final String value) {
 		return Arrays.stream(values())
 			.filter(enumObj -> enumObj.value.equals(value))
-			.findFirst().orElseThrow(() -> new IllegalArgumentException(String.format("Illegal enum value: %s", value)));
+			.findFirst().orElseThrow(() -> new IllegalArgumentException("Illegal enum value: %s".formatted(value)));
 	}
 }

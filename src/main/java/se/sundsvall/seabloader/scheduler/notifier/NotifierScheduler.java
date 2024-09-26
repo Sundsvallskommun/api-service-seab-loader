@@ -6,11 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import se.sundsvall.dept44.requestid.RequestId;
 import se.sundsvall.seabloader.scheduler.AbstractScheduler;
 import se.sundsvall.seabloader.service.NotifierService;
-
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 @Service
 @ConfigurationProperties("scheduler.notifier.cron")
@@ -22,7 +21,9 @@ public class NotifierScheduler extends AbstractScheduler {
 
 	private final NotifierService notifierService;
 
-	public NotifierScheduler(final NotifierService notifierService) {this.notifierService = notifierService;}
+	public NotifierScheduler(final NotifierService notifierService) {
+		this.notifierService = notifierService;
+	}
 
 	@Override
 	@Scheduled(cron = "${scheduler.notifier.cron.expression}")
@@ -34,5 +35,4 @@ public class NotifierScheduler extends AbstractScheduler {
 		notifierService.sendFailureNotification();
 		LOGGER.info(LOG_EXECUTE_ENDED);
 	}
-
 }

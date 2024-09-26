@@ -34,6 +34,8 @@ public class InvoicePdfMerger {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoicePdfMerger.class);
 
+	private static final String MERGE_ERROR_MESSAGE = "A problem occured during merge of PDF:s. %s.";
+
 	public OutputStream mergePdfs(InExchangeInvoiceStatusType inExchangeInvoice) {
 		try {
 			final var merger = initializePDFMergerUtility();
@@ -48,7 +50,7 @@ public class InvoicePdfMerger {
 			return compress((ByteArrayOutputStream) merger.getDestinationStream());
 
 		} catch (final Exception e) {
-			throw Problem.valueOf(INTERNAL_SERVER_ERROR, String.format("A problem occured during merge of PDF:s. %s.", e.getMessage()));
+			throw Problem.valueOf(INTERNAL_SERVER_ERROR, MERGE_ERROR_MESSAGE.formatted(e.getMessage()));
 		}
 	}
 
