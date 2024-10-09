@@ -31,7 +31,7 @@ class AsyncExecutorServiceTest {
 	@Test
 	void databaseCleanerExecute() {
 
-		// Call
+		// Act
 		asyncExecutorService.databaseCleanerExecute();
 
 		// Verification
@@ -43,7 +43,7 @@ class AsyncExecutorServiceTest {
 	@Test
 	void invoiceExportExecute() {
 
-		// Call
+		// Act
 		asyncExecutorService.invoiceExportExecute();
 
 		verify(invoiceExportSchedulerMock).execute();
@@ -54,7 +54,7 @@ class AsyncExecutorServiceTest {
 	@Test
 	void notifierExecute() {
 
-		// Call
+		// Act
 		asyncExecutorService.notifierExecute();
 
 		verify(notifierSchedulerMock).execute();

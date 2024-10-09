@@ -21,12 +21,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import generated.se.sundsvall.messaging.EmailRequest;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.integration.messaging.MessagingClient;
-
-import generated.se.sundsvall.messaging.EmailRequest;
 
 @ExtendWith(MockitoExtension.class)
 class NotifierServiceTest {
@@ -55,13 +54,13 @@ class NotifierServiceTest {
 	@Test
 	void executeWithNoFailedRecords() {
 
-		// Setup
+		// Arrange
 		when(invoiceRepositoryMock.findByStatusIn(Status.values())).thenReturn(emptyList());
 
-		// Call.
+		// Act
 		service.sendFailureNotification();
 
-		// Verification.
+		// Assert
 		verify(invoiceRepositoryMock).findByStatusIn(Status.values());
 		verifyNoInteractions(messagingClientMock);
 	}
@@ -69,13 +68,13 @@ class NotifierServiceTest {
 	@Test
 	void executeWithExportFailedRecords() {
 
-		// Setup
+		// Arrange
 		when(invoiceRepositoryMock.findByStatusIn(Status.values())).thenReturn(List.of(InvoiceEntity.create().withStatus(EXPORT_FAILED).withMunicipalityId("2281")));
 
-		// Call.
+		// Act
 		service.sendFailureNotification();
 
-		// Verification.
+		// Assert
 		verify(invoiceRepositoryMock).findByStatusIn(Status.values());
 		verify(messagingClientMock).sendEmail(eq("2281"), emailRequestCaptor.capture());
 
@@ -87,7 +86,7 @@ class NotifierServiceTest {
 		assertThat(capturedEmailRequest.getSubject()).isEqualTo("Failed records discovered in MyApplication (test)");
 		assertThat(capturedEmailRequest.getMessage()).isEqualToIgnoringWhitespace("""
 				Failed record(s) exist in test-database!
-			
+
 				UNPROCESSED         	0 records
 				PROCESSED           	0 records
 				EXPORT_FAILED       	1 records
@@ -98,13 +97,13 @@ class NotifierServiceTest {
 	@Test
 	void executeWithImportFailedRecords() {
 
-		// Setup
+		// Arrange
 		when(invoiceRepositoryMock.findByStatusIn(Status.values())).thenReturn(List.of(InvoiceEntity.create().withStatus(IMPORT_FAILED).withMunicipalityId("2281")));
 
-		// Call.
+		// Act
 		service.sendFailureNotification();
 
-		// Verification.
+		// Assert
 		verify(invoiceRepositoryMock).findByStatusIn(Status.values());
 		verify(messagingClientMock).sendEmail(eq("2281"), emailRequestCaptor.capture());
 
@@ -116,7 +115,7 @@ class NotifierServiceTest {
 		assertThat(capturedEmailRequest.getSubject()).isEqualTo("Failed records discovered in MyApplication (test)");
 		assertThat(capturedEmailRequest.getMessage()).isEqualToIgnoringWhitespace("""
 				Failed record(s) exist in test-database!
-			
+
 				UNPROCESSED         	0 records
 				PROCESSED           	0 records
 				EXPORT_FAILED       	0 records
@@ -127,15 +126,14 @@ class NotifierServiceTest {
 	@Test
 	void executeWithFailedRecordsAndMailNotificationDisabled() {
 
-		// Setup
+		// Arrange
 		setField(service, "mailNotificationEnabled", false);
 
-		// Call.
+		// Act
 		service.sendFailureNotification();
 
-		// Verification.
+		// Assert
 		verifyNoInteractions(invoiceRepositoryMock);
 		verifyNoInteractions(messagingClientMock);
 	}
-
 }

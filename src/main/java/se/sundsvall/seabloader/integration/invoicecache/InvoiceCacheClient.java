@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import se.sundsvall.seabloader.integration.invoicecache.configuration.InvoiceCacheConfiguration;
-
 import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
+import se.sundsvall.seabloader.integration.invoicecache.configuration.InvoiceCacheConfiguration;
 
 @FeignClient(name = CLIENT_REGISTRATION_ID, url = "${integration.invoicecache.url}", configuration = InvoiceCacheConfiguration.class)
 public interface InvoiceCacheClient {
@@ -19,6 +18,7 @@ public interface InvoiceCacheClient {
 	/**
 	 * Export invoice to invoice cache.
 	 *
+	 * @param municipalityId    the municipality ID.
 	 * @param invoicePdfRequest with attributes for export an invoice.
 	 */
 	@PostMapping(path = "/{municipalityId}/invoices", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_PROBLEM_JSON_VALUE)

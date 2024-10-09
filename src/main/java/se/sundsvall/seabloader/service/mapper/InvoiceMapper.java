@@ -1,6 +1,7 @@
 package se.sundsvall.seabloader.service.mapper;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
@@ -79,7 +80,7 @@ public final class InvoiceMapper {
 
 	private static InvoicePdf toInvoicePdf(final InExchangeInvoiceStatusType inExchangeInvoiceStatusType, final OutputStream outputStream) {
 
-		if (Objects.isNull(inExchangeInvoiceStatusType.getOriginalInvoice()) || Objects.isNull(outputStream)) {
+		if (isNull(inExchangeInvoiceStatusType.getOriginalInvoice()) || Objects.isNull(outputStream)) {
 			LOGGER.error("OriginalInvoice or attachments not found in invoice with invoiceId: {}", inExchangeInvoiceStatusType.getInvoice().getInvoiceId());
 			throw new IllegalArgumentException("OriginalInvoice or attachments not found in invoice with invoiceId: %s".formatted(inExchangeInvoiceStatusType.getInvoice().getInvoiceId()));
 		}
