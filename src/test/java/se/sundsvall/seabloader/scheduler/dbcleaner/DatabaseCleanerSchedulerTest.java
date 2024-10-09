@@ -22,9 +22,12 @@ class DatabaseCleanerSchedulerTest {
 
 	@Test
 	void executeWithEntitiesToRemove() {
+
+		// Act
 		scheduler.execute();
+
+		// Assert
 		verify(databaseCleanerServiceMock).cleanDatabase();
 		verifyNoMoreInteractions(databaseCleanerServiceMock);
 	}
-
 }

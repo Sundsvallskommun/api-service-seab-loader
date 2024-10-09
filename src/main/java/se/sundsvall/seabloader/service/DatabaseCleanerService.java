@@ -37,7 +37,10 @@ public class DatabaseCleanerService {
 		if (entitiesToRemove > 0) {
 			LOGGER.info(LOG_ENTITIES_REMOVAL, entitiesToRemove, STATUS_FOR_ENTITIES_TO_REMOVE);
 			Lists.partition(getIdsToRemove(), DELETE_CHUNK_SIZE)
-				.forEach(invoiceRepository::deleteAllByIdInBatch);
+				.forEach(idList -> {
+					invoiceRepository.flush();
+					invoiceRepository.deleteAllByIdInBatch(idList);
+				});
 
 			final var optimizeResult = invoiceRepository.optimizeTable();
 			LOGGER.info(LOG_OPTIMIZE_RESULT, optimizeResult);

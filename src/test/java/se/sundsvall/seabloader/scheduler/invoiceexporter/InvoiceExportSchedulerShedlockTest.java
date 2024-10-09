@@ -5,6 +5,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import se.sundsvall.seabloader.service.InvoiceService;
 
@@ -36,28 +38,33 @@ import se.sundsvall.seabloader.service.InvoiceService;
 	"spring.lifecycle.timeout-per-shutdown-phase=0s"
 })
 @ActiveProfiles("junit")
+@Sql({
+	"/db/scripts/truncate.sql",
+	"/db/scripts/testdata-junit.sql"
+})
 class InvoiceExportSchedulerShedlockTest {
-	
+
 	private static LocalDateTime mockCalledTime;
 
 	@Autowired
-	private InvoiceService invoiceService;
+	private InvoiceService invoiceServiceMock;
 
 	@Autowired
 	private NamedParameterJdbcTemplate jdbcTemplate;
 
 	@Test
 	void verifyShedLockForExportInvoices() {
+
 		// Make sure scheduling occurs multiple times
-		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
+		await().until(() -> (mockCalledTime != null) && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(3)));
 
 		// Verify lock
 		await().atMost(5, SECONDS)
 			.untilAsserted(() -> assertThat(getLockedAt("exportinvoices"))
 				.isCloseTo(LocalDateTime.now(systemUTC()), within(10, ChronoUnit.SECONDS)));
 
-		verify(invoiceService).exportInvoices();
-		verifyNoMoreInteractions(invoiceService);
+		verify(invoiceServiceMock).sendInvoiceToInvoiceCache(1L);
+		verifyNoMoreInteractions(invoiceServiceMock);
 	}
 
 	private LocalDateTime getLockedAt(final String name) {
@@ -79,7 +86,7 @@ class InvoiceExportSchedulerShedlockTest {
 
 		@Bean
 		@Primary
-		public InvoiceService createMock() {
+		InvoiceService createInvoiceServiceMock() {
 
 			final var mockBean = Mockito.mock(InvoiceService.class);
 
@@ -89,11 +96,9 @@ class InvoiceExportSchedulerShedlockTest {
 				await().forever()
 					.until(() -> false);
 				return null;
-			}).when(mockBean).exportInvoices();
+			}).when(mockBean).sendInvoiceToInvoiceCache(anyLong());
 
 			return mockBean;
 		}
-
 	}
-
 }

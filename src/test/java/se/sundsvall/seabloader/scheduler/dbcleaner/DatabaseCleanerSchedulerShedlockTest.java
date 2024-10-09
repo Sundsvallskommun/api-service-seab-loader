@@ -49,7 +49,7 @@ class DatabaseCleanerSchedulerShedlockTest {
 	@Test
 	void verifyShedLockForDatabaseCleaner() {
 		// Make sure scheduling occurs multiple times
-		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
+		await().until(() -> (mockCalledTime != null) && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
 
 		// Verify lock
 		await().atMost(5, SECONDS)
@@ -79,7 +79,7 @@ class DatabaseCleanerSchedulerShedlockTest {
 
 		@Bean
 		@Primary
-		public DatabaseCleanerService createMock() {
+		DatabaseCleanerService createMock() {
 
 			final var mockBean = Mockito.mock(DatabaseCleanerService.class);
 
@@ -93,7 +93,5 @@ class DatabaseCleanerSchedulerShedlockTest {
 
 			return mockBean;
 		}
-
 	}
-
 }

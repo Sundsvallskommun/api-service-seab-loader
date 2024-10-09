@@ -33,12 +33,12 @@ class InvoicePdfMergerTest {
 	@Test
 	void mergeWithAttachements(@Load(TEST_INVOICE_FILE_WITH_ATTACHEMENTS) final String xml) throws Exception {
 
-		// Call
+		// Act
 		final var inExchangeInvoice = InvoiceMapper.toInExchangeInvoice(xml);
 		final var byteArrayOutput = pdfUtil.mergePdfs(inExchangeInvoice);
 		final var pdfDocument = Loader.loadPDF(((ByteArrayOutputStream) byteArrayOutput).toByteArray());
 
-		// Verification
+		// Assert
 		assertThat(byteArrayOutput).isNotNull();
 		assertThat(pdfDocument.getNumberOfPages()).isEqualTo(3);
 	}
@@ -46,12 +46,14 @@ class InvoicePdfMergerTest {
 	@Test
 	void mergeWithoutAttachements(@Load(TEST_INVOICE_FILE_WITHOUT_ATTACHEMENTS) final String xml) throws Exception {
 
-		// Call
+		// Arrange
 		final var inExchangeInvoice = InvoiceMapper.toInExchangeInvoice(xml);
+
+		// Act
 		final var byteArrayOutput = pdfUtil.mergePdfs(inExchangeInvoice);
 		final var pdfDocument = Loader.loadPDF(((ByteArrayOutputStream) byteArrayOutput).toByteArray());
 
-		// Verification
+		// Assert
 		assertThat(byteArrayOutput).isNotNull();
 		assertThat(pdfDocument.getNumberOfPages()).isEqualTo(1);
 	}
@@ -59,11 +61,11 @@ class InvoicePdfMergerTest {
 	@Test
 	void mergeFaultyInvoicePdf(@Load(TEST_INVOICE_FILE_WITH_FAULTY_ORIGINAL_PDF) final String xml) throws Exception {
 
-		// Call
+		// Act
 		final var inExchangeInvoice = InvoiceMapper.toInExchangeInvoice(xml);
 		final var exception = assertThrows(ThrowableProblem.class, () -> pdfUtil.mergePdfs(inExchangeInvoice));
 
-		// Verification
+		// Assert
 		assertThat(exception.getStatus()).isEqualTo(Status.INTERNAL_SERVER_ERROR);
 		assertThat(exception.getMessage()).isEqualTo("Internal Server Error: A problem occured during merge of PDF:s. Input byte array has wrong 4-byte ending unit.");
 	}

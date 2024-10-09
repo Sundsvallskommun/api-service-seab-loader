@@ -49,7 +49,7 @@ class NotifierSchedulerShedlockTest {
 	@Test
 	void verifyShedLockForSendNotifications() {
 		// Make sure scheduling occurs multiple times
-		await().until(() -> mockCalledTime != null && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
+		await().until(() -> (mockCalledTime != null) && LocalDateTime.now().isAfter(mockCalledTime.plusSeconds(2)));
 
 		// Verify lock
 		await().atMost(5, SECONDS)
@@ -79,7 +79,7 @@ class NotifierSchedulerShedlockTest {
 
 		@Bean
 		@Primary
-		public NotifierService createMock() {
+		NotifierService createMock() {
 
 			final var mockBean = Mockito.mock(NotifierService.class);
 

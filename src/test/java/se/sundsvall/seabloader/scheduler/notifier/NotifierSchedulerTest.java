@@ -22,7 +22,11 @@ class NotifierSchedulerTest {
 
 	@Test
 	void exportInvoices() {
+
+		// Act
 		service.execute();
+
+		// Assert
 		verify(notifierService).sendFailureNotification();
 		verifyNoMoreInteractions(notifierService);
 	}
