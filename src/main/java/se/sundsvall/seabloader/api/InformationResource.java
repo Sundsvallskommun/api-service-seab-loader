@@ -37,10 +37,14 @@ class InformationResource {
 		this.scheduleServiceList = scheduleServiceList;
 	}
 
-	@GetMapping(path = "/schedulers", produces = { APPLICATION_JSON_VALUE })
+	@GetMapping(path = "/schedulers", produces = {
+		APPLICATION_JSON_VALUE
+	})
 	@Operation(summary = "Scheduler information")
 	@ApiResponse(responseCode = "200", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
+	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+		Problem.class, ConstraintViolationProblem.class
+	})))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	ResponseEntity<List<SchedulerInformation>> getSchedulerInformation(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId) {

@@ -24,7 +24,9 @@ public class InvoiceExportScheduler extends AbstractScheduler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceExportScheduler.class);
 
-	private static final Status[] STATUSES_OF_INVOICES_TO_SEND = { UNPROCESSED, EXPORT_FAILED };
+	private static final Status[] STATUSES_OF_INVOICES_TO_SEND = {
+		UNPROCESSED, EXPORT_FAILED
+	};
 
 	private static final String LOG_SENDING_STARTED = "Beginning of sending invoices to Invoice-cache";
 	private static final String LOG_SENDING_ENDED = "Sending of invoices to Invoice-cache has ended";
