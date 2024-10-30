@@ -24,7 +24,9 @@ import se.sundsvall.seabloader.integration.db.model.enums.Status;
 @Entity
 @Table(name = "invoice",
 	uniqueConstraints = {
-		@UniqueConstraint(name = "invoice_unique_invoice_id_constraint", columnNames = {"invoice_id"})
+		@UniqueConstraint(name = "invoice_unique_invoice_id_constraint", columnNames = {
+			"invoice_id"
+		})
 	},
 	indexes = {
 		@Index(name = "invoice_invoice_id_index", columnList = "invoice_id"),
@@ -204,10 +206,13 @@ public class InvoiceEntity {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		final InvoiceEntity that = (InvoiceEntity) o;
-		return id == that.id && Objects.equals(municipalityId, that.municipalityId) && Objects.equals(invoiceId, that.invoiceId) && Objects.equals(content, that.content) && Objects.equals(created, that.created) && Objects.equals(modified, that.modified) && Objects.equals(processed, that.processed) && status == that.status && Objects.equals(statusMessage, that.statusMessage);
+		return id == that.id && Objects.equals(municipalityId, that.municipalityId) && Objects.equals(invoiceId, that.invoiceId) && Objects.equals(content, that.content) && Objects.equals(created, that.created) && Objects.equals(modified, that.modified)
+			&& Objects.equals(processed, that.processed) && status == that.status && Objects.equals(statusMessage, that.statusMessage);
 	}
 
 	@Override

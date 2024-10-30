@@ -36,7 +36,9 @@ import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
 
-@ExtendWith({ MockitoExtension.class, ResourceLoaderExtension.class })
+@ExtendWith({
+	MockitoExtension.class, ResourceLoaderExtension.class
+})
 class InvoiceServiceTest {
 
 	private static final String MUNICIPALITY_ID = "2281";

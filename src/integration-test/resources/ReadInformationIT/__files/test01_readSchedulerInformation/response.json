@@ -1,17 +1,17 @@
 [
-  {
-    "name": "DatabaseCleanerScheduler",
-    "expression": "0 0 7 * * 7",
-    "description": "At 07:00, every day, only on Sunday"
-  },
-  {
-    "name": "InvoiceExportScheduler",
-    "expression": "0 0 */1 * * *",
-    "description": "Every hour, every day"
-  },
-  {
-    "name": "NotifierScheduler",
-    "expression": "0 0 8 * * MON-FRI",
-    "description": "At 08:00, every day, Monday through Friday"
-  }
+	{
+		"expression": "0 0 7 * * 7",
+		"name": "DatabaseCleanerScheduler",
+		"description": "At 07:00, every day, only on Sunday"
+	},
+	{
+		"expression": "0 0 */1 * * *",
+		"name": "InvoiceExportScheduler",
+		"description": "Every hour, every day"
+	},
+	{
+		"expression": "0 0 8 * * MON-FRI",
+		"name": "NotifierScheduler",
+		"description": "At 08:00, every day, Monday through Friday"
+	}
 ]

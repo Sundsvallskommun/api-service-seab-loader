@@ -39,10 +39,14 @@ class InvoicesResource {
 		this.invoiceService = invoiceService;
 	}
 
-	@PostMapping(consumes = { APPLICATION_OCTET_STREAM_VALUE, APPLICATION_XML_VALUE }, produces = APPLICATION_PROBLEM_JSON_VALUE)
+	@PostMapping(consumes = {
+		APPLICATION_OCTET_STREAM_VALUE, APPLICATION_XML_VALUE
+	}, produces = APPLICATION_PROBLEM_JSON_VALUE)
 	@Operation(summary = "Create invoice", description = "Receives and stores invoices in XML-format.")
 	@ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
+	@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+		Problem.class, ConstraintViolationProblem.class
+	})))
 	@ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 	ResponseEntity<Void> createInvoice(
 		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId,

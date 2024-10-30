@@ -1,33 +1,23 @@
 {
-  "name": "api-invoicecache",
-  "request": {
-    "urlPath": "/api-invoicecache/2281/invoices",
-    "method": "POST",
-    "headers": {
-      "Authorization": {
-        "equalTo": "Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"
-      },
-      "x-request-id": {
-        "matches": "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$"
-      }
-    },
-    "bodyPatterns": [
-      {
-        "equalToJson": {
-          "issuerLegalId": "5555555555",
-          "debtorLegalId": "180101300101",
-          "invoiceNumber": "712345678",
-          "invoiceId": "111",
-          "invoiceType": "CONSOLIDATED_INVOICE",
-          "attachment": {
-            "content": "${json-unit.any-string}",
-            "name": "111.pdf"
-          }
-        }
-      }
-    ]
-  },
-  "response": {
-    "status": 201
-  }
+	"request": {
+		"headers": {
+			"Authorization": {"equalTo": "Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"},
+			"x-request-id": {"matches": "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$"}
+		},
+		"method": "POST",
+		"bodyPatterns": [{"equalToJson": {
+			"issuerLegalId": "5555555555",
+			"attachment": {
+				"name": "111.pdf",
+				"content": "${json-unit.any-string}"
+			},
+			"debtorLegalId": "180101300101",
+			"invoiceNumber": "712345678",
+			"invoiceType": "CONSOLIDATED_INVOICE",
+			"invoiceId": "111"
+		}}],
+		"urlPath": "/api-invoicecache/2281/invoices"
+	},
+	"response": {"status": 201},
+	"name": "api-invoicecache"
 }

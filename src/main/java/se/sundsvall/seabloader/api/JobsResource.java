@@ -28,7 +28,9 @@ import se.sundsvall.seabloader.service.AsyncExecutorService;
 @Tag(name = "Jobs", description = "Jobs resource")
 @RequestMapping("/{municipalityId}/jobs")
 @ApiResponse(responseCode = "204", description = "Successful operation", useReturnTypeSchema = true)
-@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = { Problem.class, ConstraintViolationProblem.class })))
+@ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(oneOf = {
+	Problem.class, ConstraintViolationProblem.class
+})))
 @ApiResponse(responseCode = "500", description = "Internal Server error", content = @Content(mediaType = APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = Problem.class)))
 class JobsResource {
 

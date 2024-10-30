@@ -24,7 +24,9 @@ public class DatabaseCleanerService {
 	private static final String LOG_OPTIMIZE_RESULT = "Optimize result: {}";
 
 	private static final int DELETE_CHUNK_SIZE = 10;
-	private static final Status[] STATUS_FOR_ENTITIES_TO_REMOVE = { PROCESSED };
+	private static final Status[] STATUS_FOR_ENTITIES_TO_REMOVE = {
+		PROCESSED
+	};
 
 	private final InvoiceRepository invoiceRepository;
 
