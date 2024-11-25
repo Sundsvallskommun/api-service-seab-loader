@@ -22,7 +22,7 @@
 		<cron-expression-descriptor.version>1.2.10</cron-expression-descriptor.version>
 		<librepdf.version>2.0.3</librepdf.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
-		<shedlock.version>5.16.0</shedlock.version>
+		<shedlock.version>6.0.1</shedlock.version>
 	</properties>
 	<dependencies>
 		<dependency>
