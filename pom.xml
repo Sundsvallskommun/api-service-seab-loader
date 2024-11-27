@@ -14,8 +14,6 @@
 	<name>api-service-seab-loader</name>
 	<description>Load pdf-invoices to InvoiceCache</description>
 	<properties>
-		<app.jvm.xmx.mb>768</app.jvm.xmx.mb>
-		<!-- Service properties -->
 		<jaxb2-maven-plugin.version>3.2.0</jaxb2-maven-plugin.version>
 		<org-apache-pdfbox.version>3.0.3</org-apache-pdfbox.version>
 		<guava.version>33.3.1-jre</guava.version>
@@ -161,7 +159,7 @@
 						<configuration>
 							<inputSpec>src/main/resources/integrations/messaging-api.yaml</inputSpec>
 							<output>${generated-sources-path}</output>
-							<generatorName>jaxrs-spec</generatorName>
+							<generatorName>spring</generatorName>
 							<generateApis>false</generateApis>
 							<generateSupportingFiles>false</generateSupportingFiles>
 							<configOptions>
