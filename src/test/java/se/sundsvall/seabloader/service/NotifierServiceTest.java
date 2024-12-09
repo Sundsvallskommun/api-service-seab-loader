@@ -10,8 +10,8 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
+import generated.se.sundsvall.messaging.EmailRequest;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +20,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import generated.se.sundsvall.messaging.EmailRequest;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;

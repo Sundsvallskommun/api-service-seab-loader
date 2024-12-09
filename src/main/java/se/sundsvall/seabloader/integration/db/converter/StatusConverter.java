@@ -1,9 +1,8 @@
 package se.sundsvall.seabloader.integration.db.converter;
 
-import java.util.Optional;
-
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import java.util.Optional;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 
 @Converter(autoApply = true)

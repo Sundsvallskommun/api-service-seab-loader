@@ -7,17 +7,15 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
+import generated.se.sundsvall.messaging.EmailRequest;
+import generated.se.sundsvall.messaging.EmailSender;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import generated.se.sundsvall.messaging.EmailRequest;
-import generated.se.sundsvall.messaging.EmailSender;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;

@@ -2,7 +2,6 @@ package se.sundsvall.seabloader.service;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
 import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerScheduler;
 import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportScheduler;
 import se.sundsvall.seabloader.scheduler.notifier.NotifierScheduler;

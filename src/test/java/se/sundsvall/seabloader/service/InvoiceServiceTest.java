@@ -16,10 +16,10 @@ import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_F
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 
+import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
 import java.io.ByteArrayOutputStream;
 import java.util.Locale;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,8 +28,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
