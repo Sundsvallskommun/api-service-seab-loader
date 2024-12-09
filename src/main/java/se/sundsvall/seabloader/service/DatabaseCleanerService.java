@@ -2,14 +2,11 @@ package se.sundsvall.seabloader.service;
 
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 
+import com.google.common.collect.Lists;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import com.google.common.collect.Lists;
-
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;

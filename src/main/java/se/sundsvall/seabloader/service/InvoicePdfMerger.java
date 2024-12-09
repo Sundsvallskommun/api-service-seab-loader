@@ -6,13 +6,18 @@ import static java.util.Optional.ofNullable;
 import static org.apache.pdfbox.io.RandomAccessReadBuffer.createBufferFromStream;
 import static org.zalando.problem.Status.INTERNAL_SERVER_ERROR;
 
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSmartCopy;
+import generated.se.inexchange.InExchangeInvoiceStatusType;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Base64;
 import java.util.List;
-
 import org.apache.commons.lang3.function.Failable;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
@@ -20,14 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.zalando.problem.Problem;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfSmartCopy;
-
-import generated.se.inexchange.InExchangeInvoiceStatusType;
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment;
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
 
 @Component
 public class InvoicePdfMerger {

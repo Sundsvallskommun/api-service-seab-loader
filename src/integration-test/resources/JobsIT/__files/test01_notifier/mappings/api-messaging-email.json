@@ -1,25 +1,35 @@
 {
 	"request": {
 		"headers": {
-			"Authorization": {"equalTo": "Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"},
-			"x-request-id": {"matches": "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$"}
+			"Authorization": {
+				"equalTo": "Bearer MTQ0NjJkZmQ5OTM2NDE1ZTZjNGZmZjI3"
+			},
+			"x-request-id": {
+				"matches": "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$"
+			}
 		},
 		"method": "POST",
-		"bodyPatterns": [{"equalToJson": {
-			"headers": {},
-			"emailAddress": "dummy@host.com",
-			"attachments": [],
-			"sender": {
-				"address": "dummy@host.com",
-				"name": "api-seab-loader"
-			},
-			"subject": "Failed records discovered in api-seab-loader ()",
-			"message": "Failed record(s) exist in -database! \n\nUNPROCESSED         \t1 records\nPROCESSED           \t1 records\nEXPORT_FAILED       \t0 records\nIMPORT_FAILED       \t1 records"
-		}}],
+		"bodyPatterns": [
+			{
+				"equalToJson": {
+					"headers": {},
+					"emailAddress": "dummy@host.com",
+					"attachments": [],
+					"sender": {
+						"address": "dummy@host.com",
+						"name": "api-seab-loader"
+					},
+					"subject": "Failed records discovered in api-seab-loader ()",
+					"message": "Failed record(s) exist in -database! \n\nUNPROCESSED         \t1 records\nPROCESSED           \t1 records\nEXPORT_FAILED       \t0 records\nIMPORT_FAILED       \t1 records"
+				}
+			}
+		],
 		"urlPath": "/api-messaging/2281/email"
 	},
 	"response": {
-		"headers": {"Content-Type": "application/json"},
+		"headers": {
+			"Content-Type": "application/json"
+		},
 		"bodyFileName": "test01_notifier/mocks/api-messaging-email-response.json",
 		"status": 200
 	},

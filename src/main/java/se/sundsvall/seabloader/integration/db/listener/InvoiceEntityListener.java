@@ -6,11 +6,9 @@ import static java.util.Objects.isNull;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
-import java.time.ZoneId;
-
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-
+import java.time.ZoneId;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 
 public class InvoiceEntityListener {

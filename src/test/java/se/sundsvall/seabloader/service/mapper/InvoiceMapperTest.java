@@ -9,21 +9,17 @@ import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
+import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
+import jakarta.xml.bind.UnmarshalException;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 import java.util.Locale;
-
-import jakarta.xml.bind.UnmarshalException;
-
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
-
-import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
 
 @ExtendWith(ResourceLoaderExtension.class)
 class InvoiceMapperTest {

@@ -14,7 +14,6 @@ import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCES
 
 import java.time.OffsetDateTime;
 import java.util.Random;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

@@ -9,7 +9,6 @@ import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSE
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
 import org.junit.jupiter.api.Test;
-
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 
 class InvoiceEntityListenerTest {

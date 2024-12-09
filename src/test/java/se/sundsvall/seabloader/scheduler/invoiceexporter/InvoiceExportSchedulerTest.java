@@ -10,13 +10,11 @@ import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_F
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
 import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.service.InvoiceService;
