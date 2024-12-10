@@ -8,8 +8,8 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerScheduler;
 import se.sundsvall.seabloader.scheduler.notifier.NotifierScheduler;
@@ -22,13 +22,13 @@ class JobsResourceTest {
 	private static final String MUNICIPALITY_ID = "2281";
 	private static final String PATH = "/{municipalityId}/jobs";
 
-	@MockBean
+	@MockitoBean
 	private AsyncExecutorService asyncExecutorService;
 
-	@MockBean
+	@MockitoBean
 	private NotifierScheduler notifierScheduler;
 
-	@MockBean
+	@MockitoBean
 	private DatabaseCleanerScheduler databaseCleanerScheduler;
 
 	@Autowired
