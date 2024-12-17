@@ -19,7 +19,7 @@ public interface InvoiceCacheClient {
 	/**
 	 * Export invoice to invoice cache.
 	 *
-	 * @param municipalityId the municipality ID.
+	 * @param municipalityId    the municipality ID.
 	 * @param invoicePdfRequest with attributes for export an invoice.
 	 */
 	@PostMapping(path = "/{municipalityId}/invoices", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_PROBLEM_JSON_VALUE)
