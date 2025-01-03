@@ -83,12 +83,12 @@ class NotifierServiceTest {
 		assertThat(capturedEmailRequest.getSender().getAddress()).isEqualTo("sender@host.com");
 		assertThat(capturedEmailRequest.getSubject()).isEqualTo("Failed records discovered in MyApplication (test)");
 		assertThat(capturedEmailRequest.getMessage()).isEqualToIgnoringWhitespace("""
-				Failed record(s) exist in test-database!
+			\tFailed record(s) exist in test-database!
 
-				UNPROCESSED         	0 records
-				PROCESSED           	0 records
-				EXPORT_FAILED       	1 records
-				IMPORT_FAILED       	0 records
+			\tUNPROCESSED         	0 records
+			\tPROCESSED           	0 records
+			\tEXPORT_FAILED       	1 records
+			\tIMPORT_FAILED       	0 records
 			""");
 	}
 
@@ -112,12 +112,12 @@ class NotifierServiceTest {
 		assertThat(capturedEmailRequest.getSender().getAddress()).isEqualTo("sender@host.com");
 		assertThat(capturedEmailRequest.getSubject()).isEqualTo("Failed records discovered in MyApplication (test)");
 		assertThat(capturedEmailRequest.getMessage()).isEqualToIgnoringWhitespace("""
-				Failed record(s) exist in test-database!
+			\tFailed record(s) exist in test-database!
 
-				UNPROCESSED         	0 records
-				PROCESSED           	0 records
-				EXPORT_FAILED       	0 records
-				IMPORT_FAILED       	1 records
+			\tUNPROCESSED         	0 records
+			\tPROCESSED           	0 records
+			\tEXPORT_FAILED       	0 records
+			\tIMPORT_FAILED       	1 records
 			""");
 	}
 

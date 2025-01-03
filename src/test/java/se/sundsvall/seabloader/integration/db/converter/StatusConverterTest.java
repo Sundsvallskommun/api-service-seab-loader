@@ -33,7 +33,7 @@ class StatusConverterTest {
 	}
 
 	@Test
-	void testConvertToEntityAttribute_whenMissingValue_should() {
+	void testConvertToEntityAttributeWhenMissingValue() {
 		assertThatExceptionOfType(IllegalArgumentException.class)
 			.isThrownBy(() -> statusConverter.convertToEntityAttribute("noMatch"))
 			.withMessage("No enum constant se.sundsvall.seabloader.integration.db.model.enums.Status.noMatch");
