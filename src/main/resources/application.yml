@@ -90,12 +90,16 @@ notification:
       address: '${config.notification.sender}'
 scheduler:
   dbcleaner:
+    name: dbcleaner
     cron:
       expression: '${config.scheduler.cron.dbcleaner}'
   invoiceexporter:
+    name: exportinvoices
     cron:
       expression: '${config.scheduler.cron.invoiceexporter}'
   notifier:
+    name: sendnotifications
     cron:
       expression: '${config.scheduler.cron.notifier}'
   shedlock-lock-at-most-for: PT2M
+  maximum-execution-time: PT2M
