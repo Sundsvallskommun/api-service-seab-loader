@@ -20,8 +20,8 @@ public class DatabaseCleanerScheduler extends AbstractScheduler {
 	@Dept44Scheduled(
 		cron = "${scheduler.dbcleaner.cron.expression}",
 		name = "${scheduler.dbcleaner.name}",
-		lockAtMostFor = "${scheduler.shedlock-lock-at-most-for}",
-		maximumExecutionTime = "${scheduler.maximum-execution-time}")
+		lockAtMostFor = "${scheduler.dbcleaner.shedlock-lock-at-most-for}",
+		maximumExecutionTime = "${scheduler.dbcleaner.maximum-execution-time}")
 	public void execute() {
 		databaseCleanerService.cleanDatabase();
 	}

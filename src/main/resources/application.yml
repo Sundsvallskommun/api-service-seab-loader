@@ -91,15 +91,19 @@ notification:
 scheduler:
   dbcleaner:
     name: dbcleaner
+    shedlock-lock-at-most-for: PT5M
+    maximum-execution-time: PT5M
     cron:
       expression: '${config.scheduler.cron.dbcleaner}'
   invoiceexporter:
     name: exportinvoices
+    shedlock-lock-at-most-for: PT15M
+    maximum-execution-time: PT15M
     cron:
       expression: '${config.scheduler.cron.invoiceexporter}'
   notifier:
     name: sendnotifications
+    shedlock-lock-at-most-for: PT2M
+    maximum-execution-time: PT2M
     cron:
       expression: '${config.scheduler.cron.notifier}'
-  shedlock-lock-at-most-for: PT2M
-  maximum-execution-time: PT2M

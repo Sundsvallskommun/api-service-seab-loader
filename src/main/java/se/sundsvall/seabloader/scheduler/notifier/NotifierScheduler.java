@@ -20,8 +20,8 @@ public class NotifierScheduler extends AbstractScheduler {
 	@Dept44Scheduled(
 		cron = "${scheduler.notifier.cron.expression}",
 		name = "${scheduler.notifier.name}",
-		lockAtMostFor = "${scheduler.shedlock-lock-at-most-for}",
-		maximumExecutionTime = "${scheduler.maximum-execution-time}")
+		lockAtMostFor = "${scheduler.notifier.shedlock-lock-at-most-for}",
+		maximumExecutionTime = "${scheduler.notifier.maximum-execution-time}")
 	public void execute() {
 		notifierService.sendFailureNotification();
 	}

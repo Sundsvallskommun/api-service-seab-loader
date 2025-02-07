@@ -37,8 +37,8 @@ public class InvoiceExportScheduler extends AbstractScheduler {
 	@Dept44Scheduled(
 		cron = "${scheduler.invoiceexporter.cron.expression}",
 		name = "${scheduler.invoiceexporter.name}",
-		lockAtMostFor = "${scheduler.shedlock-lock-at-most-for}",
-		maximumExecutionTime = "${scheduler.maximum-execution-time}")
+		lockAtMostFor = "${scheduler.invoiceexporter.shedlock-lock-at-most-for}",
+		maximumExecutionTime = "${scheduler.invoiceexporter.maximum-execution-time}")
 	public void execute() {
 
 		final var invoiceIdsToSend = invoiceRepository.findIdsByStatusIn(STATUSES_OF_INVOICES_TO_SEND);
