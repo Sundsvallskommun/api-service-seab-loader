@@ -1,6 +1,6 @@
 # SeabLoader
 
-_The service _
+_Service providing functionality to load pdf invoices from SEAB into InvoiceCache._
 
 ## Getting Started
 
