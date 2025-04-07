@@ -14,7 +14,7 @@
 	<name>api-service-seab-loader</name>
 	<description>Load pdf-invoices to InvoiceCache</description>
 	<properties>
-		<jaxb2-maven-plugin.version>3.2.0</jaxb2-maven-plugin.version>
+		<jaxb2-maven-plugin.version>3.3.0</jaxb2-maven-plugin.version>
 		<org-apache-pdfbox.version>3.0.4</org-apache-pdfbox.version>
 		<guava.version>33.4.6-jre</guava.version>
 		<cron-expression-descriptor.version>1.2.10</cron-expression-descriptor.version>
