@@ -16,7 +16,7 @@
 	<properties>
 		<jaxb2-maven-plugin.version>3.3.0</jaxb2-maven-plugin.version>
 		<org-apache-pdfbox.version>3.0.4</org-apache-pdfbox.version>
-		<guava.version>33.4.7-jre</guava.version>
+		<guava.version>33.4.8-jre</guava.version>
 		<cron-expression-descriptor.version>1.2.10</cron-expression-descriptor.version>
 		<librepdf.version>2.0.3</librepdf.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
