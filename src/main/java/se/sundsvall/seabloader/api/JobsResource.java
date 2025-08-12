@@ -42,7 +42,7 @@ class JobsResource {
 	@PostMapping(path = "/invoiceexporter")
 	@Operation(summary = "Triggers export invoices (to InvoiceCache) job.", description = "Triggers export invoices (to InvoiceCache) job.")
 	ResponseEntity<Void> invoiceExporter(
-		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId) {
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable @ValidMunicipalityId final String municipalityId) {
 
 		asyncExecutorService.invoiceExportExecute();
 		return noContent()
@@ -53,7 +53,7 @@ class JobsResource {
 	@PostMapping(path = "/notifier")
 	@Operation(summary = "Triggers notification job.", description = "Triggers notification job.")
 	ResponseEntity<Void> notifier(
-		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId) {
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable @ValidMunicipalityId final String municipalityId) {
 
 		asyncExecutorService.notifierExecute();
 		return noContent()
@@ -64,7 +64,7 @@ class JobsResource {
 	@PostMapping(path = "/dbcleaner")
 	@Operation(summary = "Triggers database cleaning job.", description = "Triggers database cleaning job.")
 	ResponseEntity<Void> dbCleaner(
-		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable("municipalityId") @ValidMunicipalityId final String municipalityId) {
+		@Parameter(name = "municipalityId", description = "Municipality id", example = "2281") @PathVariable @ValidMunicipalityId final String municipalityId) {
 
 		asyncExecutorService.databaseCleanerExecute();
 		return noContent()

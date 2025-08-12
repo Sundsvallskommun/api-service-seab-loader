@@ -1,19 +1,19 @@
 package se.sundsvall.seabloader.integration.db.model;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static org.hibernate.Length.LONG32;
 import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.OffsetDateTime;
 import java.util.Objects;
-import org.hibernate.Length;
 import org.hibernate.annotations.TimeZoneStorage;
 import se.sundsvall.seabloader.integration.db.listener.InvoiceEntityListener;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
@@ -34,7 +34,7 @@ import se.sundsvall.seabloader.integration.db.model.enums.Status;
 public class InvoiceEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "id")
 	private long id;
 
@@ -44,7 +44,7 @@ public class InvoiceEntity {
 	@Column(name = "invoice_id")
 	private String invoiceId;
 
-	@Column(name = "content", length = Length.LONG32)
+	@Column(name = "content", length = LONG32)
 	private String content;
 
 	@Column(name = "created")
@@ -62,7 +62,7 @@ public class InvoiceEntity {
 	@Column(name = "status", nullable = false)
 	private Status status;
 
-	@Column(name = "status_message", length = Length.LONG32)
+	@Column(name = "status_message", length = LONG32)
 	private String statusMessage;
 
 	public static InvoiceEntity create() {
@@ -203,10 +203,12 @@ public class InvoiceEntity {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
 		final InvoiceEntity that = (InvoiceEntity) o;
 		return id == that.id && Objects.equals(municipalityId, that.municipalityId) && Objects.equals(invoiceId, that.invoiceId) && Objects.equals(content, that.content) && Objects.equals(created, that.created) && Objects.equals(modified, that.modified)
 			&& Objects.equals(processed, that.processed) && status == that.status && Objects.equals(statusMessage, that.statusMessage);
