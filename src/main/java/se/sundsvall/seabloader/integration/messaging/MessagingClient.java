@@ -25,7 +25,7 @@ public interface MessagingClient {
 	 * @return                response containing id for sent message
 	 */
 	@PostMapping(path = "/{municipalityId}/email", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-	MessageResult sendEmail(@PathVariable(name = "municipalityId") final String municipalityId, @RequestBody EmailRequest emailRequest);
+	MessageResult sendEmail(@PathVariable final String municipalityId, @RequestBody EmailRequest emailRequest);
 
 	/**
 	 * Send a single sms
@@ -36,6 +36,6 @@ public interface MessagingClient {
 	 */
 	@PostMapping(path = "/{municipalityId}/sms", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
 	MessageResult sendSms(
-		@PathVariable(name = "municipalityId") final String municipalityId,
+		@PathVariable final String municipalityId,
 		@RequestBody SmsRequest smsRequest);
 }

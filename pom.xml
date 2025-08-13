@@ -16,9 +16,8 @@
 	<properties>
 		<jaxb2-maven-plugin.version>3.3.0</jaxb2-maven-plugin.version>
 		<org-apache-pdfbox.version>3.0.5</org-apache-pdfbox.version>
-		<guava.version>33.4.8-jre</guava.version>
 		<cron-expression-descriptor.version>1.2.10</cron-expression-descriptor.version>
-		<librepdf.version>2.4.0</librepdf.version>
+		<openpdf.version>2.4.0</openpdf.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 	</properties>
 	<dependencies>
@@ -44,10 +43,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
 		</dependency>
 		<dependency>
@@ -64,14 +59,13 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.librepdf</groupId>
-			<artifactId>openpdf</artifactId>
-			<version>${librepdf.version}</version>
+			<artifactId>openpdf-core-modern</artifactId>
+			<version>${openpdf.version}</version>
 		</dependency>
 		<dependency>
 			<!-- Used for list partitioning (DatabaseCleanerSchedulerService) -->
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
 		</dependency>
 		<!-- Test -->
 		<dependency>

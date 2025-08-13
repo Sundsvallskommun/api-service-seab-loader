@@ -1,7 +1,6 @@
 package se.sundsvall.seabloader.integration.invoicecache;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON_VALUE;
 import static se.sundsvall.seabloader.integration.invoicecache.configuration.InvoiceCacheConfiguration.CLIENT_REGISTRATION_ID;
 
 import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
@@ -22,7 +21,6 @@ public interface InvoiceCacheClient {
 	 * @param municipalityId    the municipality ID.
 	 * @param invoicePdfRequest with attributes for export an invoice.
 	 */
-	@PostMapping(path = "/{municipalityId}/invoices", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_PROBLEM_JSON_VALUE)
-	void sendInvoice(@PathVariable(name = "municipalityId") String municipalityId, @RequestBody InvoicePdfRequest invoicePdfRequest);
-
+	@PostMapping(path = "/{municipalityId}/invoices", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+	void sendInvoice(@PathVariable String municipalityId, @RequestBody InvoicePdfRequest invoicePdfRequest);
 }
