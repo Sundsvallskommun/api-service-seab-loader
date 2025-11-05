@@ -1,12 +1,143 @@
 openapi: 3.0.1
 info:
   title: Messaging
-  contact: {}
+  contact: { }
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: "7.3"
+  version: "7.9"
+servers:
+  - url: http://localhost:53686
+    description: Generated server url
 paths:
+  /{municipalityId}/{organizationNumber}/mailboxes:
+    post:
+      tags:
+        - Sending Resources
+      summary: Retrieve a list of digital mailboxes
+      description: "Response contains a list of partyIds, supplier and if the digital\
+        \ mailbox is reachable for the given organization."
+      operationId: getMailboxes
+      parameters:
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
+        - name: organizationNumber
+          in: path
+          description: The organization number of the intended sending organization
+          required: true
+          schema:
+            type: string
+          example: 5561234567
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
+      responses:
+        "200":
+          description: Successful Operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Mailbox"
+        "400":
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: Bad Gateway
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /{municipalityId}/{organizationNumber}/digital-mail:
+    post:
+      tags:
+        - Sending Resources
+      summary: Send a single digital mail to one or more parties
+      operationId: sendDigitalMail
+      parameters:
+        - name: x-origin
+          in: header
+          description: Origin of the request
+          required: false
+          schema:
+            type: string
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
+        - name: organizationNumber
+          in: path
+          description: The organization number of the sending organization
+          required: true
+          schema:
+            type: string
+          example: 5561234567
+        - name: async
+          in: query
+          description: If the message should be sent asynchronously or not
+          required: false
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DigitalMailRequest"
+        required: true
+      responses:
+        "201":
+          description: Successful Operation
+          headers:
+            Location:
+              style: simple
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageBatchResult"
+        "400":
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: Bad Gateway
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /{municipalityId}/webmessage:
     post:
       tags:
@@ -14,42 +145,31 @@ paths:
       summary: Send a single web message
       operationId: sendWebMessage
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: async
+        - name: async
           in: query
           description: If the message should be sent asynchronously or not
           required: false
-          style: form
-          explode: true
           schema:
             type: boolean
             default: false
@@ -65,13 +185,117 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/MessageResult"
+        "400":
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: Bad Gateway
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /{municipalityId}/snail-mail:
+    post:
+      tags:
+        - Sending Resources
+      summary: Add snail-mail to a batch
+      operationId: addSnailMailToBatch
+      parameters:
+        - name: x-origin
+          in: header
+          description: Origin of the request
+          required: false
+          schema:
+            type: string
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
+        - name: batchId
+          in: query
+          description: The snail-mail batch id
+          required: true
+          schema:
+            type: string
+          example: f427952b-247c-4d3b-b081-675a467b3619
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SnailmailRequest"
+        required: true
+      responses:
+        "201":
+          description: Successful Operation
+          headers:
+            Location:
+              style: simple
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResult"
+        "400":
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: Internal Server Error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "502":
+          description: Bad Gateway
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+  /{municipalityId}/snail-mail/batch/{batchId}:
+    post:
+      tags:
+        - Sending Resources
+      summary: Trigger processing of a snail-mail batch
+      operationId: triggerSnailMailBatchProcessing
+      parameters:
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
+        - name: batchId
+          in: path
+          description: The snail-mail batch id
+          required: true
+          schema:
+            type: string
+          example: f427952b-247c-4d3b-b081-675a467b3619
+      responses:
+        "200":
+          description: Successful Operation
         "400":
           description: Bad Request
           content:
@@ -97,42 +321,31 @@ paths:
       summary: Send a single SMS
       operationId: sendSms
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: async
+        - name: async
           in: query
           description: If the message should be sent asynchronously or not
           required: false
-          style: form
-          explode: true
           schema:
             type: boolean
             default: false
@@ -148,7 +361,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -180,32 +392,24 @@ paths:
       summary: Send a batch of sms asynchronously
       operationId: sendSmsBatch
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
@@ -221,7 +425,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -253,42 +456,31 @@ paths:
       summary: Send a single Slack message
       operationId: sendToSlack
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: async
+        - name: async
           in: query
           description: If the message should be sent asynchronously or not
           required: false
-          style: form
-          explode: true
           schema:
             type: boolean
             default: false
@@ -304,7 +496,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -336,42 +527,31 @@ paths:
       summary: Send a batch of messages as e-mail or SMS to a list of parties
       operationId: sendMessages
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: async
+        - name: async
           in: query
           description: If the message should be sent asynchronously or not
           required: false
-          style: form
-          explode: true
           schema:
             type: boolean
             default: false
@@ -387,7 +567,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -419,42 +598,31 @@ paths:
       summary: Send a single letter as digital mail or snail mail
       operationId: sendLetter
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: async
+        - name: async
           in: query
           description: If the message should be sent asynchronously or not
           required: false
-          style: form
-          explode: true
           schema:
             type: boolean
             default: false
@@ -470,7 +638,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -502,42 +669,31 @@ paths:
       summary: Send a single e-mail
       operationId: sendEmail
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: async
+        - name: async
           in: query
           description: If the message should be sent asynchronously or not
           required: false
-          style: form
-          explode: true
           schema:
             type: boolean
             default: false
@@ -553,7 +709,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -585,32 +740,24 @@ paths:
       summary: Send a batch of e-mails asynchronously
       operationId: sendEmailBatch
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
@@ -626,7 +773,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -656,44 +802,35 @@ paths:
       tags:
         - Sending Resources
       summary: Send a single digital mail to one or more parties
-      operationId: sendDigitalMail
+      description: "This endpoint is deprecated in favor of /{organizationNumber}/digital-mail\
+        \ and will be removed in a future version."
+      operationId: sendDigitalMailDeprecated
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: async
+        - name: async
           in: query
           description: If the message should be sent asynchronously or not
           required: false
-          style: form
-          explode: true
           schema:
             type: boolean
             default: false
@@ -709,7 +846,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -734,6 +870,7 @@ paths:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+      deprecated: true
   /{municipalityId}/digital-invoice:
     post:
       tags:
@@ -741,42 +878,31 @@ paths:
       summary: Send a digital invoice
       operationId: sendDigitalInvoice
       parameters:
-        -
-          name: x-origin
+        - name: x-origin
           in: header
           description: Origin of the request
           required: false
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: x-issuer
+        - name: x-issuer
           in: header
-          description: "Issuer of the request.  **DEPRECATED**: This parameter will be removed in a future version, use X-Sent-By instead."
+          description: "Issuer of the request.  **DEPRECATED**: This parameter will\
+          \ be removed in a future version, use X-Sent-By instead."
           required: false
           deprecated: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: async
+        - name: async
           in: query
           description: If the message should be sent asynchronously or not
           required: false
-          style: form
-          explode: true
           schema:
             type: boolean
             default: false
@@ -792,7 +918,6 @@ paths:
           headers:
             Location:
               style: simple
-              explode: false
               schema:
                 type: string
           content:
@@ -821,60 +946,46 @@ paths:
     get:
       tags:
         - History Resources
-      summary: "Get historical messages sent by a user, optionally filtered by batch id"
+      summary: "Get historical messages sent by a user, optionally filtered by batch\
+        \ id"
       operationId: getUserMessages
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: userId
+        - name: userId
           in: path
           description: User id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: joe01doe
-        -
-          name: batchId
+        - name: batchId
           in: query
           description: Batch id
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: uuid
           example: 118e05b3-4321-4f46-9a33-b9f43faa58a6
-        -
-          name: page
+        - name: page
           in: query
           description: Which page to fetch
           required: false
-          style: form
-          explode: true
           schema:
             minimum: 1
             type: integer
             format: int32
             default: 1
           example: 1
-        -
-          name: limit
+        - name: limit
           in: query
           description: Sets the amount of entries per page
           required: false
-          style: form
-          explode: true
           schema:
             minimum: 1
             type: integer
@@ -894,10 +1005,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -911,32 +1020,23 @@ paths:
       summary: Get a historical message sent by a user
       operationId: getUserMessage
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: userId
+        - name: userId
           in: path
           description: User id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: joe01doe
-        -
-          name: messageId
+        - name: messageId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
             format: uuid
@@ -954,10 +1054,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -971,46 +1069,34 @@ paths:
       summary: Get information regarding historical batches sent by a user
       operationId: getUserBatches
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: userId
+        - name: userId
           in: path
           description: User id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: joe01doe
-        -
-          name: page
+        - name: page
           in: query
           description: Which page to fetch
           required: false
-          style: form
-          explode: true
           schema:
             minimum: 1
             type: integer
             format: int32
             default: 1
           example: 1
-        -
-          name: limit
+        - name: limit
           in: query
           description: Sets the amount of entries per page
           required: false
-          style: form
-          explode: true
           schema:
             minimum: 1
             type: integer
@@ -1030,10 +1116,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1047,27 +1131,27 @@ paths:
       summary: Get the status for a single message and its deliveries
       operationId: getMessageStatus
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: messageId
+        - name: messageId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
             format: uuid
           example: d1e07d2c-2e75-44e0-b978-de7e19d7edad
       responses:
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "200":
           description: Successful Operation
           content:
@@ -1080,16 +1164,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
-        "404":
-          description: Not Found
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1103,27 +1179,27 @@ paths:
       summary: Get the status for a single delivery
       operationId: getDeliveryStatus
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: deliveryId
+        - name: deliveryId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
             format: uuid
           example: 41141c6f-4825-45a7-b52b-79fbff70765e
       responses:
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "200":
           description: Successful Operation
           content:
@@ -1136,16 +1212,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
-        "404":
-          description: Not Found
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1159,27 +1227,27 @@ paths:
       summary: "Get the status for a message batch, its messages and their deliveries"
       operationId: getBatchStatus
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: batchId
+        - name: batchId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
             format: uuid
           example: 118e05b3-4321-4f46-9a33-b9f43faa58a6
       responses:
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "200":
           description: Successful Operation
           content:
@@ -1192,16 +1260,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
-        "404":
-          description: Not Found
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1215,23 +1275,17 @@ paths:
       summary: Get delivery statistics
       operationId: getStatistics
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: messageType
+        - name: messageType
           in: query
           description: Message type
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             enum:
@@ -1244,23 +1298,17 @@ paths:
               - SNAIL_MAIL
               - LETTER
               - SLACK
-        -
-          name: from
+        - name: from
           in: query
           description: "From-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
-        -
-          name: to
+        - name: to
           in: query
           description: "To-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
@@ -1277,10 +1325,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1294,51 +1340,36 @@ paths:
       summary: Get letter delivery statistics by department
       operationId: getDepartmentStatistics
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: department
+        - name: department
           in: path
           description: Department name
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
-        -
-          name: origin
+        - name: origin
           in: query
           description: Origin name
           required: false
-          style: form
-          explode: true
           schema:
             type: string
-        -
-          name: from
+        - name: from
           in: query
           description: "From-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
-        -
-          name: to
+        - name: to
           in: query
           description: "To-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
@@ -1357,10 +1388,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1374,42 +1403,30 @@ paths:
       summary: Get letter delivery statistics by department
       operationId: getDepartmentStatistics_1
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: origin
+        - name: origin
           in: query
           description: Origin name
           required: false
-          style: form
-          explode: true
           schema:
             type: string
-        -
-          name: from
+        - name: from
           in: query
           description: "From-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
-        -
-          name: to
+        - name: to
           in: query
           description: "To-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
@@ -1428,10 +1445,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1445,51 +1460,36 @@ paths:
       summary: Get letter and sms delivery statistics by department
       operationId: getStatisticsByDepartment
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: department
+        - name: department
           in: query
           description: Department name
           required: false
-          style: form
-          explode: true
           schema:
             type: string
-        -
-          name: origin
+        - name: origin
           in: query
           description: Origin name
           required: false
-          style: form
-          explode: true
           schema:
             type: string
-        -
-          name: from
+        - name: from
           in: query
           description: "From-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
-        -
-          name: to
+        - name: to
           in: query
           description: "To-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
@@ -1506,10 +1506,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1521,30 +1519,32 @@ paths:
       tags:
         - History Resources
       summary: Get a message and all its deliveries
-      description: "This endpoint is deprecated and will be removed in a future version.Use /messages/{messageId}/metadata instead. To get the file content for the message use /messages/{messageId}/attachments/{fileName}."
+      description: "This endpoint is deprecated and will be removed in a future version.Use\
+        \ /messages/{messageId}/metadata instead. To get the file content for the\
+        \ message use /messages/{messageId}/attachments/{fileName}."
       operationId: getMessage
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: messageId
+        - name: messageId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
             format: uuid
           example: d1e07d2c-2e75-44e0-b978-de7e19d7edad
       responses:
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "200":
           description: Successful Operation
           content:
@@ -1559,16 +1559,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
-        "404":
-          description: Not Found
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1583,27 +1575,27 @@ paths:
       summary: Get metadata for a message and all its deliveries
       operationId: getMessageMetadata
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: messageId
+        - name: messageId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
             format: uuid
           example: d1e07d2c-2e75-44e0-b978-de7e19d7edad
       responses:
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
         "200":
           description: Successful Operation
           content:
@@ -1618,16 +1610,53 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
-        "404":
-          description: Not Found
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
+        "500":
+          description: Internal Server Error
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+  /{municipalityId}/messages/{messageId}/attachments:
+    get:
+      tags:
+        - History Resources
+      summary: Stream attachment by messageId and fileName
+      operationId: readAttachmentByRequestParameter
+      parameters:
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
+        - name: messageId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: d1e07d2c-2e75-44e0-b978-de7e19d7edad
+        - name: fileName
+          in: query
+          required: true
+          schema:
+            minLength: 1
+            type: string
+          example: some-filename.txt
+      responses:
+        "200":
+          description: Successful Operation
+        "400":
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
@@ -1639,34 +1668,28 @@ paths:
       tags:
         - History Resources
       summary: Stream attachment by messageId and fileName
+      description: |
+        This endpoint is deprecated and will be removed in a future version."
+        Use /{municipalityId}/messages/{messageId}/attachments and provide the filename using request parameter fileName.
       operationId: readAttachment
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: messageId
+        - name: messageId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
             format: uuid
           example: d1e07d2c-2e75-44e0-b978-de7e19d7edad
-        -
-          name: fileName
+        - name: fileName
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: some-filename.txt
@@ -1679,16 +1702,15 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+      deprecated: true
   /{municipalityId}/conversation-history/{partyId}:
     get:
       tags:
@@ -1696,43 +1718,31 @@ paths:
       summary: Get the entire conversation history for a given party
       operationId: getConversationHistory
       parameters:
-        -
-          name: municipalityId
+        - name: municipalityId
           in: path
           description: Municipality id
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
           example: 2281
-        -
-          name: partyId
+        - name: partyId
           in: path
           required: true
-          style: simple
-          explode: false
           schema:
             type: string
             format: uuid
           example: 46f9bf9f-09f2-45ac-8c8b-6cad847541ed
-        -
-          name: from
+        - name: from
           in: query
           description: "From-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
-        -
-          name: to
+        - name: to
           in: query
           description: "To-date (inclusive). Format: yyyy-MM-dd (ISO8601)"
           required: false
-          style: form
-          explode: true
           schema:
             type: string
             format: date
@@ -1751,18 +1761,175 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                  -
-                    $ref: "#/components/schemas/Problem"
-                  -
-                    $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server Error
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/Problem"
+  /api-docs:
+    get:
+      tags:
+        - API
+      summary: OpenAPI
+      operationId: getApiDocs
+      responses:
+        "200":
+          description: OK
+          content:
+            application/yaml:
+              schema:
+                type: string
+      x-auth-type: None
+      x-throttling-tier: Unlimited
+      x-wso2-mutual-ssl: Optional
 components:
   schemas:
+    Problem:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/StatusType"
+        detail:
+          type: string
+        title:
+          type: string
+        instance:
+          type: string
+          format: uri
+        type:
+          type: string
+          format: uri
+        parameters:
+          type: object
+          additionalProperties:
+            type: object
+    StatusType:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        reasonPhrase:
+          type: string
+    Mailbox:
+      type: object
+      properties:
+        partyId:
+          type: string
+          description: partyId for the person the mailbox belongs to
+        supplier:
+          type: string
+          description: "Name of the mailbox, e.g. Kivra"
+        reachable:
+          type: boolean
+          description: If it's possible to send messages to this mailbox
+      description: Response model for a mailbox
+    DigitalMailAttachment:
+      required:
+        - content
+        - filename
+      type: object
+      properties:
+        contentType:
+          type: string
+          description: Content type
+          enum:
+            - application/pdf
+        content:
+          minLength: 1
+          type: string
+          description: Content (BASE64-encoded)
+        filename:
+          minLength: 1
+          type: string
+          description: Filename
+      description: Attachment
+    DigitalMailParty:
+      required:
+        - partyIds
+      type: object
+      properties:
+        partyIds:
+          minItems: 1
+          type: array
+          items:
+            type: string
+            description: The message party ids
+            format: uuid
+        externalReferences:
+          type: array
+          description: External references
+          items:
+            $ref: "#/components/schemas/ExternalReference"
+      description: Party
+    DigitalMailRequest:
+      required:
+        - body
+        - contentType
+        - party
+      type: object
+      properties:
+        party:
+          $ref: "#/components/schemas/DigitalMailParty"
+        sender:
+          $ref: "#/components/schemas/DigitalMailSender"
+        subject:
+          type: string
+          description: Subject
+          nullable: true
+        department:
+          type: string
+          description: Department and unit that should be billed for the message
+          nullable: true
+          example: "SBK(Gatuavdelningen, Trafiksektionen)"
+        contentType:
+          minLength: 1
+          type: string
+          description: Content type
+          enum:
+            - text/plain
+            - text/html
+        body:
+          minLength: 1
+          type: string
+          description: "Body (plain text if contentType is set to 'text/plain', BASE64-encoded\
+            \ if contentType is set to 'application/html')"
+        attachments:
+          type: array
+          description: Attachments
+          items:
+            $ref: "#/components/schemas/DigitalMailAttachment"
+    DigitalMailSender:
+      required:
+        - supportInfo
+      type: object
+      properties:
+        supportInfo:
+          $ref: "#/components/schemas/DigitalMailSenderSupportInfo"
+      description: Sender
+    DigitalMailSenderSupportInfo:
+      required:
+        - text
+      type: object
+      properties:
+        text:
+          minLength: 1
+          type: string
+          description: Text
+        emailAddress:
+          type: string
+          description: E-mail address
+          format: email
+        phoneNumber:
+          type: string
+          description: Phone number
+        url:
+          type: string
+          description: URL
+      description: Support info
     ExternalReference:
       required:
         - key
@@ -1780,6 +1947,68 @@ components:
           description: The external reference value
           example: 356t4r34f
       description: External references
+    DeliveryResult:
+      type: object
+      properties:
+        deliveryId:
+          type: string
+          description: The delivery id
+          format: uuid
+        messageType:
+          $ref: "#/components/schemas/MessageType"
+        status:
+          $ref: "#/components/schemas/MessageStatus"
+      description: Delivery result
+    MessageBatchResult:
+      type: object
+      properties:
+        batchId:
+          type: string
+          description: The batch id
+          format: uuid
+        messages:
+          type: array
+          description: The individual message results
+          items:
+            $ref: "#/components/schemas/MessageResult"
+      description: Message batch result
+    MessageResult:
+      type: object
+      properties:
+        messageId:
+          type: string
+          description: The message id
+          format: uuid
+        deliveries:
+          type: array
+          description: The message deliveries
+          items:
+            $ref: "#/components/schemas/DeliveryResult"
+      description: Message result
+    MessageStatus:
+      type: string
+      description: Status
+      enum:
+        - PENDING
+        - AWAITING_FEEDBACK
+        - SENT
+        - NOT_SENT
+        - FAILED
+        - NO_CONTACT_SETTINGS_FOUND
+        - NO_CONTACT_WANTED
+    MessageType:
+      type: string
+      description: Message type
+      enum:
+        - MESSAGE
+        - EMAIL
+        - SMS
+        - WEB_MESSAGE
+        - DIGITAL_MAIL
+        - DIGITAL_INVOICE
+        - SNAIL_MAIL
+        - LETTER
+        - SLACK
     WebMessageAttachment:
       type: object
       properties:
@@ -1826,7 +2055,8 @@ components:
           default: false
         oepInstance:
           type: string
-          description: Determines if the message should be added to the internal or external OeP instance
+          description: Determines if the message should be added to the internal or
+            external OeP instance
           example: INTERNAL
           enum:
             - INTERNAL
@@ -1845,82 +2075,103 @@ components:
           description: The user ID of the sender. I.e. employee ID
           example: joe01doe
       description: Sender
-    Problem:
+    Address:
       type: object
       properties:
-        instance:
+        firstName:
           type: string
-          format: uri
-        type:
+          description: The first name of the recipient
+          example: John
+        lastName:
           type: string
-          format: uri
-        parameters:
-          type: object
-          additionalProperties:
-            type: object
-        status:
-          $ref: "#/components/schemas/StatusType"
-        title:
+          description: The last name of the recipient
+          example: Doe
+        address:
           type: string
-        detail:
+          description: The address
+          example: Main Street 1
+        apartmentNumber:
           type: string
-    StatusType:
+          description: The apartment number
+          example: "1101"
+        careOf:
+          type: string
+          description: The care of
+          example: c/o John Doe
+        zipCode:
+          type: string
+          description: The zip code
+          example: "12345"
+        city:
+          type: string
+          description: The city
+          example: Main Street
+        country:
+          type: string
+          description: The country
+          example: Sweden
+      description: Address
+    SnailmailAttachment:
+      required:
+        - content
+        - filename
       type: object
       properties:
-        statusCode:
-          type: integer
-          format: int32
-        reasonPhrase:
+        filename:
+          minLength: 1
           type: string
-    DeliveryResult:
+          description: The attachment filename
+          example: test.txt
+        contentType:
+          type: string
+          description: The attachment content type
+          example: text/plain
+        content:
+          type: string
+          description: The attachment (file) content as a BASE64-encoded string
+          example: aGVsbG8gd29ybGQK
+      description: Attachment
+    SnailmailParty:
       type: object
       properties:
-        deliveryId:
+        partyId:
           type: string
-          description: The delivery id
-          format: uuid
-        messageType:
-          $ref: "#/components/schemas/MessageType"
-        status:
-          $ref: "#/components/schemas/MessageStatus"
-      description: Delivery result
-    MessageResult:
-      type: object
-      properties:
-        messageId:
-          type: string
-          description: The message id
-          format: uuid
-        deliveries:
+          description: The message party id
+          example: f427952b-247c-4d3b-b081-675a467b3619
+        externalReferences:
           type: array
-          description: The message deliveries
+          description: External references
           items:
-            $ref: "#/components/schemas/DeliveryResult"
-      description: Message result
-    MessageStatus:
-      type: string
-      description: Status
-      enum:
-        - PENDING
-        - AWAITING_FEEDBACK
-        - SENT
-        - NOT_SENT
-        - FAILED
-        - NO_CONTACT_SETTINGS_FOUND
-        - NO_CONTACT_WANTED
-    MessageType:
-      type: string
-      description: Message type
-      enum:
-        - MESSAGE
-        - EMAIL
-        - SMS
-        - WEB_MESSAGE
-        - DIGITAL_MAIL
-        - DIGITAL_INVOICE
-        - SNAIL_MAIL
-        - LETTER
-        - SLACK
+            $ref: "#/components/schemas/ExternalReference"
+      description: Party
+    SnailmailRequest:
+      required:
+        - department
+      type: object
+      properties:
+        party:
+          $ref: "#/components/schemas/SnailmailParty"
+        address:
+          $ref: "#/components/schemas/Address"
+        department:
+          minLength: 1
+          type: string
+          description: Department and unit that should be billed
+          example: "SBK(Gatuavdelningen, Trafiksektionen)"
+        deviation:
+          type: string
+          description: If the letter to send deviates from the standard
+          example: A3 Ritning
+        attachments:
+          minItems: 1
+          type: array
+          items:
+            $ref: "#/components/schemas/SnailmailAttachment"
+        folderName:
+          type: string
+          description: Used by snailmail-sender to set the name of the organization
+            folder
+          example: Sundsvalls Kommun
     SmsRequest:
       required:
         - message
@@ -1933,7 +2184,8 @@ components:
           maxLength: 11
           minLength: 3
           type: string
-          description: "The sender of the SMS, swedish letters(å,ä,ö) will be replaced by (a,a,o) respectively"
+          description: "The sender of the SMS, swedish letters(å,ä,ö) will be replaced\
+            \ by (a,a,o) respectively"
           example: sender
         mobileNumber:
           type: string
@@ -1975,7 +2227,8 @@ components:
           maxLength: 11
           minLength: 3
           type: string
-          description: "The sender of the SMS, swedish letters(å,ä,ö) will be replaced by (a,a,o) respectively"
+          description: "The sender of the SMS, swedish letters(å,ä,ö) will be replaced\
+            \ by (a,a,o) respectively"
           example: sender
         message:
           minLength: 1
@@ -2010,19 +2263,6 @@ components:
           type: string
           description: "Mobile number, which should start with +467x"
       description: Parties to send the sms message to
-    MessageBatchResult:
-      type: object
-      properties:
-        batchId:
-          type: string
-          description: The batch id
-          format: uuid
-        messages:
-          type: array
-          description: The individual message results
-          items:
-            $ref: "#/components/schemas/MessageResult"
-      description: Message batch result
     SlackRequest:
       required:
         - channel
@@ -2056,10 +2296,12 @@ components:
           minLength: 1
           type: string
           description: Sender e-mail address
+          format: email
           example: sender@sender.se
         replyTo:
           type: string
           description: Reply-to e-mail address
+          format: email
           example: sender@sender.se
     Message:
       required:
@@ -2143,42 +2385,6 @@ components:
           type: string
           description: The sender of the SMS
           example: sender
-    Address:
-      type: object
-      properties:
-        firstName:
-          type: string
-          description: The first name of the recipient
-          example: John
-        lastName:
-          type: string
-          description: The last name of the recipient
-          example: Doe
-        address:
-          type: string
-          description: The address
-          example: Main Street 1
-        apartmentNumber:
-          type: string
-          description: The apartment number
-          example: "1101"
-        careOf:
-          type: string
-          description: The care of
-          example: c/o John Doe
-        zipCode:
-          type: string
-          description: The zip code
-          example: "12345"
-        city:
-          type: string
-          description: The city
-          example: Main Street
-        country:
-          type: string
-          description: The country
-          example: Sweden
-      description: Addresses that gets a letter copy
     LetterAttachment:
       required:
         - content
@@ -2251,7 +2457,8 @@ components:
             - text/html
         body:
           type: string
-          description: "Body (plain text if contentType is set to 'text/plain', BASE64-encoded if contentType is set to 'text/html')"
+          description: "Body (plain text if contentType is set to 'text/plain', BASE64-encoded\
+            \ if contentType is set to 'text/html')"
         department:
           minLength: 1
           type: string
@@ -2286,6 +2493,7 @@ components:
         emailAddress:
           type: string
           description: E-mail address
+          format: email
         phoneNumber:
           type: string
           description: Phone number
@@ -2325,6 +2533,7 @@ components:
           minLength: 1
           type: string
           description: Recipient e-mail address
+          format: email
         subject:
           minLength: 1
           type: string
@@ -2377,10 +2586,12 @@ components:
           minLength: 1
           type: string
           description: Sender e-mail address
+          format: email
           example: sender@sender.se
         replyTo:
           type: string
           description: Reply-to e-mail address
+          format: email
           example: sender@sender.se
       description: Sender
     EmailBatchRequest:
@@ -2433,108 +2644,8 @@ components:
           minLength: 1
           type: string
           description: Recipient e-mail address
+          format: email
           example: someone@somewhere.com
-    DigitalMailAttachment:
-      required:
-        - content
-        - filename
-      type: object
-      properties:
-        contentType:
-          type: string
-          description: Content type
-          enum:
-            - application/pdf
-        content:
-          minLength: 1
-          type: string
-          description: Content (BASE64-encoded)
-        filename:
-          minLength: 1
-          type: string
-          description: Filename
-      description: Attachment
-    DigitalMailParty:
-      required:
-        - partyIds
-      type: object
-      properties:
-        partyIds:
-          minItems: 1
-          type: array
-          items:
-            type: string
-            description: The message party ids
-            format: uuid
-        externalReferences:
-          type: array
-          description: External references
-          items:
-            $ref: "#/components/schemas/ExternalReference"
-      description: Party
-    DigitalMailRequest:
-      required:
-        - body
-        - contentType
-        - party
-      type: object
-      properties:
-        party:
-          $ref: "#/components/schemas/DigitalMailParty"
-        sender:
-          $ref: "#/components/schemas/DigitalMailSender"
-        subject:
-          type: string
-          description: Subject
-          nullable: true
-        department:
-          type: string
-          description: Department and unit that should be billed for the message
-          nullable: true
-          example: "SBK(Gatuavdelningen, Trafiksektionen)"
-        contentType:
-          minLength: 1
-          type: string
-          description: Content type
-          enum:
-            - text/plain
-            - text/html
-        body:
-          minLength: 1
-          type: string
-          description: "Body (plain text if contentType is set to 'text/plain', BASE64-encoded if contentType is set to 'application/html')"
-        attachments:
-          type: array
-          description: Attachments
-          items:
-            $ref: "#/components/schemas/DigitalMailAttachment"
-    DigitalMailSender:
-      required:
-        - supportInfo
-      type: object
-      properties:
-        supportInfo:
-          $ref: "#/components/schemas/DigitalMailSenderSupportInfo"
-      description: Sender
-    DigitalMailSenderSupportInfo:
-      required:
-        - text
-      type: object
-      properties:
-        text:
-          minLength: 1
-          type: string
-          description: Text
-        emailAddress:
-          type: string
-          description: E-mail address
-        phoneNumber:
-          type: string
-          description: Phone number
-        url:
-          type: string
-          description: URL
-      description: Support info
     Details:
       required:
         - accountNumber
@@ -2554,6 +2665,7 @@ components:
           type: string
           description: The invoice due date
           format: date
+          example: 2023-10-09
         paymentReferenceType:
           type: string
           enum:
@@ -2683,6 +2795,8 @@ components:
           type: string
         message:
           type: string
+        detail:
+          type: string
         instance:
           type: string
           format: uri
@@ -2690,8 +2804,6 @@ components:
           type: object
           additionalProperties:
             type: object
-        detail:
-          type: string
         suppressed:
           type: array
           items:
@@ -2754,6 +2866,12 @@ components:
                 type: boolean
         message:
           type: string
+        status:
+          $ref: "#/components/schemas/StatusType"
+        detail:
+          type: string
+        title:
+          type: string
         instance:
           type: string
           format: uri
@@ -2764,12 +2882,6 @@ components:
           type: object
           additionalProperties:
             type: object
-        status:
-          $ref: "#/components/schemas/StatusType"
-        title:
-          type: string
-        detail:
-          type: string
         suppressed:
           type: array
           items:
@@ -2871,6 +2983,10 @@ components:
           type: string
           description: The message type
           example: SNAIL_MAIL
+        mobileNumber:
+          type: string
+          description: The recipient mobile number
+          example: "+46123456789"
         status:
           type: string
           description: The message status
@@ -2900,6 +3016,10 @@ components:
           type: string
           description: The message subject
           example: Important message
+        body:
+          type: string
+          description: The message body
+          example: This is a message
         recipients:
           type: array
           readOnly: true
@@ -2936,7 +3056,8 @@ components:
           example: LETTER
         subject:
           type: string
-          description: Message subject if such exists for message(s) attached to the batch
+          description: Message subject if such exists for message(s) attached to the
+            batch
           example: Important message
         sent:
           type: string
@@ -3085,3 +3206,4 @@ components:
         timestamp:
           type: string
           format: date-time
+  securitySchemes: { }
