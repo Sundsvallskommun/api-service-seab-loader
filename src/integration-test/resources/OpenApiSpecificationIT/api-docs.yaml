@@ -1,44 +1,38 @@
-openapi: 3.0.1
+openapi: 3.1.0
 info:
   title: api-seab-loader
-  contact: {}
+  contact: { }
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
   version: "2.0"
 servers:
-- url: https://localhost:8080
-  description: Generated server url
+  - url: http://localhost:60369
+    description: Generated server url
 tags:
-- name: Information
-  description: Information resources
-- name: Invoices
-  description: Invoice resource
-- name: Jobs
-  description: Jobs resource
+  - name: Information
+    description: Information resources
+  - name: Invoices
+    description: Invoice resource
+  - name: Jobs
+    description: Jobs resource
 paths:
   /{municipalityId}/jobs/notifier:
     post:
       tags:
-      - Jobs
+        - Jobs
       summary: Triggers notification job.
       description: Triggers notification job.
       operationId: notifier
       parameters:
-      - name: municipalityId
-        in: path
-        description: Municipality id
-        required: true
-        schema:
-          type: string
-        example: 2281
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
       responses:
-        "500":
-          description: Internal Server error
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
         "204":
           description: Successful operation
         "400":
@@ -47,30 +41,30 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                - $ref: "#/components/schemas/Problem"
-                - $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
+        "500":
+          description: Internal Server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /{municipalityId}/jobs/invoiceexporter:
     post:
       tags:
-      - Jobs
+        - Jobs
       summary: Triggers export invoices (to InvoiceCache) job.
       description: Triggers export invoices (to InvoiceCache) job.
       operationId: invoiceExporter
       parameters:
-      - name: municipalityId
-        in: path
-        description: Municipality id
-        required: true
-        schema:
-          type: string
-        example: 2281
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
       responses:
-        "500":
-          description: Internal Server error
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
         "204":
           description: Successful operation
         "400":
@@ -79,30 +73,30 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                - $ref: "#/components/schemas/Problem"
-                - $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
+        "500":
+          description: Internal Server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /{municipalityId}/jobs/dbcleaner:
     post:
       tags:
-      - Jobs
+        - Jobs
       summary: Triggers database cleaning job.
       description: Triggers database cleaning job.
       operationId: dbCleaner
       parameters:
-      - name: municipalityId
-        in: path
-        description: Municipality id
-        required: true
-        schema:
-          type: string
-        example: 2281
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
       responses:
-        "500":
-          description: Internal Server error
-          content:
-            application/problem+json:
-              schema:
-                $ref: "#/components/schemas/Problem"
         "204":
           description: Successful operation
         "400":
@@ -111,23 +105,29 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                - $ref: "#/components/schemas/Problem"
-                - $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
+        "500":
+          description: Internal Server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
   /{municipalityId}/invoices:
     post:
       tags:
-      - Invoices
+        - Invoices
       summary: Create invoice
       description: Receives and stores invoices in XML-format.
       operationId: createInvoice
       parameters:
-      - name: municipalityId
-        in: path
-        description: Municipality id
-        required: true
-        schema:
-          type: string
-        example: 2281
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
       requestBody:
         content:
           application/octet-stream:
@@ -148,8 +148,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                - $ref: "#/components/schemas/Problem"
-                - $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server error
           content:
@@ -159,17 +159,17 @@ paths:
   /{municipalityId}/information/schedulers:
     get:
       tags:
-      - Information
+        - Information
       summary: Scheduler information
       operationId: getSchedulerInformation
       parameters:
-      - name: municipalityId
-        in: path
-        description: Municipality id
-        required: true
-        schema:
-          type: string
-        example: 2281
+        - name: municipalityId
+          in: path
+          description: Municipality id
+          required: true
+          schema:
+            type: string
+          example: 2281
       responses:
         "200":
           description: Successful operation
@@ -185,8 +185,8 @@ paths:
             application/problem+json:
               schema:
                 oneOf:
-                - $ref: "#/components/schemas/Problem"
-                - $ref: "#/components/schemas/ConstraintViolationProblem"
+                  - $ref: "#/components/schemas/Problem"
+                  - $ref: "#/components/schemas/ConstraintViolationProblem"
         "500":
           description: Internal Server error
           content:
@@ -196,7 +196,7 @@ paths:
   /api-docs:
     get:
       tags:
-      - API
+        - API
       summary: OpenAPI
       operationId: getApiDocs
       responses:
@@ -214,6 +214,12 @@ components:
     Problem:
       type: object
       properties:
+        status:
+          $ref: "#/components/schemas/StatusType"
+        title:
+          type: string
+        detail:
+          type: string
         instance:
           type: string
           format: uri
@@ -222,14 +228,7 @@ components:
           format: uri
         parameters:
           type: object
-          additionalProperties:
-            type: object
-        status:
-          $ref: "#/components/schemas/StatusType"
-        title:
-          type: string
-        detail:
-          type: string
+          additionalProperties: { }
     StatusType:
       type: object
       properties:
@@ -278,15 +277,14 @@ components:
           type: string
         message:
           type: string
+        detail:
+          type: string
         instance:
           type: string
           format: uri
         parameters:
           type: object
-          additionalProperties:
-            type: object
-        detail:
-          type: string
+          additionalProperties: { }
         suppressed:
           type: array
           items:
@@ -323,8 +321,7 @@ components:
     ThrowableProblem:
       type: object
       properties:
-        cause:
-          $ref: "#/components/schemas/ThrowableProblem"
+        cause: { }
         stackTrace:
           type: array
           items:
@@ -349,6 +346,12 @@ components:
                 type: boolean
         message:
           type: string
+        status:
+          $ref: "#/components/schemas/StatusType"
+        title:
+          type: string
+        detail:
+          type: string
         instance:
           type: string
           format: uri
@@ -357,14 +360,7 @@ components:
           format: uri
         parameters:
           type: object
-          additionalProperties:
-            type: object
-        status:
-          $ref: "#/components/schemas/StatusType"
-        title:
-          type: string
-        detail:
-          type: string
+          additionalProperties: { }
         suppressed:
           type: array
           items:
@@ -407,18 +403,21 @@ components:
           type: string
     SchedulerInformation:
       type: object
+      description: Scheduler information model
       properties:
         name:
           type: string
           description: Scheduler name
-          example: SchedulerService
+          examples:
+            - SchedulerService
         expression:
           type: string
           description: Scheduler expression
-          example: 0 0 13 * * 7
+          examples:
+            - 0 0 13 * * 7
         description:
           type: string
           description: Scheduler human readable description
-          example: "At 13:00, only on Sunday"
-      description: Scheduler information model
-  securitySchemes: {}
+          examples:
+            - "At 13:00, only on Sunday"
+  securitySchemes: { }

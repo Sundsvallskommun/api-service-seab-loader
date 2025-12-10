@@ -6,7 +6,7 @@ _Service providing functionality to load pdf invoices from SEAB into InvoiceCach
 
 ### Prerequisites
 
-- **Java 21 or higher**
+- **Java 25 or higher**
 - **Maven**
 - **MariaDB**
 - **Git**
@@ -30,7 +30,8 @@ cd api-service-seab-loader
 
 3. **Ensure dependent services are running:**
 
-   If this microservice depends on other services, make sure they are up and accessible. See [Dependencies](#dependencies) for more details.
+   If this microservice depends on other services, make sure they are up and accessible.
+   See [Dependencies](#dependencies) for more details.
 
 4. **Build and run the application:**
 
@@ -52,11 +53,13 @@ This microservice depends on the following services:
 
 - **InvoiceCache**
   - **Purpose:** Service that acts as frontend to the permanent storage where the invoices are stored.
-  - **Repository:** [https://github.com/Sundsvallskommun/api-service-invoice-cache](https://github.com/Sundsvallskommun/api-service-invoice-cache)
+  - **Repository:
+    ** [https://github.com/Sundsvallskommun/api-service-invoice-cache](https://github.com/Sundsvallskommun/api-service-invoice-cache)
   - **Setup Instructions:** See documentation in repository above for installation and configuration steps.
 - **Messaging**
   - **Purpose:** Used for sending emails when execution is not successful.
-  - **Repository:** [https://github.com/Sundsvallskommun/api-service-messaging](https://github.com/Sundsvallskommun/api-service-messaging)
+  - **Repository:
+    ** [https://github.com/Sundsvallskommun/api-service-messaging](https://github.com/Sundsvallskommun/api-service-messaging)
   - **Setup Instructions:** See documentation in repository above for installation and configuration steps.
 
 Ensure that these services are running and properly configured before starting this microservice.
@@ -81,7 +84,8 @@ curl -X GET https://localhost:8080/2281/information/schedulers
 
 ## Configuration
 
-Configuration is crucial for the application to run successfully. Ensure all necessary settings are configured in `application.yml`.
+Configuration is crucial for the application to run successfully. Ensure all necessary settings are configured in
+`application.yml`.
 
 ### Key Configuration Parameters
 
@@ -133,7 +137,8 @@ config:
 
 ### Database Initialization
 
-The project is set up with [Flyway](https://github.com/flyway/flyway) for database migrations. Flyway is disabled by default so you will have to enable it to automatically populate the database schema upon application startup.
+The project is set up with [Flyway](https://github.com/flyway/flyway) for database migrations. Flyway is disabled by
+default so you will have to enable it to automatically populate the database schema upon application startup.
 
 ```yaml
 config:
@@ -141,7 +146,8 @@ config:
     enabled: true
 ```
 
-- **No additional setup is required** for database initialization, as long as the database connection settings are correctly configured.
+- **No additional setup is required** for database initialization, as long as the database connection settings are
+  correctly configured.
 
 ### Additional Notes
 
@@ -155,7 +161,8 @@ config:
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/Sundsvallskommun/.github/blob/main/.github/CONTRIBUTING.md) for guidelines.
+Contributions are welcome! Please
+see [CONTRIBUTING.md](https://github.com/Sundsvallskommun/.github/blob/main/.github/CONTRIBUTING.md) for guidelines.
 
 ## License
 

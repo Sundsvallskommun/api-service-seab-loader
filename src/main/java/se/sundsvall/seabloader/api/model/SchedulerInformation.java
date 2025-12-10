@@ -6,13 +6,13 @@ import java.util.Objects;
 @Schema(description = "Scheduler information model")
 public class SchedulerInformation {
 
-	@Schema(description = "Scheduler name", example = "SchedulerService")
+	@Schema(description = "Scheduler name", examples = "SchedulerService")
 	private String name;
 
-	@Schema(description = "Scheduler expression", example = "0 0 13 * * 7")
+	@Schema(description = "Scheduler expression", examples = "0 0 13 * * 7")
 	private String expression;
 
-	@Schema(description = "Scheduler human readable description", example = "At 13:00, only on Sunday")
+	@Schema(description = "Scheduler human readable description", examples = "At 13:00, only on Sunday")
 	private String description;
 
 	public static SchedulerInformation create() {
