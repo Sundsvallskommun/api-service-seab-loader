@@ -1,8 +1,5 @@
 package se.sundsvall.seabloader.service;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +8,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.seabloader.scheduler.dbcleaner.DatabaseCleanerScheduler;
 import se.sundsvall.seabloader.scheduler.invoiceexporter.InvoiceExportScheduler;
 import se.sundsvall.seabloader.scheduler.notifier.NotifierScheduler;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class AsyncExecutorServiceTest {

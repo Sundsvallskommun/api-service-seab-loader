@@ -1,8 +1,5 @@
 package se.sundsvall.seabloader.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.io.ByteArrayOutputStream;
 import org.apache.pdfbox.Loader;
 import org.junit.jupiter.api.Test;
@@ -15,6 +12,9 @@ import org.zalando.problem.ThrowableProblem;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 import se.sundsvall.seabloader.service.mapper.InvoiceMapper;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = InvoicePdfMerger.class)
 @ActiveProfiles(value = "junit")

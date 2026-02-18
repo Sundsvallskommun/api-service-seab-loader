@@ -1,9 +1,5 @@
 package se.sundsvall.seabloader.integration.db.model;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
-import static org.hibernate.Length.LONG32;
-import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -17,6 +13,10 @@ import java.util.Objects;
 import org.hibernate.annotations.TimeZoneStorage;
 import se.sundsvall.seabloader.integration.db.listener.InvoiceEntityListener;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
+
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static org.hibernate.Length.LONG32;
+import static org.hibernate.annotations.TimeZoneStorageType.NORMALIZE;
 
 @Entity
 @Table(name = "invoice",
