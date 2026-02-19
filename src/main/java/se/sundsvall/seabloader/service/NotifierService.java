@@ -1,12 +1,5 @@
 package se.sundsvall.seabloader.service;
 
-import static java.lang.String.format;
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
-import static org.springframework.util.CollectionUtils.isEmpty;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
-
 import generated.se.sundsvall.messaging.EmailRequest;
 import generated.se.sundsvall.messaging.EmailSender;
 import java.util.Arrays;
@@ -20,6 +13,13 @@ import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.integration.messaging.MessagingClient;
+
+import static java.lang.String.format;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
 @Service
 public class NotifierService {

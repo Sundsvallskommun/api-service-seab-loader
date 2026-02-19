@@ -1,13 +1,5 @@
 package se.sundsvall.seabloader.service;
 
-import static java.util.stream.LongStream.rangeClosed;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
-
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
@@ -17,6 +9,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
+
+import static java.util.stream.LongStream.rangeClosed;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 
 @ExtendWith(MockitoExtension.class)
 class DatabaseCleanerServiceTest {

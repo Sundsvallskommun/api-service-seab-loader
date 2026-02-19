@@ -1,5 +1,7 @@
 package se.sundsvall.seabloader.service.mapper.model;
 
+import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.CONSOLIDATED_INVOICE;
 import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.CREDIT_INVOICE;
@@ -8,8 +10,6 @@ import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.FINAL_INV
 import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.INVOICE;
 import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.REMINDER;
 import static se.sundsvall.seabloader.service.mapper.model.InvoiceType.SELF_INVOICE;
-
-import org.junit.jupiter.api.Test;
 
 class InvoiceTypeTest {
 

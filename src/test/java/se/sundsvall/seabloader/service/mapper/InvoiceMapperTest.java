@@ -1,14 +1,5 @@
 package se.sundsvall.seabloader.service.mapper;
 
-import static generated.se.sundsvall.invoicecache.InvoicePdfRequest.InvoiceTypeEnum.INVOICE;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Locale.ENGLISH;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
-
 import generated.se.inexchange.InExchangeInvoiceStatusTypeAttachment.Attachment;
 import jakarta.xml.bind.UnmarshalException;
 import java.io.ByteArrayOutputStream;
@@ -20,6 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
+
+import static generated.se.sundsvall.invoicecache.InvoicePdfRequest.InvoiceTypeEnum.INVOICE;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Locale.ENGLISH;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
 @ExtendWith(ResourceLoaderExtension.class)
 class InvoiceMapperTest {

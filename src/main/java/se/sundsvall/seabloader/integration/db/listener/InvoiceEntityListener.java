@@ -1,15 +1,15 @@
 package se.sundsvall.seabloader.integration.db.listener;
 
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import java.time.ZoneId;
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.Objects.isNull;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
-
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import java.time.ZoneId;
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 
 public class InvoiceEntityListener {
 

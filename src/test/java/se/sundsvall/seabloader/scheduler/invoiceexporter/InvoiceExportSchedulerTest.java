@@ -1,14 +1,5 @@
 package se.sundsvall.seabloader.scheduler.invoiceexporter;
 
-import static java.util.Collections.emptyList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
-
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +9,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.service.InvoiceService;
+
+import static java.util.Collections.emptyList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
 @ExtendWith(MockitoExtension.class)
 class InvoiceExportSchedulerTest {

@@ -1,21 +1,5 @@
 package se.sundsvall.seabloader.service;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Locale.ENGLISH;
-import static java.util.Optional.empty;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
-
 import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
 import java.io.ByteArrayOutputStream;
 import java.util.Locale;
@@ -33,6 +17,22 @@ import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 import se.sundsvall.seabloader.integration.db.InvoiceRepository;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.integration.invoicecache.InvoiceCacheClient;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Locale.ENGLISH;
+import static java.util.Optional.empty;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 
 @ExtendWith({
 	MockitoExtension.class, ResourceLoaderExtension.class

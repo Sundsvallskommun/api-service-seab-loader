@@ -1,12 +1,12 @@
 package se.sundsvall.seabloader.scheduler;
 
-import static java.util.Locale.ENGLISH;
-import static org.apache.commons.lang3.StringUtils.length;
-
 import it.burning.cron.CronExpressionDescriptor;
 import it.burning.cron.CronExpressionParser.Options;
 import java.util.Optional;
 import se.sundsvall.seabloader.api.model.SchedulerInformation;
+
+import static java.util.Locale.ENGLISH;
+import static org.apache.commons.lang3.StringUtils.length;
 
 public abstract class AbstractScheduler implements SchedulerService {
 

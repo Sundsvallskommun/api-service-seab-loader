@@ -1,11 +1,5 @@
 package se.sundsvall.seabloader.api;
 
-import static java.nio.file.Files.readAllBytes;
-import static org.mockito.Mockito.verify;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.MediaType.APPLICATION_XML;
-import static org.springframework.util.ResourceUtils.getFile;
-
 import java.io.IOException;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -15,6 +9,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import se.sundsvall.seabloader.service.InvoiceService;
+
+import static java.nio.file.Files.readAllBytes;
+import static org.mockito.Mockito.verify;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.MediaType.APPLICATION_XML;
+import static org.springframework.util.ResourceUtils.getFile;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")

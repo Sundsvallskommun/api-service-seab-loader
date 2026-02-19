@@ -1,5 +1,8 @@
 package se.sundsvall.seabloader.integration.db.listener;
 
+import org.junit.jupiter.api.Test;
+import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
+
 import static java.time.OffsetDateTime.now;
 import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,9 +10,6 @@ import static org.assertj.core.api.Assertions.within;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.PROCESSED;
 import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
-
-import org.junit.jupiter.api.Test;
-import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 
 class InvoiceEntityListenerTest {
 

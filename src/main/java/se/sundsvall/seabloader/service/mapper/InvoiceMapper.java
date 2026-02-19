@@ -1,10 +1,5 @@
 package se.sundsvall.seabloader.service.mapper;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
-
 import generated.se.inexchange.InExchangeInvoiceStatusType;
 import generated.se.sundsvall.invoicecache.InvoicePdf;
 import generated.se.sundsvall.invoicecache.InvoicePdfRequest;
@@ -25,6 +20,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import se.sundsvall.seabloader.integration.db.model.InvoiceEntity;
 import se.sundsvall.seabloader.service.mapper.model.InvoiceType;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.exception.ExceptionUtils.getRootCauseMessage;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.IMPORT_FAILED;
 
 public final class InvoiceMapper {
 

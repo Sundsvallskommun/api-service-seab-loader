@@ -1,9 +1,5 @@
 package se.sundsvall.seabloader.scheduler.invoiceexporter;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
-import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -14,6 +10,10 @@ import se.sundsvall.seabloader.integration.db.model.InvoiceId;
 import se.sundsvall.seabloader.integration.db.model.enums.Status;
 import se.sundsvall.seabloader.scheduler.AbstractScheduler;
 import se.sundsvall.seabloader.service.InvoiceService;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.EXPORT_FAILED;
+import static se.sundsvall.seabloader.integration.db.model.enums.Status.UNPROCESSED;
 
 @Service
 @ConfigurationProperties("scheduler.invoiceexporter.cron")
