@@ -17,7 +17,7 @@
 		<jaxb2-maven-plugin.version>4.1.0</jaxb2-maven-plugin.version>
 		<org-apache-pdfbox.version>3.0.6</org-apache-pdfbox.version>
 		<cron-expression-descriptor.version>1.2.10</cron-expression-descriptor.version>
-		<openpdf.version>3.0.0</openpdf.version>
+		<openpdf.version>3.0.1</openpdf.version>
 		<generated-sources-path>${project.build.directory}/generated-sources</generated-sources-path>
 	</properties>
 	<dependencies>
