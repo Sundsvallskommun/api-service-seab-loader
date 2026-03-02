@@ -7,14 +7,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.zalando.problem.Status;
-import org.zalando.problem.ThrowableProblem;
+import se.sundsvall.dept44.problem.ThrowableProblem;
 import se.sundsvall.dept44.test.annotation.resource.Load;
 import se.sundsvall.dept44.test.extension.ResourceLoaderExtension;
 import se.sundsvall.seabloader.service.mapper.InvoiceMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @SpringBootTest(classes = InvoicePdfMerger.class)
 @ActiveProfiles(value = "junit")
@@ -64,7 +64,7 @@ class InvoicePdfMergerTest {
 		final var exception = assertThrows(ThrowableProblem.class, () -> pdfUtil.mergePdfs(inExchangeInvoice));
 
 		// Assert
-		assertThat(exception.getStatus()).isEqualTo(Status.INTERNAL_SERVER_ERROR);
+		assertThat(exception.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
 		assertThat(exception.getMessage()).isEqualTo("Internal Server Error: A problem occured during merge of PDF:s. Input byte array has wrong 4-byte ending unit.");
 	}
 }

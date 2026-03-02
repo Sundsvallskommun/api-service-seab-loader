@@ -4,20 +4,22 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.zalando.problem.Problem;
-import org.zalando.problem.Status;
+import se.sundsvall.dept44.problem.Problem;
 import se.sundsvall.seabloader.service.InvoiceService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 
+@AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("junit")
 class InvoicesResourceFailuresTest {
@@ -46,9 +48,9 @@ class InvoicesResourceFailuresTest {
 		// Verifications
 		assertThat(response).isNotNull();
 		assertThat(response.getTitle()).isEqualTo("Bad Request");
-		assertThat(response.getStatus()).isEqualTo(Status.BAD_REQUEST);
+		assertThat(response.getStatus()).isEqualTo(BAD_REQUEST);
 		assertThat(response.getDetail()).isEqualTo(
-			"Required request body is missing: org.springframework.http.ResponseEntity<java.lang.Void> se.sundsvall.seabloader.api.InvoicesResource.createInvoice(java.lang.String,byte[])");
+			"Failed to read request");
 
 		verifyNoInteractions(invoiceService);
 	}
@@ -69,8 +71,8 @@ class InvoicesResourceFailuresTest {
 		// Verifications
 		assertThat(response).isNotNull();
 		assertThat(response.getTitle()).isEqualTo("Unsupported Media Type");
-		assertThat(response.getStatus()).isEqualTo(Status.UNSUPPORTED_MEDIA_TYPE);
-		assertThat(response.getDetail()).isEqualTo("Content-Type 'application/json' is not supported");
+		assertThat(response.getStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE);
+		assertThat(response.getDetail()).isEqualTo("Content-Type 'application/json' is not supported.");
 
 		verifyNoInteractions(invoiceService);
 	}
